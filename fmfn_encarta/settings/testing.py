@@ -1,0 +1,49 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from _base import Settings
+from os.path import join
+
+
+class Testing(Settings):
+
+	SECRET_KEY = 't5_o87@$2#7ca8==8n=lb67y_2o4zgwv3bp*+k*b*4nfe#k8x2'
+
+	DATABASES = {
+		'default': {
+			'ENGINE': 'django.db.backends.mysql',
+			'HOST': 'localhost',
+			'NAME': 'fmfn',
+			'USER': 'fmfn_user',
+			'PASSWORD': 'VHSBLnRquEFyPAbZ',
+			'TEST': {
+				'HOST': 'localhost',
+				'NAME': 'fmfn_test',
+				'USER': 'fmfn',
+				'PASSWORD': 'VHSBLnRquEFyPAbZ'
+			}
+		}
+	}
+
+	CACHES = {
+		'default': { 'BACKEND': 'django.core.cache.backends.locmem.LocMemCache' }
+	}
+
+	EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+
+	LOGGING = {
+		'version': 1,
+		'disable_existing_loggers': False,
+		'handlers': {
+			'console': { 'class': 'logging.StreamHandler' },
+		},
+		'loggers': {
+			'django': {
+				'handlers': [ 'console' ],
+				'level': 'DEBUG',
+			},
+		},
+	}
+
+	STATIC_ROOT = join(Settings.BASE_DIR, 'static')
+
+	TEST_RUNNER = 'django.test.runner.DiscoverRunner'
