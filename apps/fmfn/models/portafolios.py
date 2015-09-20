@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import *
 from django.conf import settings
-
 #settings.AUTH_USER_MODEL
 
 class Portafolio(Model):
