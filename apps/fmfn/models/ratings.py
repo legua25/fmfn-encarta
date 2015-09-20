@@ -17,7 +17,7 @@ class Rating(Model):
 		],
 		verbose_name = _('rating values')
 	)
-	material  = ForeignKey('fmfn.material',
+	material = ForeignKey('fmfn.Material',
 		null = False,
 		verbose_name = _('material')
 	)
