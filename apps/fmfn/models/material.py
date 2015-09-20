@@ -4,7 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import *
 from django.conf import settings
 
-# Create your models here.
 class Material(Model):
 
     title = CharField(
@@ -16,7 +15,7 @@ class Material(Model):
         max_length = 1024,
         null = False,
         blank = False,
-        verbose_name = _('material description')
+        verbose_name = _('description')
     )
     suggested_ages = PositiveSmallIntegerField(
         choices = [
@@ -29,8 +28,9 @@ class Material(Model):
         verbose_name = _('suggested ages')
     )
     user = ForeignKey(settings.AUTH_USER_MODEL,
-        null = False,
-        on_delete = CASCADE
+        related_name = 'materials',
+        on_delete = CASCADE,
+		verbose_name = _('uploading user')
     )
 
     class Meta(object):

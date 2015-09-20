@@ -5,25 +5,26 @@ from django.db.models import *
 from django.conf import settings
 from _base import Model
 
-# settings.AUTH_USER_MODEL
-
 class Report(Model):
-    user = ForeignKey(settings.AUTH_USER_MODEL,
-                      related_name='reports',
-                      verbose_name='author'
-                      )
 
+    user = ForeignKey(settings.AUTH_USER_MODEL,
+        related_name = 'reports',
+        verbose_name = _('reporting author')
+    )
     description = CharField(
-        max_length=64
+        max_length = 64,
+	    verbose_name = _('description')
+    )
+    material = ForeignKey('fmfn.Material',
+		related_name = '+',
+		verbose_name = _('reported material')
+	)
+    date_created = DateTimeField(
+	    auto_now_add = True,
+	    verbose_name = _('date created')
     )
 
-    material = ForeignKey('fmfn.Material',
-                          related_name='reports',
-                          verbose_name='reported material'
-                          )
-
-
     class Meta(object):
-        verbose_name = 'material report'
-        verbose_name_plural = 'material reports'
+        verbose_name = _('material report')
+        verbose_name_plural = _('material reports')
         app_label = 'fmfn'
