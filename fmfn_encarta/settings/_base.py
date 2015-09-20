@@ -30,6 +30,7 @@ class Settings(Configuration):
 		'dbmail',
 		'imagekit',
 		'widget_tweaks',
+		'apps.fmfn'
 
 	]
 	MIDDLEWARE_CLASSES = [
