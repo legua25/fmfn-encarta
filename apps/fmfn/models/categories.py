@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.db.models import *
 from django.utils.translation import ugettext_lazy as _
 
@@ -10,8 +12,8 @@ class Category(Model):
         blank = False
     )
 
-    material = ManyToManyField('fmfn_encarta.Material',
-        related_name='materials',
-        verbose_name= _('materials'),
-        null=False
+    material = ManyToManyField('fmfn.Material',
+        related_name = 'categories',
+        verbose_name =  _('materials'),
+        null = False
     )

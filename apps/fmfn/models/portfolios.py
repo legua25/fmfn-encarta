@@ -11,10 +11,11 @@ class Portfolio(Model):
         related_name = '+',
         verbose_name = _('materials')
     )
+
     user = ForeignKey(settings.AUTH_USER_MODEL,
-		related_name = 'portfolio',
-		verbose_name = _('user')
-	)
+        related_name = 'portfolio',
+        verbose_name = _('user')
+    )
 
     class Meta(object):
 
