@@ -5,7 +5,7 @@ from django.db.models import *
 from django.conf import settings
 from _base import Model
 
-class Downloads(Model):
+class Download(Model):
 
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = '+',

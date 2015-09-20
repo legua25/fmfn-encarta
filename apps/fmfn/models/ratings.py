@@ -18,12 +18,13 @@ class Rating(Model):
 		verbose_name = _('rating values')
 	)
 	material = ForeignKey('fmfn.Material',
-		null = False,
+		related_name = 'ratings',
 		verbose_name = _('material')
 	)
 	user = ForeignKey(settings.AUTH_USER_MODEL,
-		null = False,
-		on_delete = CASCADE
+		related_name = '+',
+		on_delete = CASCADE,
+
 	)
 
 	class Meta(object):

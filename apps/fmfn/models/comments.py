@@ -12,18 +12,21 @@ class Comment(Model):
 		related_name = 'comments',
 		verbose_name = _('author')
 	)
-
-	comment_text = CharField(
-		max_length = 64
+	content = CharField(
+		max_length = 64,
+		verbose_name = _('comment content')
 	)
-
+	date_created = DateTimeField(
+		auto_now_add = True,
+		verbose_name = _('date created')
+	)
 	material = ForeignKey('fmfn.Material',
 		related_name = 'comments',
-		verbose_name = _('material')
+		verbose_name = _('commented material')
 	)
 
-
 	class Meta(object):
-		verbose_name = _('material_comment')
-		verbose_name_plural = _('material_comments')
+
+		verbose_name = _('material comment')
+		verbose_name_plural = _('material comments')
 		app_label = 'fmfn'
