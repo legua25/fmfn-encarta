@@ -5,12 +5,21 @@ from django.db.models import *
 from django.conf import settings
 from _base import Model
 
+
 class Material(Model):
 	""" Represents the model for the materials. It contains:
 		*title(CharField): it's the title of the material
 		*description(Charfield): it's the description of the material
 		*suggested_ages(PositiveSmallIntegerField): the optional values here are related with the educational level
 		*user (ForeignKey): A relationship to users to know if the material is visible to them
+	"""
+
+	"""
+		Represents the model for each material on the server,
+		*title(CharField): The name for the material
+		*description(CharField): A brief abstract of the material
+		*suggested_grades(ManyToManyField): The grades this material has proven to be effective
+		*user(ForeignKey): The user that uploaded this material
 	"""
 
 	title = CharField(

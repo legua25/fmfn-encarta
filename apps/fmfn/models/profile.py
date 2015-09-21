@@ -7,6 +7,10 @@ from _base import Model
 
 class Profile(Model):
 	"""
+		Represents the model for the user, note that the fields firstname, lastname, email are already present on the AUTH_USER_MODEL referenced on the user foreign key
+		*user(ForeignKeyField): Reference to the django default user model
+		*campus(CharField): The campus this user is registered on
+		*class_grades(ManyToManyField): The grades this user teaches on
 	"""
 
 	user = ForeignKey(settings.AUTH_USER_MODEL,
