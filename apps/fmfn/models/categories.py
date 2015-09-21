@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.db.models import *
 from django.utils.translation import ugettext_lazy as _
+from _base import Model
 
 class Category(Model):
 
