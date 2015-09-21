@@ -13,11 +13,9 @@ class Profile(Model):
 		related_name = 'profile',
 		verbose_name = _('user')
 	)
-
-	class_grades = ManyToManyField('fmfn.Grades',
+	class_grades = ManyToManyField('fmfn.Grade',
 		related_name = '+',
-		verbose_name =  _('class_grades'),
-		null = False
+		verbose_name = _('class grades')
 	)
 
 	class Meta(object):

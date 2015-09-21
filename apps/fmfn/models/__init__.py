@@ -7,3 +7,5 @@ from reports import Report
 from downloads import Download
 from comments import Comment
 from ratings import Rating
+from grades import Grade
+from profile import Profile
