@@ -24,14 +24,8 @@ class Material(Model):
 		blank = False,
 		verbose_name = _('description')
 	)
-	suggested_ages = PositiveSmallIntegerField(
-		choices = [
-			(1, _('kindergarten')),
-			(2, _('pre school')),
-			(3, _('low elementary school')),
-			(4, _('high elementary school')),
-			(5, _('junior high school'))
-		],
+	suggested_ages = ManyToManyField('fmfn.Grade',
+		related_name = 'materials',
 		verbose_name = _('suggested ages')
 	)
 	user = ForeignKey(settings.AUTH_USER_MODEL,
