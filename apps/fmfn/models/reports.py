@@ -6,6 +6,14 @@ from django.conf import settings
 from _base import Model
 
 class Report(Model):
+    """
+    Represents a user's report on a particular material. Each report defines:
+
+        * user (ForeignKey): A reference to the user that posted the report
+        * description (CharField): A short message explaining the nature of the report
+        * material (ForeignKey): A reference to the material that is being reported
+        * date_created (ForeignKey): A timestamp of the date that the report was raised
+    """
 
     user = ForeignKey(settings.AUTH_USER_MODEL,
         related_name = 'reports',
