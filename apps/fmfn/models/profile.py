@@ -7,9 +7,8 @@ from _base import Model
 
 class Profile(Model):
 	"""
+		Fields firstname, lastname, email already present on AUTH_USER_MODEL
 	"""
-
-	#Fields firstname, lastname, email already present on AUTH_USER_MODEL
 
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = 'profile',
