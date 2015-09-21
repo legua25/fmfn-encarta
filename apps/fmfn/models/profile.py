@@ -28,4 +28,7 @@ class Profile(Model):
 	)
 
 	class Meta(object):
+
+		verbose_name = _('user profile')
+		verbose_name_plural = _('user profiles')
 		app_label = 'fmfn'
