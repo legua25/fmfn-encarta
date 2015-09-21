@@ -8,6 +8,7 @@ from _base import Model
 class Download(Model):
 	"""" Record of a material download 
 	"""
+
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = '+',
 		verbose_name = _('user')

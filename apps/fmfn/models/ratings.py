@@ -2,10 +2,15 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import *
-from material import *
 from django.conf import settings
+from _base import Model
 
 class Rating(Model):
+	""" Represents the model for the rating. It contains:
+			*rating_value(PositiveSmallIntegerField)): it has the rating value
+			*material (ForeignKey): A relationship to materials in order to identify the rated material
+			*user (ForeignKey): A relationship to users in order to know who rate the material
+	"""
 
 	rating_value = PositiveSmallIntegerField(
 		choices = [
