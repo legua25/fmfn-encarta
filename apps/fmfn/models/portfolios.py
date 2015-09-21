@@ -8,6 +8,7 @@ from _base import Model
 class Portfolio(Model):
 	"""" Registry of materials marked as favorite by a user
 	"""
+
 	materials = ManyToManyField('fmfn.Material',
         related_name = '+',
         verbose_name = _('materials')
