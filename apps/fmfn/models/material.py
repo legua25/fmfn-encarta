@@ -5,7 +5,16 @@ from django.db.models import *
 from django.conf import settings
 from _base import Model
 
+
 class Material(Model):
+
+	"""
+		Represents the model for each material on the server,
+		*title(CharField): The name for the material
+		*description(CharField): A brief abstract of the material
+		*suggested_grades(ManyToManyField): The grades this material has proven to be effective
+		*user(ForeignKey): The user that uploaded this material
+	"""
 
 	title = CharField(
 		max_length = 128,
