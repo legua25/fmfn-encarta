@@ -6,6 +6,14 @@ from django.conf import settings
 from _base import Model
 
 class Comment(Model):
+	"""
+    Represents a user's comment on a particular material. Each comment defines:
+
+        * user (ForeignKey): A reference to the user that posted the comment
+        * description (CharField): The message content of the comment
+        * material (ForeignKey): A reference to the material that is being commented
+        * date_created (ForeignKey): A timestamp of the date that the comment was posted
+    """
 
 	user = ForeignKey(
 		settings.AUTH_USER_MODEL,

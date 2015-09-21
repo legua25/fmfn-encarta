@@ -6,6 +6,8 @@ from django.conf import settings
 from _base import Model
 
 class Download(Model):
+	"""" Record of a material download 
+	"""
 
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = '+',
