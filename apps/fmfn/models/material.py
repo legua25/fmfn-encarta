@@ -6,6 +6,13 @@ from django.conf import settings
 
 class Material(Model):
 
+    """ Represents the model for the materials. It contains:
+        *title(CharField): it's the title of the material
+        *description(Charfield): it's the description of the material
+        *suggested_ages(PositiveSmallIntegerField): the optional values here are related with the educational level
+        *user (ForeignKey): A relationship to users to know if the material is visible to them
+    """
+
     title = CharField(
         max_length = 128,
         null = False,
