@@ -13,6 +13,12 @@ class Profile(Model):
 		related_name = 'profile',
 		verbose_name = _('user')
 	)
+
+	campus = CharField(
+		max_length=64,
+		verbose_name = _('campus')
+	)
+
 	class_grades = ManyToManyField('fmfn.Grade',
 		related_name = '+',
 		verbose_name = _('class grades')
