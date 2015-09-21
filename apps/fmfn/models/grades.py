@@ -5,6 +5,13 @@ from django.db.models import *
 from _base import Model
 
 class Grade(Model):
+	"""
+		Represents the school grades used by other models:
+
+        * name (CharField): The name of the school grade
+        * min_age (PositiveSmallIntegerField): The minimum age that is related to this grade
+        * max_age (PositiveSmallIntegerField): The maximum age that is related to this grade
+	"""
 
 	name = CharField(
 		max_length = 64,
