@@ -16,7 +16,8 @@ class Profile(Model):
 
 	campus = CharField(
 		max_length=64,
-		verbose_name = _('campus')
+		verbose_name = _('campus'),
+		null = True
 	)
 
 	class_grades = ManyToManyField('fmfn.Grade',
