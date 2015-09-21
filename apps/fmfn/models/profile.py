@@ -6,6 +6,8 @@ from django.conf import settings
 from _base import Model
 
 class Profile(Model):
+	"""
+	"""
 
 	#Fields firstname, lastname, email already present on AUTH_USER_MODEL
 
