@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import *
 from django.conf import settings
+from django.db.models import *
 from _base import Model
+from uuid import uuid4
 
+def upload_to(instance, filename):
+
+	name, ext = filename.rsplit('.', 1)
+	return '%s-%s.%s' % (name, uuid4().hex, ext)
 
 class Material(Model):
 	""" Represents the model for the materials. It contains:
@@ -14,18 +19,15 @@ class Material(Model):
 		*user (ForeignKey): A relationship to users to know if the material is visible to them
 	"""
 
-	"""
-		Represents the model for each material on the server,
-		*title(CharField): The name for the material
-		*description(CharField): A brief abstract of the material
-		*suggested_grades(ManyToManyField): The grades this material has proven to be effective
-		*user(ForeignKey): The user that uploaded this material
-	"""
-
 	title = CharField(
 		max_length = 128,
 		null = False,
-		blank = False
+		blank = False,
+		verbose_name = _('title')
+	)
+	content = FileField(
+		upload_to = upload_to,
+		verbose_name = _('content file')
 	)
 	description = CharField(
 		max_length = 1024,
