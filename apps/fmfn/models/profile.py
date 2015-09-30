@@ -13,15 +13,29 @@ class Profile(Model):
 		*class_grades(ManyToManyField): The grades this user teaches on
 	"""
 
+	@property
+	def email(self): return self.user.email
+
+	@property
+	def firstname(self): return self.user.firstname
+
+	@property
+	def lastname(self): return self.user.lastname
+
+	@property
+	def email(self): return self.user.email
+
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = 'profile',
 		verbose_name = _('user')
 	)
+
 	campus = CharField(
 		max_length=64,
 		verbose_name = _('campus'),
 		null = True
 	)
+
 	class_grades = ManyToManyField('fmfn.Grade',
 		related_name = '+',
 		verbose_name = _('class grades')
