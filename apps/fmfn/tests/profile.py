@@ -21,3 +21,4 @@ class ProfileTestCase(TestCase):
 		self.assertEqual(user.firstname, self.first_name)
 		self.assertEqual(user.lastname, self.last_name)
 		self.assertEqual(user.email, self.email)
+
