@@ -14,19 +14,16 @@ class Profile(Model):
 	"""
 
 	@property
+	def username(self): return self.user.username
+
+	@property
+	def firstname(self): return self.user.first_name
+
+	@property
+	def lastname(self): return self.user.last_name
+
+	@property
 	def email(self): return self.user.email
-
-	@property
-	def firstname(self): return self.user.firstname
-
-	@property
-	def lastname(self): return self.user.lastname
-
-	@property
-	def email(self): return self.user.email
-
-	@property
-	def password(self): return self.user.password
 
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = 'profile',

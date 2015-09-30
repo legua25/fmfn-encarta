@@ -9,7 +9,16 @@ __all__ = ['ProfileForm']
 class ProfileForm(Form):
 
 	email_address = EmailField(
-		widget = EmailInput(attrs = { 'placeholder': _('Email address') })
+		widget = EmailInput(attrs = { 'placeholder': _('Email address') }),
+		max_length= 255,
+		required= True
+
+	)
+
+	password = CharField(
+		widget= PasswordInput(attrs = { 'placeholder': _('password') }),
+		max_length= 128,
+		required= True
 	)
 
 	def __init__(self, user, *args, **kwargs):
