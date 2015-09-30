@@ -25,6 +25,9 @@ class Profile(Model):
 	@property
 	def email(self): return self.user.email
 
+	@property
+	def password(self): return self.user.password
+
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = 'profile',
 		verbose_name = _('user')
