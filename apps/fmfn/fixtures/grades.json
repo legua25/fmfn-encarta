@@ -1,0 +1,34 @@
+[
+	{
+		"model": "fmfn.Grade", "pk": 1,
+		"fields": {
+			"name": "",
+			"min_age": 0,
+			"max_age": 0
+		}
+	},
+	{
+		"model": "fmfn.Grade", "pk": 2,
+		"fields": {
+			"name": "",
+			"min_age": 0,
+			"max_age": 0
+		}
+	},
+	{
+		"model": "fmfn.Grade", "pk": 3,
+		"fields": {
+			"name": "",
+			"min_age": 0,
+			"max_age": 0
+		}
+	},
+	{
+		"model": "fmfn.Grade", "pk": 4,
+		"fields": {
+			"name": "",
+			"min_age": 0,
+			"max_age": 0
+		}
+	}
+]

@@ -31,6 +31,15 @@ class Report(Model):
 	    auto_now_add = True,
 	    verbose_name = _('date created')
     )
+    status = PositiveSmallIntegerField(
+	    choices = [
+		    (1, _('in progress')),
+		    (2, _('resolved'))
+	    ],
+	    blank = True,
+	    default = 1,
+	    verbose_name = _('report status')
+    )
 
     class Meta(object):
         verbose_name = _('material report')
