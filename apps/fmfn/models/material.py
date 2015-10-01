@@ -41,7 +41,6 @@ class Material(Model):
 	)
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = 'materials',
-		on_delete = CASCADE,
 		verbose_name = _('uploading user')
 	)
 

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>{% block title %}{% endblock title %}</title>
+
+		{% load static %}
+		<link rel="stylesheet" href="{% static 'please_kill_me/css/bootstrap.min.css' %}" />
+		<script src="{% static 'please_kill_me/js/bootstrap.min.js' %}" async></script>
+	</head>
+	<body>{% block content %}{% endblock content %}
+	</body>
+</html>
