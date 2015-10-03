@@ -42,17 +42,6 @@ class ProfileTest(TestCase):
 		profile.class_grades.add(grade_low_primary)
 		profile.class_grades.add(grade_high_primary)
 
-	def test_profiles_are_correctly_created(self):
-		"""user profiles are correctly created and stored data is consistent with the one provided beforehand"""
-		user = Profile.objects.get(user__username=self.email)
-		self.assertEqual(user.username, self.email)
-		self.assertEqual(user.firstname, self.first_name)
-		self.assertEqual(user.lastname, self.last_name)
-		self.assertEqual(user.email, self.email)
-
-		self.assertEqual(user.campus, self.campus)
-		self.assertEqual(user.class_grades.get(id=1).name, self.grade_name )
-		self.assertEqual(user.class_grades.get(id=2).name, self.grade_name_h )
 
 	def test_profiles_are_correctly_obtained(self):
 		"""User profiles are retrieved correctly from the system for visualization"""
@@ -62,9 +51,8 @@ class ProfileTest(TestCase):
 
 	def test_profiles_are_correctly_edited(self):
 		""" User profiles are modified correctly on demand
-			------------  Work in progress --------- Work in progress -------------
 		"""
-		# TODO: Assess if this is more or less the way to correctly test this module.
+		user = Profile.objects.get(user__username=self.email)
 
 		#Submit changes using post:
 
@@ -76,4 +64,16 @@ class ProfileTest(TestCase):
 			'campus' : self.campus,
         })
 
+		self.assertEqual(response.status_code, 200)
+
 		#Check whether user has been correctly modified
+
+
+		self.assertEqual(user.username, self.email)
+		self.assertEqual(user.firstname, self.first_name)
+		self.assertEqual(user.lastname, self.last_name)
+		self.assertEqual(user.email, self.email)
+
+		self.assertEqual(user.campus, self.campus)
+		self.assertEqual(user.class_grades.get(id=1).name, self.grade_name )
+		self.assertEqual(user.class_grades.get(id=2).name, self.grade_name_h )

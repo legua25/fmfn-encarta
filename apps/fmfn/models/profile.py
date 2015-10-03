@@ -41,6 +41,10 @@ class Profile(Model):
 		verbose_name = _('class grades')
 	)
 
+	user_image = ImageField(
+		upload_to= 'media/',
+	)
+
 	class Meta(object):
 
 		verbose_name = _('user profile')
