@@ -55,25 +55,36 @@ class ProfileTest(TestCase):
 		user = Profile.objects.get(user__username=self.email)
 
 		#Submit changes using post:
+		new_first_name = 'John'
+		new_last_name = 'Albert'
+		new_email = 'jalb@mail.com'
+		new_image = '??????',
+		new_password = 'test_password_2'
+		new_campus = 'DF'
+
 
 		response = self.client.post(reverse_lazy('/users/1/edit'), data = {
-			'first_name' : self.first_name,
-			'last_name' : self.last_name,
-			'email' :self.email,
-			'password' : 'test_password_2',
-			'campus' : self.campus,
+			'first_name' : new_first_name,
+			'last_name' : new_last_name,
+			'email' :new_email,
+			'password' : new_password,
+			#upload a new image here?? how??
+			'campus' : new_campus,
         })
 
 		self.assertEqual(response.status_code, 200)
 
 		#Check whether user has been correctly modified
 
+		response = self.client.get('/users/1')
+		self.assertEqual(response.status_code, 200)
+		user = response.body.user
 
 		self.assertEqual(user.username, self.email)
-		self.assertEqual(user.firstname, self.first_name)
-		self.assertEqual(user.lastname, self.last_name)
-		self.assertEqual(user.email, self.email)
+		self.assertEqual(user.firstname, new_first_name)
+		self.assertEqual(user.lastname, new_last_name)
+		self.assertEqual(user.email, new_email)
 
-		self.assertEqual(user.campus, self.campus)
+		self.assertEqual(user.campus, new_campus )
 		self.assertEqual(user.class_grades.get(id=1).name, self.grade_name )
 		self.assertEqual(user.class_grades.get(id=2).name, self.grade_name_h )
