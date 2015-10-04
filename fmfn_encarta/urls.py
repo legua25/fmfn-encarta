@@ -46,12 +46,15 @@ urlpatterns = [
 
 		url(r'^login/$', views.login, name = 'login'),  # GET, POST
 		url(r'^logout/$', views.logout, name = 'logout'),  # GET
-		# url(r'^recover/', include([
-		#
-		# 	url(r'^request/$', None, name = 'recover'),  # GET, PUT
-		# 	url(r'^complete/$', None, name = 'complete')  # GET, PATCH
-		#
-		# ]))
+		url(r'^recover/', include([
+
+			url(r'^$', views.recover, name = 'recover', kwargs = { 'stage': 'request' }),  # GET, POST
+			url(r'^complete/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.recover,
+			    name = 'complete',
+			    kwargs = { 'stage': 'complete' }
+			)  # GET, PATCH
+
+		]))
 
 	], namespace = 'accounts', app_name = 'apps.fmfn')),
 	# User management

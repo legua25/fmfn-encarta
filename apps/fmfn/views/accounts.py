@@ -7,15 +7,18 @@ from django.contrib.auth import (
 )
 from django.shortcuts import render_to_response, redirect, RequestContext
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
+from apps.fmfn.forms import LoginForm, RecoveryForm
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponseForbidden
 from apps.fmfn.models import ActionLog
-from apps.fmfn.forms import LoginForm
 from django.views.generic import View
 
 __all__ = [
 	'login',
-	'logout'
+	'logout',
+	'recover'
 ]
 
 class LoginView(View):
@@ -36,6 +39,7 @@ class LoginView(View):
 		# Create the login form and render the template
 		form = LoginForm()
 		return render_to_response('accounts/login.html', context = RequestContext(request, locals()))
+	@method_decorator(csrf_protect)
 	def post(self, request):
 
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
@@ -97,3 +101,27 @@ class LogoutView(View):
 		return redirect(reverse_lazy('accounts:login'))
 
 logout = LogoutView.as_view()
+
+class RecoverView(View):
+
+	def get(self, request, stage = ''):
+
+		if stage == 'request':
+
+			pass
+
+		return HttpResponseForbidden()
+	@method_decorator(csrf_protect)
+	def post(self, request, user_id = '', token = '', stage = ''):
+
+		if stage == 'complete': pass
+
+		return HttpResponseForbidden()
+	@method_decorator(csrf_protect)
+	def patch(self, request, user_id = '', token = '', stage = ''):
+
+		if stage == 'complete': pass
+
+		return HttpResponseForbidden()
+
+recover = RecoverView.as_view()

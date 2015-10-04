@@ -7,7 +7,8 @@ from apps.fmfn.models import ActionLog
 
 __all__ = [
 	'LoginTest',
-	'LogoutTest'
+	'LogoutTest',
+	'RecoveryTest'
 ]
 
 User = get_user_model()
@@ -41,9 +42,6 @@ class LoginTest(TestCase):
 		)
 		user.is_active = False
 		user.save()
-
-		# Clear the action log
-		ActionLog.objects.all().delete()
 
 	def test_invalid_user(self):
 		""" Verifies the login view with invalid user credentials. In this alternative flow, the user is not validated,
@@ -160,9 +158,6 @@ class LogoutTest(TestCase):
 			password = 'asdfg123'
 		)
 
-		# Clear the action log
-		ActionLog.objects.all().delete()
-
 	def test_logout_user(self):
 		""" Verifies the logout view with a valid, authenticated user. As part of the normal flow, the action is logged
 			into the database under the "account control" category, and the user is logged out. Immediately after, the
@@ -185,3 +180,25 @@ class LogoutTest(TestCase):
 		self.assertEqual(len(ActionLog.objects.all()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+
+class RecoveryTest(TestCase):
+
+	def setUp(self):
+
+		# Configure the test client
+		self.client = Client(enforce_csrf_checks = False)
+
+		# Create test users
+		User.objects.create_user(
+			username = 'test1@example.com',
+			email = 'test1@example.com',
+			password = 'asdfg123'
+		)
+
+	def test_mismatched_email(self):
+
+		response = self.client.post(reverse_lazy('accounts:recover'), data = {
+            'email_address': 'test3@example.com'
+        })
+	def test_same_password(self): pass
+	def test_new_password(self): pass
