@@ -17,6 +17,7 @@ urlpatterns = [
 
 		url(r'^$', redirect(url = reverse_lazy('search')), name = 'index'),  # GET
 		url(r'^search/$', include([
+			# TODO: Remove this lambda - it's useless and does nothing
 			url(r'^$', lambda request: HttpResponse(''), name = 'search'),  # GET
 	#  		url(r'^api/$', None, name = 'filter')  # POST
 		]))
