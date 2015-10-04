@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
+import apps.fmfn.models.material
 
 
 class Migration(migrations.Migration):
@@ -71,7 +72,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('title', models.CharField(max_length=128)),
+                ('title', models.CharField(max_length=128, verbose_name='title')),
+                ('content', models.FileField(upload_to=apps.fmfn.models.material.upload_to, null=True, verbose_name='content file', blank=True)),
+                ('link', models.URLField(null=True, verbose_name='content link', blank=True)),
                 ('description', models.CharField(max_length=1024, verbose_name='description')),
                 ('suggested_ages', models.ManyToManyField(related_name='materials', verbose_name='suggested ages', to='fmfn.Grade')),
                 ('user', models.ForeignKey(related_name='materials', verbose_name='uploading user', to=settings.AUTH_USER_MODEL)),

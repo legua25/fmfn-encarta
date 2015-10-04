@@ -26,8 +26,15 @@ class Material(Model):
 		verbose_name = _('title')
 	)
 	content = FileField(
+		null = True,
+		blank = True,
 		upload_to = upload_to,
 		verbose_name = _('content file')
+	)
+	link = URLField(
+		null = True,
+		blank = True,
+		verbose_name = _('content link')
 	)
 	description = CharField(
 		max_length = 1024,

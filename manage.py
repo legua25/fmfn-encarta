@@ -6,7 +6,7 @@ import os, sys
 if __name__ == '__main__':
 
 	os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fmfn_encarta.settings')
-	os.environ.setdefault('DJANGO_CONFIGURATION', 'Testing')
+	os.environ.setdefault('DJANGO_CONFIGURATION', 'Development')
 
 	from configurations import importer
 	importer.install()
