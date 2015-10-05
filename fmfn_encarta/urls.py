@@ -56,21 +56,21 @@ urlpatterns = [
 
 	], namespace = 'accounts', app_name = 'apps.fmfn')),
 	# User management
-	# url(r'^users/', include([
-	#
+	url(r'^users/', include([
+
 	# 	url(r'^$', None, name = 'list'),  # GET
 	# 	url(r'^api/$', None, name = 'filter'),  # POST
-	# 	url(r'^(?P<user_id>[\d]+)/', include([
-	#
+		url(r'^(?P<user_id>[\d]+)/', include([
+
 	# 		url(r'^$', None, name = 'view'),  # GET
 	# 		url(r'^edit/$', None, name = 'edit'),  # GET, POST, DELETE
 	# 		url(r'^portfolio/$', None, name = 'portfolio')  # GET, PUT, DELETE
-	# 		url(r'^roles/(?P<role_id>[\d]+)/', None, name = 'roles')  # PUT, DELETE
-	# 		url(r'^roles/(?P<perm_id>[\d]+)/', None, name = 'permissions')  # PUT, DELETE
-	#
-	# 	]))
-	#
-	# ], namespace = 'users', app_name = 'apps.fmfn')),
+			url(r'^roles/(?P<role_id>[\d]+)/', views.roles, name = 'roles')  # PUT, DELETE
+	# 		url(r'^permissions/(?P<perm_id>[\d]+)/', None, name = 'permissions')  # PUT, DELETE
+
+		]))
+
+	], namespace = 'users', app_name = 'apps.fmfn')),
 	# Management
 	# url(r'^manage/', include([
 	#
