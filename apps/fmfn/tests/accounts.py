@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.contrib.auth.tokens import default_token_generator as tokens
+from django.utils.http import urlsafe_base64_encode as b64, force_str
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
@@ -10,8 +12,8 @@ __all__ = [
 	'LogoutTest',
 	'RecoveryTest'
 ]
-
 User = get_user_model()
+
 class LoginTest(TestCase):
 	""" Tests associated with the "login" view. Both the normal flow and all alternative flows are tested, regarding the
 		following scenarios:
@@ -140,7 +142,6 @@ class LoginTest(TestCase):
 		self.assertEqual(len(ActionLog.objects.all()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
-
 class LogoutTest(TestCase):
 	""" Tests associated with the "logout" view. Only the normal flow is tested since the alternate flows are handled by
 		the framework, which is already validated.
@@ -180,8 +181,17 @@ class LogoutTest(TestCase):
 		self.assertEqual(len(ActionLog.objects.all()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
-
 class RecoveryTest(TestCase):
+	""" Tests associated with the "recover" view, in its dual modes: "recover" and "reset". Both the normal
+		flow and all alternative flows are tested, regarding the following scenarios:
+
+			* The user provides an invalid email address
+			* The user is attempting to recover an already logged in account
+			* The user tampers the reset form parameters purposely
+			* The user provides a password and mismatches the confirmation
+			* The user provides a password which matches the user's current password
+			* The user provides a totally new password for the user account
+	"""
 
 	def setUp(self):
 
@@ -189,16 +199,145 @@ class RecoveryTest(TestCase):
 		self.client = Client(enforce_csrf_checks = False)
 
 		# Create test users
-		User.objects.create_user(
+		self.user = User.objects.create_user(
 			username = 'test1@example.com',
 			email = 'test1@example.com',
 			password = 'asdfg123'
 		)
 
-	def test_mismatched_email(self):
+	def test_already_logged_in(self):
+		""" Verifies the recovery view with an already authenticated user. This alternative flow should redirect the user
+			immediately, since it makes no sense to be able to recover the password of a logged in user: to log in, they
+			surely remember the password (this is an obvious statement, but nevertheless asserted as true).
+		"""
 
+		# Test case: the user is already logged in
+		result = self.client.login(username = 'test1@example.com', password = 'asdfg123')
+		self.assertTrue(result)
+
+		response = self.client.get(reverse_lazy('accounts:recover'), follow = True)
+		self.assertEqual(response.status_code, 200)
+
+		# The user should have been redirected and the action should have been logged - check the action log (account control) and status code (302)
+		self.assertEqual(len(ActionLog.objects.all()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
+	def test_mismatched_email(self):
+		""" Verifies the recovery view ("recover" mode) with an email address which is not registered in the database. In this
+			alternate scenario, the request fails and the action is logged.
+		"""
+
+		# Test case: attempting to recover an invalid account
 		response = self.client.post(reverse_lazy('accounts:recover'), data = {
-            'email_address': 'test3@example.com'
-        })
-	def test_same_password(self): pass
-	def test_new_password(self): pass
+			'email_address': 'test2@example.com'
+		}, follow = True)
+
+		# The user does not exist - the operation has failed (HTTP 401)
+		self.assertEqual(response.status_code, 401)
+
+		# The action should have been logged - check the action category (account control) and status code (401)
+		self.assertEqual(len(ActionLog.objects.all()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
+	def test_tampered_GET(self):
+		""" Verifies the recovery view ("reset" mode) with a purposely altered request in order to edit another user.
+			This alternate path may lead to a security breach, therefore the attempt is immediately blocked and forbidden
+			further access into the system.
+		"""
+
+		# Test case: invalid but possibly valid user data is used instead of the expected user
+		u = User(username = 'test2@example.com', email = 'test2@example.com')
+		u.set_password('asdfg123')
+		u.id = 3
+
+		response = self.client.get(reverse_lazy('accounts:reset', kwargs = {
+			'user_id': b64(force_str(u.id)),
+			'token': tokens.make_token(u)
+		}),
+		follow = True)
+
+		# The request must have failed abruptly - the action should have been logged and a HTTP 403 Forbidden should have been returned
+		self.assertEqual(response.status_code, 403)
+		self.assertEqual(len(ActionLog.objects.all()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 403)
+	def test_tampered_POST(self):
+		""" Verifies the recovery view ("reset" mode) with a purposely altered request in order to edit another user.
+			This alternate path may lead to a security breach, therefore the attempt is immediately blocked and forbidden
+			further access into the system.
+		"""
+
+		# Test case: invalid but possibly valid user data is used instead of the expected user
+		u = User(username = 'test2@example.com', email = 'test2@example.com')
+		u.set_password('asdfg123')
+		u.id = 3
+
+		response = self.client.post(reverse_lazy('accounts:reset', kwargs = {
+			'user_id': b64(force_str(u.id)),
+			'token': tokens.make_token(u)
+		}),
+		follow = True)
+
+		# The request must have failed abruptly - the action should have been logged and a HTTP 403 Forbidden should have been returned
+		self.assertEqual(response.status_code, 403)
+		self.assertEqual(len(ActionLog.objects.all()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 403)
+	def test_wrong_passwords(self):
+		""" Verifies the recovery view ("reset" mode) with a request in which the confirmation password
+			does not match the provided password. In this alternate path, the request cannot be completed and
+			the action is logged.
+		"""
+
+		# Test case: the user provides the very same password as a replacement for his current one
+		url_params = { 'user_id': b64(force_str(self.user.id)), 'token': tokens.make_token(self.user) }
+		response = self.client.post(reverse_lazy('accounts:reset', kwargs = url_params), data = {
+			'password': 'asdfgh123',
+			'repeat': 'asdfgh124'
+		}, follow = True)
+
+		# The password is not changed - the action is logged and the response is an unauthorized action (401)
+		self.assertEqual(response.status_code, 401)
+		self.assertEqual(len(ActionLog.objects.all()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
+	def test_same_password(self):
+		""" Verifies the recovery view ("reset" mode) with a request in which the confirmation password
+			matches the given password, but this one matches the current user password. In this alternate
+			path, the request cannot be completed and the action is logged.
+		"""
+
+		# Test case: the user provides the very same password as a replacement for his current one
+		url_params = { 'user_id': b64(force_str(self.user.id)), 'token': tokens.make_token(self.user) }
+		response = self.client.post(reverse_lazy('accounts:reset', kwargs = url_params), data = {
+			'password': 'asdfg123',
+			'repeat': 'asdfg123'
+		}, follow = True)
+
+		# The action should have been logged - check the action category (account control) and status code (401)
+		self.assertEqual(response.status_code, 401)
+		self.assertEqual(len(ActionLog.objects.all()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
+	def test_new_password(self):
+		""" Verifies the recovery view ("reset" mode) with a request in which the confirmation password
+			matches the given password and the password is different form the current one. In this scenario,
+			the user's password is changed and the action is logged.
+		"""
+
+		# Test case: the user provides a new password, which can be replaced
+		url_params = { 'user_id': b64(force_str(self.user.id)), 'token': tokens.make_token(self.user) }
+		response = self.client.post(reverse_lazy('accounts:reset', kwargs = url_params), data = {
+			'password': 'asdfgh123',
+			'repeat': 'asdfgh123'
+		}, follow = True)
+
+		# The action should have been logged - check the action category (account control) and status code (200)
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(len(ActionLog.objects.all()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+
+		# The user's password changed - test this
+		self.user.refresh_from_db()
+		self.assertTrue(self.user.check_password('asdfgh123'))

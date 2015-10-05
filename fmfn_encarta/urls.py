@@ -49,10 +49,10 @@ urlpatterns = [
 		url(r'^logout/$', views.logout, name = 'logout'),  # GET
 		url(r'^recover/', include([
 
-			url(r'^$', views.recover, name = 'recover', kwargs = { 'stage': 'request' }),  # GET, POST
-			url(r'^complete/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.recover,
-			    name = 'complete',
-			    kwargs = { 'stage': 'complete' }
+			url(r'^$', views.recover, name = 'recover', kwargs = { 'stage': 'recover' }),  # GET, POST
+			url(r'^reset/(?P<user_id>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.recover,
+			    name = 'reset',
+			    kwargs = { 'stage': 'reset' }
 			)  # GET, PATCH
 
 		]))
