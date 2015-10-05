@@ -34,7 +34,7 @@ urlpatterns = [
 
 	 	])),
 
-		url(r'^$', None, name = 'list'),  # GET
+		url(r'^$', views.list_material, name = 'list'),  # GET
 
 
 	# 	url(r'^tags/', include([
