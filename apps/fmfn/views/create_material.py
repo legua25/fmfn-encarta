@@ -6,13 +6,21 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import View
-from apps.fmfn.forms import materials
+from apps.fmfn.forms import CreateMaterialForm
+from django.contrib.auth.decorators import login_required
+from apps.fmfn.models import Material
 
 __all__ = [ 'create_material' ]
 
 
 class CreateMaterialView(View):
 
+	@method_decorator(login_required)
 	def post(self,request):
-		pass
+		form = CreateMaterialForm(request.POST)
+		if form.is_valid():
+			Material.objects.create(form)
+			ActionLog.objects.create()
+			return redirect(reverse_lazy('index'))
+
 create_material = CreateMaterialView.as_view()

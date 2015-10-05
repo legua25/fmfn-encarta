@@ -54,7 +54,8 @@ class ActionLog(Model):
 	)
 	category = PositiveSmallIntegerField(
 		choices = [
-			(1, _('account control'))
+			(1, _('account control')),
+			(2, _('content management'))
 		],
 		verbose_name = _('performed action category')
 	)

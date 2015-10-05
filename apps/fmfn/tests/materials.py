@@ -43,6 +43,8 @@ class CreateMaterialTest(TestCase):
 	# Checks that the input data was stored successfully in the database
 	def test_material_created(self):
 
+		self.client.login(username = 'test1@example.com', email = 'test1@example.com', password = 'asdfg123')
+
 		data = {'title': 'Matemáticas I',
 		        'description': 'Descripción de material 1',
 		        'link': 'http://www.google.com',
@@ -55,7 +57,7 @@ class CreateMaterialTest(TestCase):
 
 		# checking that the latest record's info matches the input
 
-		latest = Material.objects.latest('title')
+		latest = Material.objects.get(id=1)
 		self.assertEqual(latest.title, data['title'])
 		self.assertEqual(latest.description, data['description'])
 		self.assertEqual(latest.link, data['link'])
@@ -66,6 +68,7 @@ class CreateMaterialTest(TestCase):
 	# TODO: check that the user has permission to edit a material
 
 	def test_inactive_user(self):
+		self.client.login(username = 'test2@example.com', email = 'test2@example.com', password = 'asdfg123')
 		data = {'title': 'Matemáticas I',
 		        'description': 'Descripción de material 1',
 		        'link': 'http://www.google.com',
@@ -102,6 +105,7 @@ class EditMaterialTest(TestCase):
 		material.save()
 
 	def test_material_edited(self):
+		self.client.login(username = 'test1@example.com', email = 'test1@example.com', password = 'asdfg123')
 		data = {'title': 'Matemáticas II',
 		        'description': 'Descripción de material 1 edit',
 		        'link': 'http://www.google.com.mx',
@@ -109,7 +113,7 @@ class EditMaterialTest(TestCase):
 		        'user': 1};
 		response = self.client.post(reverse_lazy('/content/1/edit'), data)
 
-		record = Material.objects.latest()
+		record = Material.objects.get(id=1)
 		self.assertEqual(response.status_code, 302)
 		self.assertEqual(record.title, data['title'])
 		self.assertEqual(record.description, data['description'])

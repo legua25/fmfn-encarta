@@ -18,3 +18,10 @@ class CreateMaterialForm(Form):
 		required = False,
 		widget = Textarea(attrs = { 'placeholder': _('Title') })
 	)
+	content = FileField(
+		widget=FileInput()
+	)
+	link = URLField(
+		widget=URLInput()
+	)
+
