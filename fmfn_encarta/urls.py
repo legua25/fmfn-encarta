@@ -66,7 +66,7 @@ urlpatterns = [
 	# 		url(r'^edit/$', None, name = 'edit'),  # GET, POST, DELETE
 	# 		url(r'^portfolio/$', None, name = 'portfolio')  # GET, PUT, DELETE
 	# 		url(r'^roles/(?P<role_id>[\d]+)/', None, name = 'roles')  # PUT, DELETE
-	# 		url(r'^roles/(?P<perm_id>[\d]+)/', None, name = 'permissions')  # PUT, DELETE
+	# 		url(r'^permissions/(?P<perm_id>[\d]+)/', None, name = 'permissions')  # PUT, DELETE
 	#
 	# 	]))
 	#
