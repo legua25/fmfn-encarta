@@ -14,6 +14,7 @@ class Settings(Configuration):
 
 	ROOT_URLCONF = 'fmfn_encarta.urls'
 	WSGI_APPLICATION = 'fmfn_encarta.wsgi.application'
+	SITE_ID = 1
 
 	INSTALLED_APPS = [
 
@@ -43,7 +44,7 @@ class Settings(Configuration):
 		'django.contrib.messages.middleware.MessageMiddleware',
 		'django.middleware.clickjacking.XFrameOptionsMiddleware',
 		'django.middleware.security.SecurityMiddleware',
-		'django_downloadview.SmartDownloadMiddleware'
+		'django_downloadview.SmartDownloadMiddleware',
 
 	]
 

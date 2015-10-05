@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db.models import *
-from _base import Model
+from _base import Model, ActiveManager
 
 class Report(Model):
 	"""
@@ -45,6 +45,19 @@ class Report(Model):
 		verbose_name = _('material report')
 		verbose_name_plural = _('material reports')
 		app_label = 'fmfn'
+
+class ActionLogManager(ActiveManager):
+
+	def log_account(self, action, status = 200, user = None): return self._log(1, action, status, user)
+
+	def _log(self, category, action, status, user):
+
+		return self.create(
+			category = category,
+			user = user,
+			status = status,
+			action = action
+		)
 class ActionLog(Model):
 
 	user = ForeignKey(settings.AUTH_USER_MODEL,
@@ -71,6 +84,8 @@ class ActionLog(Model):
 		db_index = True,
 		verbose_name = _('performed action date')
 	)
+
+	objects = ActionLogManager()
 
 	class Meta(object):
 
