@@ -50,10 +50,7 @@ urlpatterns = [
 		url(r'^recover/', include([
 
 			url(r'^$', views.recover, name = 'recover', kwargs = { 'stage': 'recover' }),  # GET, POST
-			url(r'^reset/(?P<user_id>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.recover,
-			    name = 'reset',
-			    kwargs = { 'stage': 'reset' }
-			)  # GET, PATCH
+			url(r'^reset/(?P<user_id>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.recover, name = 'reset', kwargs = { 'stage': 'reset' })  # GET, POST
 
 		]))
 
@@ -68,6 +65,8 @@ urlpatterns = [
 	# 		url(r'^$', None, name = 'view'),  # GET
 	# 		url(r'^edit/$', None, name = 'edit'),  # GET, POST, DELETE
 	# 		url(r'^portfolio/$', None, name = 'portfolio')  # GET, PUT, DELETE
+	# 		url(r'^roles/(?P<role_id>[\d]+)/', None, name = 'roles')  # PUT, DELETE
+	# 		url(r'^roles/(?P<perm_id>[\d]+)/', None, name = 'permissions')  # PUT, DELETE
 	#
 	# 	]))
 	#
