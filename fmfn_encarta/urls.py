@@ -24,15 +24,19 @@ urlpatterns = [
 
 	])),
 	# Content management
-	# url(r'^content/', include([
-	#
-	# 	url(r'create/$', None, name = 'create'),  # GET, PUT
-	# 	url(r'^(?P<content_id>[\d]+)/', include([
-	#
-	# 		url(r'^$', None, name = 'view'),  # GET
-	# 		url(r'^edit/$', None, name = 'edit')  # GET, POST, DELETE
-	#
-	# 	])),
+	 url(r'^content/', include([
+
+	 	url(r'create/$', views.create_material, name = 'create'),  # GET, PUT
+	 	url(r'^(?P<content_id>[\d]+)/', include([
+
+	 		#url(r'^$', views.view_material, name = 'view'),  # GET
+	 		url(r'^edit/$', views.edit_material, name = 'edit')  # GET, POST, DELETE
+
+	 	])),
+
+		url(r'^$', None, name = 'list'),  # GET
+
+
 	# 	url(r'^tags/', include([
 	#
 	# 		url(r'^$', None, name = 'list'),  # GET
@@ -41,7 +45,8 @@ urlpatterns = [
 	#
 	# 	], namespace = 'content-tags', app_name = 'fmfn'))
 	#
-	# ], namespace = 'content', app_name = 'apps.fmfn')),
+	 ], namespace = 'content', app_name = 'apps.fmfn')),
+
 	# Account management
 	url(r'^accounts/', include([
 
@@ -55,6 +60,7 @@ urlpatterns = [
 		# ]))
 
 	], namespace = 'accounts', app_name = 'apps.fmfn')),
+
 	# User management
 	# url(r'^users/', include([
 	#
