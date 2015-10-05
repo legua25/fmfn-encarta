@@ -61,15 +61,7 @@ class ProfileTest(TestCase):
 		#image and password fields are assumed to work consistently with the framework defined behaviour.s
 		new_campus = 'DF'
 
-
-		response = self.client.post(reverse_lazy('/users/1/edit'), data = {
-			'first_name' : new_first_name,
-			'last_name' : new_last_name,
-			'email' :new_email,
-			'campus' : new_campus,
-        })
-
-		self.assertEqual(response.status_code, 200)
+		self.sendProfileData(new_first_name, new_last_name, new_email, new_campus, 200)
 
 		#Check whether user has been correctly modified
 
@@ -96,21 +88,28 @@ class ProfileTest(TestCase):
 		new_first_name = 'JohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohn'
 		new_last_name = 'AlbertAlbertAlbertAlbertAlbertAlbert'
 		new_email = 'jalbmail.com'
-		# Other alternatives:
 		new_email2 = 'jalb@mailcom'
 		new_email3 = 'jalb@@mail.com'
 		#image and password fields are assumed to work consistently with the framework defined behaviour.
-		new_campus = 'DF'
+		new_campus = 'DFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDF'
 
+		# Test sending invalid first_name: 30+ char's
+		self.sendProfileData(new_first_name, self.last_name, self.email, self.password, self.campus, 400)
 
-		response = self.client.post(reverse_lazy('/users/1/edit'), data = {
-			'first_name' : new_first_name,
-			'last_name' : new_last_name,
-			'email' :new_email,
-			'campus' : new_campus,
-        })
+		# Test sending invalid last_name: 30+ char's
+		self.sendProfileData(self.first_name, new_last_name, self.email, self.password, self.campus, 400)
 
-		self.assertEqual(response.status_code, 400)
+		# Test sending invalid email: without "@"
+		self.sendProfileData(self.first_name, self.last_name, new_email, self.password, self.campus, 400)
+
+		# Test sending invalid email: without "."
+		self.sendProfileData(self.first_name, self.last_name, new_email2, self.password, self.campus, 400)
+
+		# Test sending invalid email: with "@@"
+		self.sendProfileData(self.first_name, self.last_name, new_email3, self.password, self.campus, 400)
+
+		# Test sending invalid campus: 64+ char's
+		self.sendProfileData(self.first_name, self.last_name, self.email, self.password, new_campus, 400)
 
 		#Check whether user has not been modified
 
@@ -126,3 +125,14 @@ class ProfileTest(TestCase):
 		self.assertEqual(user.campus, self.campus )
 		self.assertEqual(user.class_grades.get(id=1).name, self.grade_name )
 		self.assertEqual(user.class_grades.get(id=2).name, self.grade_name_h )
+
+	def sendProfileData(self, first_name, last_name, email, password, campus, status_code):
+		response = self.client.post(reverse_lazy('/users/1/edit'), data = {
+			'first_name' : first_name,
+			'last_name' : last_name,
+			'email' : email,
+			'campus' : campus,
+        })
+		self.assertEqual(response.status_code, status_code)
+
+
