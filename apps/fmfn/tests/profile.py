@@ -34,7 +34,7 @@ class ProfileTest(TestCase):
 		# Configure the test client
 		self.client = Client(enforce_csrf_checks = False)
 
-		# Right data submitted
+		# Submit the user to be tested
 		user = User.objects.create_user(username = self.email, first_name = self.first_name, last_name = self.last_name, email = self.email, password = self.password)
 		grade_low_primary = Grade.objects.create( name = self.grade_name, min_age = self.grade_min_age, max_age = self.grade_max_age)
 		grade_high_primary = Grade.objects.create( name = self.grade_name_h, min_age = self.grade_min_age_h, max_age = self.grade_max_age_h)
