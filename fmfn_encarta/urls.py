@@ -34,7 +34,7 @@ urlpatterns = [
 
 			url(r'^$', None, name = 'list'),  # GET
 			url(r'^create/$', None, name = 'create'),  # PUT
-			url(r'^edit/$', None, name = 'edit')  # POST, DELETE
+			url(r'^(?P<tag_id>[\d]+)/edit/$', None, name = 'edit')  # POST, DELETE
 
 		], namespace = 'content-tags', app_name = 'fmfn'))
 
