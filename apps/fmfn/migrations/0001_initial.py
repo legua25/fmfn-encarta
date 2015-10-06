@@ -2,17 +2,67 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from django.conf import settings
 import apps.fmfn.models.material
+import imagekit.models.fields
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('auth', '0006_require_contenttypes_0002'),
     ]
 
     operations = [
+        migrations.CreateModel(
+            name='User',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('password', models.CharField(max_length=128, verbose_name='password')),
+                ('last_login', models.DateTimeField(null=True, verbose_name='last login', blank=True)),
+                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
+                ('active', models.BooleanField(default=True, verbose_name='is active')),
+                ('email_address', models.EmailField(unique=True, max_length=255, verbose_name='email address')),
+                ('date_joined', models.DateTimeField(auto_now_add=True, verbose_name='date joined')),
+                ('first_name', models.CharField(max_length=64, verbose_name='first name')),
+                ('father_family_name', models.CharField(default='', max_length=64, verbose_name="father's family name")),
+                ('mother_family_name', models.CharField(default='', max_length=64, verbose_name="mother's family name")),
+                ('photo', imagekit.models.fields.ProcessedImageField(upload_to=b'', verbose_name='user photo')),
+            ],
+            options={
+                'verbose_name': 'user',
+                'verbose_name_plural': 'users',
+            },
+        ),
+        migrations.CreateModel(
+            name='ActionLog',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('active', models.BooleanField(default=True, verbose_name='is active')),
+                ('category', models.PositiveSmallIntegerField(verbose_name='performed action category', choices=[(1, 'account control')])),
+                ('action', models.CharField(max_length=512, verbose_name='performed action', db_index=True)),
+                ('status', models.PositiveSmallIntegerField(verbose_name='performed action status code')),
+                ('action_date', models.DateTimeField(auto_now_add=True, verbose_name='performed action date', db_index=True)),
+                ('user', models.ForeignKey(related_name='+', verbose_name='user', to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'verbose_name': 'action log',
+                'verbose_name_plural': 'action logs',
+            },
+        ),
+        migrations.CreateModel(
+            name='Campus',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('active', models.BooleanField(default=True, verbose_name='is active')),
+                ('mane', models.CharField(max_length=256, verbose_name='campus name')),
+                ('date_added', models.DateTimeField(auto_now_add=True, verbose_name='date added')),
+            ],
+            options={
+                'verbose_name': 'campus',
+                'verbose_name_plural': 'campi',
+            },
+        ),
         migrations.CreateModel(
             name='Comment',
             fields=[
@@ -41,20 +91,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Grade',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('name', models.CharField(max_length=64, verbose_name='name')),
-                ('min_age', models.PositiveSmallIntegerField(verbose_name='minimum expected age')),
-                ('max_age', models.PositiveSmallIntegerField(verbose_name='maximum expected age')),
-            ],
-            options={
-                'verbose_name': 'school grade',
-                'verbose_name_plural': 'school grades',
-            },
-        ),
-        migrations.CreateModel(
             name='Language',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -76,8 +112,6 @@ class Migration(migrations.Migration):
                 ('content', models.FileField(upload_to=apps.fmfn.models.material.upload_to, null=True, verbose_name='content file', blank=True)),
                 ('link', models.URLField(null=True, verbose_name='content link', blank=True)),
                 ('description', models.CharField(max_length=1024, verbose_name='description')),
-                ('suggested_ages', models.ManyToManyField(related_name='materials', verbose_name='suggested ages', to='fmfn.Grade')),
-                ('user', models.ForeignKey(related_name='materials', verbose_name='uploading user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'material',
@@ -95,20 +129,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'portfolio',
                 'verbose_name_plural': 'portfolios',
-            },
-        ),
-        migrations.CreateModel(
-            name='Profile',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('campus', models.CharField(max_length=64, null=True, verbose_name='campus')),
-                ('class_grades', models.ManyToManyField(related_name='+', verbose_name='class grades', to='fmfn.Grade')),
-                ('user', models.ForeignKey(related_name='profile', verbose_name='user', to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'verbose_name': 'user profile',
-                'verbose_name_plural': 'user profiles',
             },
         ),
         migrations.CreateModel(
@@ -132,12 +152,42 @@ class Migration(migrations.Migration):
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
                 ('description', models.CharField(max_length=64, verbose_name='description')),
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='date created')),
+                ('status', models.PositiveSmallIntegerField(default=1, blank=True, verbose_name='report status', choices=[(1, 'in progress'), (2, 'resolved')])),
                 ('material', models.ForeignKey(related_name='+', verbose_name='reported material', to='fmfn.Material')),
                 ('user', models.ForeignKey(related_name='reports', verbose_name='reporting author', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'material report',
                 'verbose_name_plural': 'material reports',
+            },
+        ),
+        migrations.CreateModel(
+            name='Role',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('active', models.BooleanField(default=True, verbose_name='is active')),
+                ('name', models.CharField(max_length=64, verbose_name='role name')),
+                ('description', models.CharField(default='', max_length=512, verbose_name='role description')),
+                ('base_permissions', models.ManyToManyField(related_query_name='role', related_name='roles', verbose_name='permissions', to='auth.Permission')),
+                ('members', models.ForeignKey(related_name='role', verbose_name='assigned role members', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'verbose_name': 'user role',
+                'verbose_name_plural': 'user roles',
+            },
+        ),
+        migrations.CreateModel(
+            name='SchoolGrade',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('active', models.BooleanField(default=True, verbose_name='is active')),
+                ('name', models.CharField(max_length=64, verbose_name='name')),
+                ('min_age', models.PositiveSmallIntegerField(verbose_name='minimum expected age')),
+                ('max_age', models.PositiveSmallIntegerField(verbose_name='maximum expected age')),
+            ],
+            options={
+                'verbose_name': 'school grade',
+                'verbose_name_plural': 'school grades',
             },
         ),
         migrations.CreateModel(
@@ -169,6 +219,16 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
+            model_name='material',
+            name='suggested_ages',
+            field=models.ManyToManyField(related_name='materials', verbose_name='suggested ages', to='fmfn.SchoolGrade'),
+        ),
+        migrations.AddField(
+            model_name='material',
+            name='user',
+            field=models.ForeignKey(related_name='materials', verbose_name='uploading user', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
             model_name='language',
             name='materials',
             field=models.ManyToManyField(related_name='languages', verbose_name='tagged materials', to='fmfn.Material'),
@@ -182,5 +242,25 @@ class Migration(migrations.Migration):
             model_name='comment',
             name='user',
             field=models.ForeignKey(related_name='comments', verbose_name='author', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='user',
+            name='campus',
+            field=models.ForeignKey(related_name='users', verbose_name='campus', to='fmfn.Campus'),
+        ),
+        migrations.AddField(
+            model_name='user',
+            name='grades',
+            field=models.ManyToManyField(related_name='users', verbose_name='school grades', to='fmfn.SchoolGrade'),
+        ),
+        migrations.AddField(
+            model_name='user',
+            name='groups',
+            field=models.ManyToManyField(related_query_name='user', related_name='user_set', to='auth.Group', blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', verbose_name='groups'),
+        ),
+        migrations.AddField(
+            model_name='user',
+            name='user_permissions',
+            field=models.ManyToManyField(related_query_name='user', related_name='user_set', to='auth.Permission', blank=True, help_text='Specific permissions for this user.', verbose_name='user permissions'),
         ),
     ]
