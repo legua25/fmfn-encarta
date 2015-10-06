@@ -200,12 +200,48 @@ class FilterMaterialTest(TestCase):
 
 	def filter_materials_test(self):
 
-		response = self.client.get(reverse_lazy('/content/list'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-		json_data = response.content
-		json_string = json.loads(json_data)
-		expected_schema = {"suggested_ages": "2"}
+		Material.objects.create(
+			title='Actividad de Español II',
+			description='Descripción de material español',
+			link='http://facebook.com',
+			suggested_ages=1,
+			user=1
+		)
 
-		self.assertEqual(json_string, expected_schema)
+		material_2 = Material.objects.create(
+			title='Actividad de Matematicas II',
+			description='Descripción de material mate',
+			link='http://twitter.com',
+			suggested_ages=1,
+			user=1
+		)
+
+		Material.objects.create(
+			title='Actividad de Fisica II',
+			description='Descripción de material fisica',
+			link='http://twitter.com',
+			suggested_ages=2,
+			user=1
+		)
+
+		response = self.client.get(reverse_lazy('content:list'), data = {
+			'suggested_ages': '1'
+		}, follow = True)
+
+		response_data = json.loads(response.body)
+		self.assertTrue(response_data.get('suggested_ages', False))
+		resp_data = response_data['data']
+
+		self.assertTrue(bool(Material.objects.active().filter(id__in = [ material['id'] for material in resp_data])))
+		self.assertEqual(len(resp_data), len(Material.objects.active()))
+
+		# Test a specific material
+		self.assertEqual(response_data['data'][0], {
+			'id': 1,
+			'name': Material.objects.get(id = 1).name
+		})
+
+		# Test response code
 		self.assertEqual(response.status_code, 200)
 
 
