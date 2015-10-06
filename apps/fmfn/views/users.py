@@ -8,15 +8,19 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import get_user_model
 from apps.fmfn.models import ActionLog
 from django.views.generic import View
+from apps.fmfn.forms import UserForm
 
 __all__ = [ 'create' ]
 User = get_user_model()
 
 class CreateUserView(View):
 
-	@method_decorator(login_required)
-	def get(self, request): pass
-	@method_decorator(login_required)
+	# @method_decorator(login_required)
+	def get(self, request):
+
+		form = UserForm()
+		return render_to_response('users/create.html', context = RequestContext(request, locals()))
+	# @method_decorator(login_required)
 	def post(self, request): pass
 
 create = CreateUserView.as_view()

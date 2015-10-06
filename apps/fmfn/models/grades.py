@@ -20,6 +20,9 @@ class Grade(Model):
 	min_age = PositiveSmallIntegerField(verbose_name = _('minimum expected age'))
 	max_age = PositiveSmallIntegerField(verbose_name = _('maximum expected age'))
 
+	def __str__(self): return self.name
+	def __unicode__(self): return unicode(self.__str__())
+
 	class Meta(object):
 
 		verbose_name = _('school grade')

@@ -18,7 +18,7 @@ class Profile(Model):
 		verbose_name = _('user')
 	)
 	campus = CharField(
-		max_length=64,
+		max_length = 64,
 		verbose_name = _('campus'),
 		null = True
 	)
