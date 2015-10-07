@@ -57,13 +57,13 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	)
 	father_family_name = CharField(
 		max_length = 64,
-		null = False,
+		blank = True,
 		default = '',
 		verbose_name = _('father\'s family name')
 	)
 	mother_family_name = CharField(
 		max_length = 64,
-		null = False,
+		blank = True,
 		default = '',
 		verbose_name = _('mother\'s family name')
 	)
@@ -82,6 +82,11 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	grades = ManyToManyField('fmfn.SchoolGrade',
 		related_name = 'users',
 		verbose_name = _('school grades')
+	)
+	role = ForeignKey('fmfn.Role',
+		related_name = 'members',
+		default = 1,
+	    verbose_name = _('user role')
 	)
 
 	objects = UserManager()
@@ -106,7 +111,7 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 		def _belongs_recursive(role, target):
 
 			if role == target: return True
-			elif role.role is not None: return _belongs_recursive(role.role, target)
+			elif role.base is not None: return _belongs_recursive(role.base, target)
 			else: return False
 
 		target = Role.objects.active().get(name = name, **kwargs)
@@ -120,10 +125,6 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 
 class Role(Model):
 
-	members = ForeignKey(settings.AUTH_USER_MODEL,
-		related_name = 'role',
-		verbose_name = _('assigned role members')
-	)
 	name = CharField(
 		max_length = 64,
 		null = False,
@@ -135,6 +136,11 @@ class Role(Model):
 		null = False,
 		default = '',
 		verbose_name = _('role description')
+	)
+	base = ForeignKey('self',
+		related_name = 'subroles',
+		null = True,
+	    verbose_name = _('base role')
 	)
 	base_permissions = ManyToManyField(Permission,
 		related_name = 'roles',
@@ -154,6 +160,8 @@ class Role(Model):
 		query = (query | self.role._get_permissions_query(query = query))
 
 		return query
+
+	def __str__(self): return self.name
 
 	class Meta(object):
 

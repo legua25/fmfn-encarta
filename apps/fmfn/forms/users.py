@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import Group as Role
+from django.utils.crypto import constant_time_compare
+from django.contrib.auth import get_user_model
+from apps.fmfn.models import SchoolGrade, Role
 from imagekit.processors import ResizeToFill
-from apps.fmfn.models import SchoolGrade
 from django.forms import *
 from imagekit.forms import ProcessedImageField as ImageField
+from django.forms import ModelForm as Form
 
 __all__ = [ 'UserForm' ]
+User = get_user_model()
 
 class UserForm(Form):
 
-	email_address = EmailField(
-		max_length = 255,
-		required = True,
-		widget = EmailInput(attrs = { 'placeholder': _('Email address') })
-	)
 	password = CharField(
 		max_length = 128,
 		required = True,
@@ -27,43 +25,31 @@ class UserForm(Form):
 		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
 	)
 
-	first_name = CharField(
-		max_length = 128,
-		required = True,
-		widget = TextInput(attrs = { 'placeholder': _('First name') })
-	)
-	family_name = CharField(
-		max_length = 256,
-		required = True,
-		widget = TextInput(attrs = { 'placeholder': _('Family name') })
-	)
-	campus = ChoiceField(
-		choices = [
-			('none', _('Select campus'))
-		],
-		initial = 'none',
-		required = True
-	)
-	grades = ModelMultipleChoiceField(
-		queryset = SchoolGrade.objects.active(),
-		required = False,
-		widget = CheckboxSelectMultiple()
-	)
-	photo = ImageField(
-		format = 'JPEG',
-		spec_id = 'users:photo:spec',
-		autoconvert = True,
-		processors = [ ResizeToFill(240, 240) ],
-		options = { 'quality': 80 },
-		required = False
-	)
-	role = ModelChoiceField(
-		queryset = Role.objects.all(),
-		required = True,
-		widget = RadioSelect()
-	)
+	def clear(self):
 
-	def __init__(self, user = None, *args, **kwargs):
+		Form.clear(self)
 
-		Form.__init__(self, *args, **kwargs)
-		self.user = user
+		password, repeat = self.cleaned_data['password'], self.cleaned_data['repeat']
+		if not constant_time_compare(password, repeat): raise ValidationError('Passwords do not match')
+
+	class Meta(object):
+
+		model = User
+		fields = [
+			'email_address',
+			'first_name',
+			'father_family_name',
+			'mother_family_name',
+			'photo',
+			'campus',
+			'grades',
+			'role'
+		]
+		widgets = {
+			'email_address': EmailInput(attrs = { 'placeholder': _('Email address') }),
+			'first_name': TextInput(attrs = { 'placeholder': _('First name') }),
+			'father_family_name': TextInput(attrs = { 'placeholder': _('Father\'s family name') }),
+			'mother_family_name': TextInput(attrs = { 'placeholder': _('Mother\'s family name') }),
+			'grades': CheckboxSelectMultiple(),
+			'role': RadioSelect()
+		}

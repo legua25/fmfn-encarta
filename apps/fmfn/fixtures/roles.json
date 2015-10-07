@@ -1,0 +1,46 @@
+[
+	{
+		"pk": 1,
+		"model": "fmfn.Role",
+		"fields": {
+			"active": true,
+			"base_permissions": [],
+			"base": null,
+			"name": "teacher",
+			"description": ""
+		}
+	},
+	{
+		"pk": 2,
+		"model": "fmfn.Role",
+		"fields": {
+			"active": true,
+			"base_permissions": [],
+			"base": 1,
+			"name": "administrator",
+			"description": ""
+		}
+	},
+	{
+		"pk": 3,
+		"model": "fmfn.Role",
+		"fields": {
+			"active": true,
+			"base_permissions": [],
+			"base": 2,
+			"name": "user manager",
+			"description": ""
+		}
+	},
+	{
+		"pk": 4,
+		"model": "fmfn.Role",
+		"fields": {
+			"active": true,
+			"base_permissions": [],
+			"base": 3,
+			"name": "content manager",
+			"description": ""
+		}
+	}
+]
