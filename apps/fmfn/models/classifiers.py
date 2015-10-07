@@ -11,8 +11,6 @@ class MaterialTag(Model):
 		define the following:
 
 			* name (CharField): A short, memorable name which serves as a search criteria.
-			* description (CharField): A documenting brief text describing what does this item
-			  represents.
 			* materials (ForeignKey): A relationship to materials, in order to tag the material
 			  with this tag.
 
@@ -23,10 +21,7 @@ class MaterialTag(Model):
 		max_length = 64,
 		verbose_name = _('type name')
 	)
-	description = CharField(
-		max_length = 256,
-		verbose_name = _('type description')
-	)
+
 	materials = None
 
 	objects = TagManager()
