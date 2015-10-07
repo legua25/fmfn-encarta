@@ -46,15 +46,34 @@ class EditMaterialView(View):
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
-	def get(self,request):
+	def get(self, request, content_id = 0):
 
-		form = MaterialForm()
+		# TODO: Add action log register here
+
+		form = MaterialForm(request.POST, instance = Material.objects.active().get(id = content_id))
 		return render_to_response('materials/create.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
-	def post(self,request): pass
+	def post(self, request, content_id = 0):
+
+		form = MaterialForm(request.POST, instance = Material.objects.active().get(id = content_id))
+
+		if form.is_valid():
+
+			material = form.instance
+			material.save()
+
+			# TODO: Add action log register here
+			return redirect(reverse_lazy('content:view', kwargs = { 'content_id': material.id }))
+
+		# TODO: Add action log register here
+		return render_to_response('materials/create.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
-	def delete(self,request): pass
+	def delete(self, request, content_id = 0):
+
+		print Material.objects.active().filter(id = content_id)
+		Material.objects.active().filter(id = content_id).update(active = False)
+		return redirect(reverse_lazy('search'))
 
 edit = EditMaterialView.as_view()

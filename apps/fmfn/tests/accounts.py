@@ -121,7 +121,6 @@ class LoginTest(TestCase):
 		# The user is, indeed, the test user #1
 		user = response.wsgi_request.user
 		self.assertEqual(user.email_address, 'test1@example.com')
-		self.assertEqual(user.id, 1)
 	def test_already_logged_in(self):
 		""" Verifies the login view with an already authenticated user. This alternative flow should immediately redirect
 			the user to the main site. The redirection is logged under the "account control" category.
