@@ -1,0 +1,70 @@
+{% extends 'base/base.html' %}
+{% load i18n widget_tweaks %}
+
+	{% block title %}{% trans 'Create User' %}{% endblock title %}
+
+	{% block content %}
+		<nav class="navbar navbar-static-top navbar-inverse"></nav>
+		<main id="content" class="row-fluid">
+			<div class="container-fluid">
+				<section class="col-xs-8 col-xs-offset-2">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3>{% trans 'Create User Account' %}</h3>
+						</div>
+						<div class="panel-body">{% if form.non_field_errors %}{% for error in form.non_field_errors %}
+							<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
+							<form action="{% url 'users:create' %}" method="post">
+								{% csrf_token %}
+								<div id="general" class="container-fluid">
+									<h4>{% trans 'General Information' %}</h4>
+									<div id="user-email" class="col-xs-6 form-group">{{ form.email_address | add_class:'form-control' }}</div>
+									<div id="user-password" class="col-xs-6 form-group">
+										{{ form.password | add_class:'form-control' }} <br />
+										{{ form.repeat | add_class:'form-control' }}
+									</div>
+									<div id="user-roles" class="col-xs-12 navbar navbar-default form-group">
+										<ul id="id_role" class="nav nav-pills nav-justified">{% for role in form.fields.role.choices %}
+											<li>
+												<a href="#">
+													<label for="id_role_{{ forloop.counter }}" class="checkbox">
+														<input type="radio" id="id_role_{{ forloop.counter }}" name="role" value="{{ role.0 }}" />
+														{% blocktrans with role.1|title as name %}{{ name }}{% endblocktrans %}
+													</label>
+												</a>
+											</li>{% endfor %}
+										</ul>
+									</div>
+								</div>
+								<hr />
+								<div id="profile" class="container-fluid">
+									<h4>{% trans 'Account Profile' %}</h4>
+									<div id="user-first-name" class="col-xs-4 form-group">{{ form.first_name | add_class:'form-control' }}</div>
+									<div id="user-father-family-name" class="col-xs-4 form-group">{{ form.father_family_name | add_class:'form-control' }}</div>
+									<div id="user-mother-family-name" class="col-xs-4 form-group">{{ form.mother_family_name | add_class:'form-control' }}</div>
+									<div id="user-profile-photo" class="col-xs-12 form-group">{{ form.photo | add_class:'form-control' }}</div>
+									<div id="user-campus" class="col-xs-12 form-group">{{ form.campus | add_class:'form-control' }}</div>
+									<div id="user-grades" class="col-xs-12 navbar navbar-default form-group">
+										<ul id="id_grades" class="nav nav-pills nav-justified">{% for grade in form.fields.grades.choices %}
+											<li>
+												<a href="#">
+													<label for="id_grades_{{ forloop.counter }}" class="checkbox">
+														<input type="checkbox" id="id_grades_{{ forloop.counter }}" name="grades" value="{{ grade.0 }}" />
+														{% blocktrans with grade.1|title as name %}{{ name }}{% endblocktrans %}
+													</label>
+												</a>
+											</li>{% endfor %}
+										</ul>
+									</div>
+								</div>
+								<hr />
+								<div class="col-xs-10 col-xs-offset-1 col-md-2 col-md-offset-5">
+									<button class="btn btn-primary" type="submit">{% trans 'Create user' %}</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+			</div>
+		</main>
+	{% endblock content %}

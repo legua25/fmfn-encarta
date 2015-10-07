@@ -42,7 +42,7 @@ class Material(Model):
 		blank = False,
 		verbose_name = _('description')
 	)
-	suggested_ages = ManyToManyField('fmfn.Grade',
+	suggested_ages = ManyToManyField('fmfn.SchoolGrade',
 		related_name = 'materials',
 		verbose_name = _('suggested ages')
 	)
