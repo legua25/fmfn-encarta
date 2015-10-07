@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 from apps.fmfn.models import Material, ActionLog
+from apps.fmfn.forms import CreateMaterialForm
 from apps.fmfn.decorators import role_required
-from apps.fmfn.forms import MaterialForm
 from django.views.generic import View
 
 __all__ = [ 'create', 'edit' ]
@@ -22,15 +22,22 @@ class CreateMaterialView(View):
 	@method_decorator(role_required('content manager'))
 	def post(self,request):
 
-		form = MaterialForm(request.POST)
+		form = CreateMaterialForm(request.POST)
 		if form.is_valid():
 
 			# TODO: Adjust material creation - use ModelForm instead
 			material = form.instance
-			ActionLog.objects.create()
+			material.user = request.user
+			material.save()
 
+			ActionLog.objects.log_content('Material "%s" created' % material.title, status = 201, user = request.user)
 			return redirect(reverse_lazy('index'))
 
+		ActionLog.objects.log_content('Failed to create material, validation error.', status = 401)
+		return render_to_response('content/',
+			context = RequestContext(request, locals()),
+			status = 401
+		)
 		# TODO: Redirect user to form (again) and present errors
 
 create = CreateMaterialView.as_view()

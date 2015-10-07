@@ -49,6 +49,7 @@ class Report(Model):
 class ActionLogManager(ActiveManager):
 
 	def log_account(self, action, status = 200, user = None): return self._log(1, action, status, user)
+	def log_content(self, action, status = 200, user = None): return self._log(2, action, status, user)
 
 	def _log(self, category, action, status, user):
 
