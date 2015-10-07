@@ -89,6 +89,8 @@ class UsersTest(TestCase):
 			role = Role.objects.active().filter(id = 3)
 		 )
 
+# Edit:
+
 	def test_profiles_are_correctly_edited_admin(self):
 		""" User profiles are modified correctly on demand if role is account manager or above"""
 
@@ -119,7 +121,36 @@ class UsersTest(TestCase):
 		self.assertEqual(self.user.lastname, new_last_name)
 		self.assertEqual(self.user.email_address, new_email)
 
-		# The action should have been logged - check the action category (account control) and status code (401)
+		# The action should have been logged - check the action category (account control) and status code (200)
+
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+
+	def test_self_profile_is_modified_correctly_if_self_edited(self):
+		""" Self profile is modified correctly on demand if the user modified its own profile respecting the limitations on the fields"""
+
+		self.client.login(credentials = {
+            'email_address': self.user.email_address,
+			'password': self.user.password
+        })
+
+		#Submit changes using post:
+		new_password = 'test_saldkjsal'
+
+		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
+			'password' : new_password
+        })
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.redirect_chain[-1], 302)
+
+		self.user.refresh_from_db()
+
+		#Check whether user has been correctly modified
+
+		self.assertEqual(self.user.check_password(new_password), True)
+
+		# The action should have been logged - check the action category (account control) and status code (200)
 
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
@@ -160,60 +191,82 @@ class UsersTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
 
-	def test_profiles_rejected_on_invalid_input(self):
-		""" User profiles are rejected for modification on invalid data	"""
-		user = User.objects.get(user__username=self.email)
+# Delete:
 
-		# Submit wrong input changes using post:
-		# 30 char limit
-		new_first_name = 'JohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohn'
-		new_last_name = 'AlbertAlbertAlbertAlbertAlbertAlbert'
-		new_email = 'jalbmail.com'
-		new_email2 = 'jalb@mailcom'
-		new_email3 = 'jalb@@mail.com'
-		#image and password fields are assumed to work consistently with the framework defined behaviour.
-		new_campus = 'DFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDF'
+	def test_profiles_are_correctly_deleted_admin(self):
+		""" User profiles are deleted correctly on demand if role is account manager or above"""
 
-		# Test sending invalid first_name: 30+ char's
-		self.sendProfileData(new_first_name, self.last_name, self.email, self.password, self.campus, 400)
-
-		# Test sending invalid last_name: 30+ char's
-		self.sendProfileData(self.first_name, new_last_name, self.email, self.password, self.campus, 400)
-
-		# Test sending invalid email: without "@"
-		self.sendProfileData(self.first_name, self.last_name, new_email, self.password, self.campus, 400)
-
-		# Test sending invalid email: without "."
-		self.sendProfileData(self.first_name, self.last_name, new_email2, self.password, self.campus, 400)
-
-		# Test sending invalid email: with "@@"
-		self.sendProfileData(self.first_name, self.last_name, new_email3, self.password, self.campus, 400)
-
-		# Test sending invalid campus: 64+ char's
-		self.sendProfileData(self.first_name, self.last_name, self.email, self.password, new_campus, 400)
-
-		#Check whether user has not been modified
-
-		response = self.client.get('/users/1')
-		self.assertEqual(response.status_code, 200)
-		user = response.body.user
-
-		self.assertEqual(user.username, self.email)
-		self.assertEqual(user.firstname, self.first_name)
-		self.assertEqual(user.lastname, self.last_name)
-		self.assertEqual(user.email, self.email)
-
-		self.assertEqual(user.campus, self.campus )
-		self.assertEqual(user.class_SchoolGrades.get(id=1).name, self.SchoolGrade_name )
-		self.assertEqual(user.class_SchoolGrades.get(id=2).name, self.SchoolGrade_name_h )
-
-	def sendProfileData(self, first_name, last_name, email, campus, status_code):
-		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
-			'first_name' : first_name,
-			'last_name' : last_name,
-			'email' : email,
-			'campus' : campus,
+		self.client.login(credentials = {
+            'email_address': self.user_admin.email_address,
+			'password': self.user_admin.password
         })
-		self.assertEqual(response.status_code, status_code)
 
+		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
+			'is_active' : False,
+        })
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.redirect_chain[-1], 302)
+
+		self.user.refresh_from_db()
+
+		#Check whether user has been correctly modified
+
+		self.assertEqual(self.user.is_active, False)
+
+		# The action should have been logged - check the action category (account control) and status code (200)
+
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+
+	def test_self_profile_deletion_is_rejected_if_self_deleted(self):
+		""" Self profile is modified correctly on demand if the user modified its own profile respecting the limitations on the fields"""
+
+		self.client.login(credentials = {
+            'email_address': self.user.email_address,
+			'password': self.user.password
+        })
+
+		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
+			'is_active' : False
+        })
+
+		self.assertEqual(response.status_code, 401)
+		self.assertEqual(response.redirect_chain[-1], 302)
+
+		self.user.refresh_from_db()
+
+		#Check whether user has been correctly rejected from deletion:
+
+		self.assertEqual(self.user.is_active, True)
+
+		# The action should have been logged - check the action category (account control) and status code (401)
+
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
+
+	def test_self_profile_deletion_rejected_if_other_deleted(self):
+		""" User profiles are modified correctly on demand if role is account manager or above"""
+
+		self.client.login(credentials = {
+            'email_address': self.user_other.email_address,
+			'password': self.user_other.password
+        })
+
+		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
+			'is_active' : False
+        })
+
+		self.assertEqual(response.status_code, 401)
+		self.assertEqual(response.redirect_chain[-1], 302)
+
+		self.user.refresh_from_db()
+
+		#Check whether user has been correctly rejected from deletion
+
+		self.assertEqual(self.user.is_active, True)
+
+		# The action should have been logged - check the action category (account control) and status code (401)
+
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
 
