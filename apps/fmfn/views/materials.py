@@ -15,10 +15,12 @@ __all__ = [ 'create', 'edit' ]
 
 class CreateMaterialView(View):
 
-	@method_decorator(login_required)
-	@method_decorator(role_required('content manager'))
+	#@method_decorator(login_required)
+	#@method_decorator(role_required('content manager'))
 	def get(self, request):
-		
+		form = MaterialForm()
+		return render_to_response('materials/create.html', context = RequestContext(request, locals()))
+
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
