@@ -6,7 +6,7 @@ from _base import Model
 
 class Campus(Model):
 
-	mane = CharField(
+	name = CharField(
 		max_length = 256,
 		null = False,
 		blank = False,
