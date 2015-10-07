@@ -4,7 +4,7 @@ from apps.fmfn.models import users
 from django.contrib.auth.models import User
 from apps.fmfn.models import SchoolGrade
 
-class ProfileTest(TestCase):
+class UsersTest(TestCase):
 
 	# User Data
 	first_name = 'Erick'
@@ -25,9 +25,11 @@ class ProfileTest(TestCase):
 		"""Tests associated with the "Edit User" view. Both the normal flow and all alternative flows are tested, regarding the
 		following scenarios:
 
-			* The user provides valid data for user data visualization
+			* The user requests its data for visualization
 			* The user provides valid data for user creation
+			* The user provides invalid data for user creation
 			* The user provides valid data for user edition
+			* The user provides invalid data for user edition
 		"""
 		# Configure the test client
 		self.client = Client(enforce_csrf_checks = False)

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
-from apps.fmfn.models import Profile
+from apps.fmfn.models import users
 from apps.fmfn.forms import ProfileForm
 
 class EditProfileView(View):
@@ -18,7 +18,7 @@ class EditProfileView(View):
 	@method_decorator(csrf_protect)
 	def user(self, request, username = ''):
 
-		Profile.objects.filter(username = username).update(**{
+		users.objects.filter(username = username).update(**{
 			'username': request.POST['username'],
 			'email': request.POST['email'],
 			'password': request.POST['password']
