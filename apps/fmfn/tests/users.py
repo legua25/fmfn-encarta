@@ -9,6 +9,10 @@ from apps.fmfn.models import ActionLog
 
 User = get_user_model()
 
+__all__ = [
+	'UsersTest'
+]
+
 class UsersTest(TestCase):
 
 	# Admin User Data
@@ -54,7 +58,7 @@ class UsersTest(TestCase):
 		# Configure the test client
 		self.client = Client(enforce_csrf_checks = False)
 
-		# Create the user required for the tests
+		# Create the users required for the tests
 
 		self.user = User.objects.create_user(
 		 	email_address = self.email,
@@ -62,10 +66,9 @@ class UsersTest(TestCase):
 		 	first_name = self.first_name,
 		 	father_family_name = self.last_name_father,
 			mother_family_name = self.last_name_mother,
-			grades = SchoolGrade.objects.active().filter(id__in = [ 1, 2 ]),
-			campus = Campus.objects.active().filter(id = 1),
-			role = Role.objects.active().filter(id = 3)
+			campus = Campus.objects.active().filter(id = 1).get()
 		 )
+
 
 		self.user_admin = User.objects.create_user(
 		 	email_address = self.email_admin,
@@ -73,10 +76,10 @@ class UsersTest(TestCase):
 		 	first_name = self.first_name_admin,
 		 	father_family_name = self.last_name_father_admin,
 			mother_family_name = self.last_name_mother_admin,
-			grades = SchoolGrade.objects.active().filter(id__in = [ 1, 2 ]),
-			campus = Campus.objects.active().filter(id = 1),
-			role = Role.objects.active().filter(id = 1)
+			campus = Campus.objects.active().filter(id = 1).get()
 		 )
+			#grades = SchoolGrade.objects.active().filter(id__in = [ 1, 2 ]),
+			#role = Role.objects.active().filter(id = 1)
 
 		self.user_other = User.objects.create_user(
 		 	email_address = self.email_other,
@@ -84,10 +87,9 @@ class UsersTest(TestCase):
 		 	first_name = self.first_name_other,
 		 	father_family_name = self.last_name_father_other,
 			mother_family_name = self.last_name_mother_other,
-			grades = SchoolGrade.objects.active().filter(id__in = [ 1, 2 ]),
-			campus = Campus.objects.active().filter(id = 1),
-			role = Role.objects.active().filter(id = 3)
+			campus = Campus.objects.active().filter(id = 1).get()
 		 )
+
 
 # Edit:
 

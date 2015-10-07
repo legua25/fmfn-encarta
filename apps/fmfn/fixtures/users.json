@@ -1,0 +1,12 @@
+[
+	{
+		"model": "fmfn.User", "pk": 1,
+		"fields": {
+		  "email_address": "erick.garcia.garcia@gmail.com",
+		  "password": "pbkdf2_sha256$10000$vkRy7QauoLLj$ry+3xm3YX+YrSXbri8s3EcXDIrx5ceM+xQjtpLdw2oE=",
+		  "date_joined": "2015-09-22T10:53:40.913",
+		  "campus_id": 1,
+		  "role_id": 3
+		}
+	}
+]

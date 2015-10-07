@@ -13,7 +13,7 @@ class EditProfileView(View):
 	def get(self, request, username = '', password = ''):
 
 		form = ProfileForm(request.user)
-		return render_to_response('edit_profile.html', context = RequestContext(request, locals()))
+		return render_to_response('profile_edit.html', context = RequestContext(request, locals()))
 
 	@method_decorator(csrf_protect)
 	def user(self, request, username = ''):

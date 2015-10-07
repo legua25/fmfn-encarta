@@ -36,6 +36,7 @@ class UserManager(ActiveManager, BaseUserManager):
 		return self._create(email_address, password, **extra_fields)
 	def create_superuser(self, email_address, password, **extra_fields):
 		return  self._create(email_address, password, is_superuser = True, **extra_fields)
+
 class User(Model, AbstractBaseUser, PermissionsMixin):
 
 	email_address = EmailField(

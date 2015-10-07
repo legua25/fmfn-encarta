@@ -6,20 +6,22 @@ from apps.fmfn.models import users
 
 __all__ = ['ProfileForm']
 
-class ProfileForm(Form):
+class ProfileForm(ModelForm):
 
-	email_address = EmailField(
-		widget = EmailInput(attrs = { 'placeholder': _('Email address') }),
-		max_length= 255,
-		required= True
+	class _Meta(object):
+		model = users
+		fields = ('email_address', 'password')
 
-	)
+	def __init__(self, user, *args, **kwargs):
 
-	password = CharField(
-		widget= PasswordInput(attrs = { 'placeholder': _('password') }),
-		max_length= 128,
-		required= True
-	)
+		Form.__init__(self, *args, **kwargs)
+		self._user = user
+
+class ProfileForm(ModelForm):
+
+	class _Meta(object):
+		model = users
+		fields = ('first_name', 'last_name_father', 'last_name_mother','email_address', 'password')
 
 	def __init__(self, user, *args, **kwargs):
 
