@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from apps.fmfn.models import ActionLog, Material, Role
 from django.core.urlresolvers import reverse_lazy
-from apps.fmfn.models import ActionLog, Material
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 
-__all__ = ['CreateMaterialTest', 'EditMaterialTest', 'DeleteMaterialTest']
+__all__ = [
+	'CreateMaterialTest',
+	'EditMaterialTest',
+	'DeleteMaterialTest'
+]
 User = get_user_model()
 
 class CreateMaterialTest(TestCase):
@@ -39,7 +43,6 @@ class CreateMaterialTest(TestCase):
 			'title': 'Matemáticas I',
 			'description': 'Descripción de material 1',
 			'link': 'http://www.google.com',
-			'suggested_ages': 1,
 			'user': User.objects.get(email_address = 'test2@example.com').id
 		}, follow = True)
 
@@ -54,7 +57,6 @@ class CreateMaterialTest(TestCase):
 		# Test case: empty material submission incoming
 		response = self.client.post(reverse_lazy('content:create'), data = {
 			'description': 'Descripción de material 1',
-			'suggested_ages': 1,
 			'user': User.objects.get(email_address = 'test1@example.com').id
 		}, follow = True)
 
@@ -74,7 +76,6 @@ class CreateMaterialTest(TestCase):
 			'title': 'Matemáticas I',
 			'description': 'Descripción de material 1',
 			'link': 'http://www.google.com',
-			'suggested_ages': 1,
 			'user': User.objects.get(email_address = 'test1@example.com').id
 		}
 		response = self.client.post(reverse_lazy('content:create'), data = mock_data, follow = True)
@@ -95,24 +96,23 @@ class CreateMaterialTest(TestCase):
 		self.assertEqual(len(ActionLog.objects.active()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
-
 class EditMaterialTest(TestCase):
+
+	fixtures = [ 'roles' ]
 
 	def setUp(self):
 
 		self.client = Client(enforce_csrf_checks = False)
 
-		# Create test users
-		# active user
 		self.user = User.objects.create_user(
 			email_address = 'test1@example.com',
-			password = 'asdfg123'
+			password = 'asdfg123',
+			role = Role.objects.get(id = 4)
 		)
-		Material.objects.create(
+		self.material = Material.objects.create(
 			title = 'Actividad de Español II',
 			description = 'Descripción de material español',
 			link = 'http://facebook.com',
-			suggested_ages = 1,
 			user = self.user
 		)
 
@@ -123,43 +123,60 @@ class EditMaterialTest(TestCase):
 			'title': 'Matemáticas II',
 	        'description': 'Descripción de material 1 edit',
 	        'link': 'http://www.google.com.mx',
-	        'suggested_ages': 1,
-	        'user': self.user.id
+	        'user': self.user
 		}
-		response = self.client.post(reverse_lazy('content:edit', kwargs = { 'content_id': 1 }), data)
+		response = self.client.post(reverse_lazy('content:edit', kwargs = { 'content_id': self.material.id }), data = data, follow = True)
 
-		record = Material.objects.get(id = 1)
-		self.assertEqual(response.status_code, 302)
-		self.assertEqual(record.title, data['title'])
-		self.assertEqual(record.description, data['description'])
-		self.assertEqual(record.link, data['link'])
+		# Redirection should have taken place - test this
+		self.assertEqual(response.status_code, 200)
+		url, status = response.redirect_chain[-1]
+		self.assertEqual(status, 301)
+
+		# Material should have been soft-deleted
+		self.material.refresh_from_db()
+		self.assertEqual(self.material.title, data['title'])
+		self.assertEqual(self.material.description, data['description'])
+		self.assertEqual(self.material.link, data['link'])
+
+		# Test action log
+		self.assertEqual(len(ActionLog.objects.active()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
-
 class DeleteMaterialTest(TestCase):
+
+	fixtures = [ 'roles' ]
 
 	def setUp(self):
 
-		self.client = Client()
+		self.client = Client(enforce_csrf_checks = False)
 
 		user = User.objects.create_user(
 			email_address = 'test1@example.com',
-			password = 'asdfg123'
+			password = 'asdfg123',
+			role = Role.objects.get(id = 4)
 		)
-		Material.objects.create(
+		self.material = Material.objects.create(
 			title = 'Actividad de Español II',
 			description = 'Descripción de material español',
 			link = 'http://facebook.com',
-			suggested_ages = 1,
 			user = user
 		)
 
 	def test_material_deleted(self):
 
 		self.client.login(email_address = 'test1@example.com', password = 'asdfg123')
-		response = self.client.delete(reverse_lazy('content:edit', kwargs = { 'content_id': 1 }))
+		response = self.client.delete(reverse_lazy('content:edit', kwargs = { 'content_id': self.material.id }), follow = True)
 
-		self.assertEqual(response.status_code, 302)
-		self.assertEqual(Material.objects.get(id = 1).active, False)
+		# Redirection should have taken place - test this
+		self.assertEqual(response.status_code, 200)
+		url, status = response.redirect_chain[-1]
+		self.assertEqual(status, 301)
+
+		# Material should have been soft-deleted
+		self.material.refresh_from_db()
+		self.assertFalse(self.material.active)
+
+		# Test action log
+		self.assertEqual(len(ActionLog.objects.active()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
