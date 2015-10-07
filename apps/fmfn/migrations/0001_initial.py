@@ -25,8 +25,8 @@ class Migration(migrations.Migration):
                 ('email_address', models.EmailField(unique=True, max_length=255, verbose_name='email address')),
                 ('date_joined', models.DateTimeField(auto_now_add=True, verbose_name='date joined')),
                 ('first_name', models.CharField(max_length=64, verbose_name='first name')),
-                ('father_family_name', models.CharField(default='', max_length=64, verbose_name="father's family name")),
-                ('mother_family_name', models.CharField(default='', max_length=64, verbose_name="mother's family name")),
+                ('father_family_name', models.CharField(default='', max_length=64, verbose_name="father's family name", blank=True)),
+                ('mother_family_name', models.CharField(default='', max_length=64, verbose_name="mother's family name", blank=True)),
                 ('photo', imagekit.models.fields.ProcessedImageField(upload_to=b'', verbose_name='user photo')),
             ],
             options={
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('mane', models.CharField(max_length=256, verbose_name='campus name')),
+                ('name', models.CharField(max_length=256, verbose_name='campus name')),
                 ('date_added', models.DateTimeField(auto_now_add=True, verbose_name='date added')),
             ],
             options={
@@ -168,8 +168,8 @@ class Migration(migrations.Migration):
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
                 ('name', models.CharField(max_length=64, verbose_name='role name')),
                 ('description', models.CharField(default='', max_length=512, verbose_name='role description')),
+                ('base', models.ForeignKey(related_name='subroles', verbose_name='base role', to='fmfn.Role', null=True)),
                 ('base_permissions', models.ManyToManyField(related_query_name='role', related_name='roles', verbose_name='permissions', to='auth.Permission')),
-                ('members', models.ForeignKey(related_name='role', verbose_name='assigned role members', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'user role',
@@ -257,6 +257,11 @@ class Migration(migrations.Migration):
             model_name='user',
             name='groups',
             field=models.ManyToManyField(related_query_name='user', related_name='user_set', to='auth.Group', blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', verbose_name='groups'),
+        ),
+        migrations.AddField(
+            model_name='user',
+            name='role',
+            field=models.ForeignKey(related_name='members', default=1, verbose_name='user role', to='fmfn.Role'),
         ),
         migrations.AddField(
             model_name='user',
