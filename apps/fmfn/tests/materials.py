@@ -3,16 +3,15 @@ from __future__ import unicode_literals
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
-from apps.fmfn.models import ActionLog, Material, Grade
+from apps.fmfn.models import ActionLog, Material, SchoolGrade
 
 __all__ = ['CreateMaterialTest', 'EditMaterialTest', 'DeleteMaterialTest']
 User = get_user_model()
 
-
 class CreateMaterialTest(TestCase):
 	def setUp(self):
 		self.client = Client()
-		grade = Grade.objects.create(
+		grade = SchoolGrade.objects.create(
 			name='Preescolar',
 			min_age=3,
 			max_age=6
@@ -45,12 +44,14 @@ class CreateMaterialTest(TestCase):
 
 		self.client.login(username = 'test1@example.com', email = 'test1@example.com', password = 'asdfg123')
 
-		data = {'title': 'Matemáticas I',
-		        'description': 'Descripción de material 1',
-		        'link': 'http://www.google.com',
-		        'suggested_ages': 1,
-		        'user': 1};
-		response = self.client.post(reverse_lazy('/content/create/'), data)
+		data = {
+			'title': 'Matemáticas I',
+			'description': 'Descripción de material 1',
+			'link': 'http://www.google.com',
+			'suggested_ages': 1,
+			'user': 1
+		}
+		response = self.client.post(reverse_lazy('content:create'), data)
 
 		# 302 status means the system redirected the user successfully
 		self.assertEqual(response.status_code, 302)
@@ -63,6 +64,15 @@ class CreateMaterialTest(TestCase):
 		self.assertEqual(latest.link, data['link'])
 		self.assertEqual(latest.suggested_ages, data['suggested_ages'])
 		self.assertEqual(latest.user, data['description'])
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
+
+	def test_material_not_valid(self):
+		self.client.login(username = 'test1@example.com', email = 'test1@example.com', password = 'asdfg123')
+		data = {'description': 'Descripción de material 1',
+		        'link': 'http://www.google.com',
+		        'suggested_ages': 1,
+		        'user': 1};
 
 	# Verifies that any inactive is unable to create a material, this test should fail
 	# TODO: check that the user has permission to edit a material
@@ -75,9 +85,11 @@ class CreateMaterialTest(TestCase):
 		        'suggested_ages': 1,
 		        'user': 2
 		        };
-		response = self.client.post(reverse_lazy('/content/create'), data)
+		response = self.client.post(reverse_lazy('content:create'), data)
 		# response 401 - unauthorized
 		self.assertEqual(response.status_code, 401)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
 
 
 class EditMaterialTest(TestCase):
@@ -105,20 +117,24 @@ class EditMaterialTest(TestCase):
 		material.save()
 
 	def test_material_edited(self):
+
 		self.client.login(username = 'test1@example.com', email = 'test1@example.com', password = 'asdfg123')
-		data = {'title': 'Matemáticas II',
-		        'description': 'Descripción de material 1 edit',
-		        'link': 'http://www.google.com.mx',
-		        'suggested_ages': 1,
-		        'user': 1};
-		response = self.client.post(reverse_lazy('/content/1/edit'), data)
+		data = {
+			'title': 'Matemáticas II',
+	        'description': 'Descripción de material 1 edit',
+	        'link': 'http://www.google.com.mx',
+	        'suggested_ages': 1,
+	        'user': 1
+		}
+		response = self.client.post(reverse_lazy('content:edit', kwargs = { 'content_id': 1 }), data)
 
 		record = Material.objects.get(id=1)
 		self.assertEqual(response.status_code, 302)
 		self.assertEqual(record.title, data['title'])
 		self.assertEqual(record.description, data['description'])
 		self.assertEqual(record.link, data['link'])
-
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
 
 class DeleteMaterialTest(TestCase):
 
@@ -134,6 +150,8 @@ class DeleteMaterialTest(TestCase):
 		material.save()
 
 	def test_material_deleted(self):
-		response = self.client.delete(reverse_lazy('/content/1/delete'), data={'id': 1})
+		response = self.client.delete(reverse_lazy('content:edit', kwargs = { 'content_id': 1 }), data={'id': 1})
 		self.assertEqual(response.status_code, 302)
 		self.assertEqual(Material.objects.get(id=1).is_active, False)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
