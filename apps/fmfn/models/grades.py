@@ -4,7 +4,25 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import *
 from _base import Model
 
-class Grade(Model):
+class Campus(Model):
+
+	name = CharField(
+		max_length = 256,
+		null = False,
+		blank = False,
+		verbose_name = _('campus name')
+	)
+	date_added = DateTimeField(
+		auto_now_add = True,
+		verbose_name = _('date added')
+	)
+
+	class Meta(object):
+
+		verbose_name = _('campus')
+		verbose_name_plural = _('campi')
+		app_label = 'fmfn'
+class SchoolGrade(Model):
 	"""
 		Represents the school grades used by other models:
 
@@ -19,6 +37,9 @@ class Grade(Model):
 	)
 	min_age = PositiveSmallIntegerField(verbose_name = _('minimum expected age'))
 	max_age = PositiveSmallIntegerField(verbose_name = _('maximum expected age'))
+
+	def __str__(self): return self.name
+	def __unicode__(self): return unicode(self.__str__())
 
 	class Meta(object):
 

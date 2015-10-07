@@ -12,6 +12,7 @@ ALLOWED_HOSTS = []
 
 ROOT_URLCONF = 'fmfn_encarta.urls'
 WSGI_APPLICATION = 'fmfn_encarta.wsgi.application'
+AUTH_USER_MODEL = 'fmfn.User'
 SITE_ID = 1
 
 INSTALLED_APPS = [
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
+	'django_select2',
     'haystack',
 	'dbmail',
 	'imagekit',

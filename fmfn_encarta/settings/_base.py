@@ -14,6 +14,7 @@ class Settings(Configuration):
 
 	ROOT_URLCONF = 'fmfn_encarta.urls'
 	WSGI_APPLICATION = 'fmfn_encarta.wsgi.application'
+	AUTH_USER_MODEL = 'fmfn.User'
 	SITE_ID = 1
 
 	INSTALLED_APPS = [
@@ -27,6 +28,7 @@ class Settings(Configuration):
 		'django.contrib.sessions',
 		'django.contrib.messages',
 		'django.contrib.staticfiles',
+		'django_select2',
 	    'haystack',
 		'dbmail',
 		'imagekit',
