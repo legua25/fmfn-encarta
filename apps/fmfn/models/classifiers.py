@@ -30,6 +30,8 @@ class MaterialTag(Model):
 	materials = None
 
 	objects = TagManager()
+	def __str__(self):
+		return self.name
 
 	class Meta(object):
 		abstract = True
@@ -39,40 +41,27 @@ class Type(MaterialTag):
 		uses this tag to ease searching for materials of a certain type.
 	"""
 
-	materials = ManyToManyField('fmfn.Material',
-		related_name = 'types',
-		verbose_name = _('tagged materials')
-	)
-
 	class Meta(object):
 
 		verbose_name = _('material type')
 		verbose_name_plural = _('material types')
 		app_label = 'fmfn'
+
 class Theme(MaterialTag):
 	""" Represents a tag describing a material theme: mathematics, linguistics, etc. A material uses
 		this tag to ease searching for materials of a certain educational theme.
 	"""
 
-	materials = ManyToManyField('fmfn.Material',
-		related_name = 'themes',
-		verbose_name = _('tagged materials')
-	)
-
 	class Meta(object):
 
 		verbose_name = _('material type')
 		verbose_name_plural = _('material types')
 		app_label = 'fmfn'
+
 class Language(MaterialTag):
 	""" Represents a tag describing a language in which written material is provided. A material uses
 		this tag to ease searching for materials with content in a certain language.
 	"""
-
-	materials = ManyToManyField('fmfn.Material',
-		related_name = 'languages',
-		verbose_name = _('tagged materials')
-	)
 
 	class Meta(object):
 
