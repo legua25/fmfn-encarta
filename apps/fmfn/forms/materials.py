@@ -5,7 +5,6 @@ from django.forms import *
 
 __all__ = [ 'CreateMaterialForm' ]
 
-
 class CreateMaterialForm(Form):
 
 	title = CharField(
