@@ -77,6 +77,8 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	)
 	campus = ForeignKey('fmfn.Campus',
 		related_name = 'users',
+		null = True,
+		default = None,
 		verbose_name = _('campus')
 	)
 	grades = ManyToManyField('fmfn.SchoolGrade',
@@ -85,7 +87,8 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	)
 	role = ForeignKey('fmfn.Role',
 		related_name = 'members',
-		default = 1,
+		null = True,
+		default = None,
 	    verbose_name = _('user role')
 	)
 

@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
+from apps.fmfn.models import Material
 from django.forms import *
+from django.forms import ModelForm as Form
 
-__all__ = [ 'CreateMaterialForm' ]
+__all__ = [ 'MaterialForm' ]
 
-class CreateMaterialForm(Form):
+class MaterialForm(Form):
 
-	title = CharField(
-		max_length = 1000,
-		required = True,
-		widget = TextInput(attrs = { 'placeholder': _('Title') })
-	)
-	description = CharField(
-		max_length = 2000,
-		required = False,
-		widget = Textarea(attrs = { 'placeholder': _('Title') })
-	)
-	content = FileField(
-		widget=FileInput()
-	)
-	link = URLField(
-		widget=URLInput()
-	)
+	class Meta(object):
 
+		model = Material
+		fields = [
+			'title',
+			'content',
+			'link',
+			'description',
+			'suggested_ages'
+		]
+		widgets = {
+			'title': TextInput(attrs = { 'placeholder': _('Title') }),
+			'link': URLInput(attrs = { 'placeholder': _('Content link (optional)') }),
+			'description': Textarea(attrs = { 'placeholder': _('Description') }),
+			'suggested_ages': CheckboxSelectMultiple()
+		}

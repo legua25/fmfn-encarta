@@ -27,11 +27,11 @@ urlpatterns = [
 	# Content management
 	 url(r'^content/', include([
 
-	 	url(r'create/$', views.material.create, name = 'create'),  # GET, PUT
+	 	url(r'create/$', views.materials.create, name = 'create'),  # GET, PUT
 	 	url(r'^(?P<content_id>[\d]+)/', include([
 
 	 		url(r'^$', lambda request: HttpResponse(''), name = 'view'),  # GET
-	 		url(r'^edit/$', views.material.edit, name = 'edit')  # GET, POST, DELETE
+	 		url(r'^edit/$', views.materials.edit, name = 'edit')  # GET, POST, DELETE
 
 	 	])),
 	# 	url(r'^tags/', include([

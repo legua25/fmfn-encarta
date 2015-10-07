@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 from apps.fmfn.models import Material, ActionLog
-from apps.fmfn.forms import CreateMaterialForm
 from apps.fmfn.decorators import role_required
+from apps.fmfn.forms import MaterialForm
 from django.views.generic import View
 
 __all__ = [ 'create', 'edit' ]
@@ -22,11 +22,11 @@ class CreateMaterialView(View):
 	@method_decorator(role_required('content manager'))
 	def post(self,request):
 
-		form = CreateMaterialForm(request.POST)
+		form = MaterialForm(request.POST)
 		if form.is_valid():
 
 			# TODO: Adjust material creation - use ModelForm instead
-			material = form
+			material = form.instance
 			ActionLog.objects.create()
 
 			return redirect(reverse_lazy('index'))
@@ -40,14 +40,14 @@ class EditMaterialView(View):
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
 	def get(self,request):
-		pass
+
+		form = MaterialForm()
+		return render_to_response('materials/create.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
-	def post(self,request):
-		pass
+	def post(self,request): pass
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
-	def delete(self,request):
-		pass
+	def delete(self,request): pass
 
 edit = EditMaterialView.as_view()
