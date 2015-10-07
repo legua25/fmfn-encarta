@@ -182,32 +182,6 @@ class FilterMaterialTest(TestCase):
 			user=1
 		)
 
-		material_2 = Material.objects.create(
-			title='Actividad de Matematicas II',
-			description='Descripción de material mate',
-			link='http://twitter.com',
-			suggested_ages=1,
-			user=1
-		)
-
-		Material.objects.create(
-			title='Actividad de Fisica II',
-			description='Descripción de material fisica',
-			link='http://twitter.com',
-			suggested_ages=2,
-			user=1
-		)
-
-	def filter_materials_test(self):
-
-		Material.objects.create(
-			title='Actividad de Español II',
-			description='Descripción de material español',
-			link='http://facebook.com',
-			suggested_ages=1,
-			user=1
-		)
-
 		Material.objects.create(
 			title='Actividad de Matematicas II',
 			description='Descripción de material mate',
@@ -223,17 +197,59 @@ class FilterMaterialTest(TestCase):
 			suggested_ages=2,
 			user=1
 		)
+
+	def test_filter_materials(self):
+
+		"""
+			Inputs: request.GET['query'] (optional): The filter criteria to use in order to select tags. Defaults to None.
+			Outputs:
+
+				A JSON document complying with the following schema:
+
+				{
+					"$schema": "http://json-schema.org/draft-04/schema#",
+
+					"id": "http://jsonschema.net/tag-list",
+					"type": "object",
+					"properties": {
+
+						"type": { "id": "http://jsonschema.net/material-list/", "type": "string" },
+						"data": {
+							"id": "http://jsonschema.net/material-list/data",
+							"type": "array",
+							"items": [
+								{
+									"id": "http://jsonschema.net/material-list/data/material",
+									"type": "object",
+									"properties": {
+										"id": { "id": "http://jsonschema.net/tag-list/data/tag/id", "type": "integer" },
+										"title": { "title": "http://jsonschema.net/tag-list/data/tag/name", "type": "string" }
+										"link": { "link": "http://jsonschema.net/tag-list/data/tag/name", "type": "string" }
+										"suggested_ages": { "2": "http://jsonschema.net/tag-list/data/tag/id", "type": "integer" },
+										"user": { "1": "http://jsonschema.net/tag-list/data/tag/id", "type": "integer" }
+									}
+								}
+							]
+						}
+
+					},
+					"required": [ "type", "data" ]
+				}
+
+		"""
 
 		response = self.client.get(reverse_lazy('content:list'), data = {
-			'suggested_ages': '1'
+			'suggested_ages': 1
 		}, follow = True)
 
 		response_data = json.loads(response.body)
 		self.assertTrue(response_data.get('suggested_ages', False))
 		resp_data = response_data['data']
 
-		self.assertTrue(bool(Material.objects.active().filter(id__in = [ material['id'] for material in resp_data])))
-		self.assertEqual(len(resp_data), len(Material.objects.active()))
+		self.assertTrue(bool(Material.objects.active().filter(id__in = [ material['id'] for material in resp_data['data'] ])))
+
+		# Test material count is valid
+		self.assertEqual(len(resp_data), len(Material.objects.get(suggedted_ages = 1)))
 
 		# Test a specific material
 		self.assertEqual(response_data['data'][0], {
