@@ -23,12 +23,16 @@
 										{{ form.password | add_class:'form-control' }} <br />
 										{{ form.repeat | add_class:'form-control' }}
 									</div>
+									<div id="user-roles" class="col-xs-12 navbar navbar-default form-group">
+										{{ form.role }}
+									</div>
 								</div>
 								<hr />
 								<div id="profile" class="container-fluid">
 									<h4>{% trans 'Account Profile' %}</h4>
 									<div id="user-first-name" class="col-xs-6 form-group">{{ form.first_name | add_class:'form-control' }}</div>
 									<div id="user-family-name" class="col-xs-6 form-group">{{ form.family_name | add_class:'form-control' }}</div>
+									<div id="user-profile-photo" class="col-xs-12 form-group">{{ form.photo | add_class:'form-control' }}</div>
 									<div id="user-campus" class="col-xs-12 form-group">{{ form.campus | add_class:'form-control' }}</div>
 									<div id="user-grades" class="col-xs-12 navbar navbar-default form-group">
 										<ul id="id_grades" class="nav nav-pills nav-justified">{% for grade in form.fields.grades.choices %}

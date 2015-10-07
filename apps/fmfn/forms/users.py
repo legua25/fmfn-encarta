@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group as Role
 from imagekit.processors import ResizeToFill
-from apps.fmfn.models import Grade
+from apps.fmfn.models import SchoolGrade
 from django.forms import *
 from imagekit.forms import ProcessedImageField as ImageField
 
@@ -45,7 +45,7 @@ class UserForm(Form):
 		required = True
 	)
 	grades = ModelMultipleChoiceField(
-		queryset = Grade.objects.active(),
+		queryset = SchoolGrade.objects.active(),
 		required = False,
 		widget = CheckboxSelectMultiple()
 	)

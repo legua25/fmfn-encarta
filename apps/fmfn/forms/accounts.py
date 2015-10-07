@@ -34,7 +34,7 @@ class LoginForm(Form):
 	def clean(self):
 
 		email, password = (self.cleaned_data['email_address'], self.cleaned_data['password'])
-		user = authenticate(username = email, password = password)
+		user = authenticate(password = password)
 
 		if user is not None:
 
