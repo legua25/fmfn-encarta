@@ -9,10 +9,10 @@ from django.forms import *
 from imagekit.forms import ProcessedImageField as ImageField
 from django.forms import ModelForm as Form
 
-__all__ = [ 'UserForm' ]
+__all__ = ['UserCreationForm']
 User = get_user_model()
 
-class UserForm(Form):
+class UserCreationForm(Form):
 
 	password = CharField(
 		max_length = 128,

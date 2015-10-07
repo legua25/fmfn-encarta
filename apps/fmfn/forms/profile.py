@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.forms import *
-from apps.fmfn.models import profile
+from apps.fmfn.models import users
 
 __all__ = ['ProfileForm']
 

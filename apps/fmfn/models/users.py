@@ -105,7 +105,9 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 
 		family_name = ' '.join(filter(lambda i: bool(i), [ self.father_family_name or '', self.mother_family_name or '' ]))
 		return ', '.join([ family_name, self.first_name ])
+
 	def get_short_name(self): return self.first_name
+
 	def belongs_to(self, name = None, **kwargs):
 
 		def _belongs_recursive(role, target):

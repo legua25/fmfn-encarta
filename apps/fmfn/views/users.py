@@ -9,7 +9,7 @@ from apps.fmfn.decorators import role_required
 from django.contrib.auth import get_user_model
 from apps.fmfn.models import ActionLog
 from django.views.generic import View
-from apps.fmfn.forms import UserForm
+from apps.fmfn.forms import UserCreationForm
 
 __all__ = [ 'create' ]
 User = get_user_model()
@@ -20,14 +20,14 @@ class CreateUserView(View):
 	@method_decorator(role_required('user manager'))
 	def get(self, request):
 
-		form = UserForm()
+		form = UserCreationForm()
 		return render_to_response('users/create.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('user manager'))
 	def post(self, request):
 
 		# Create and validate the form
-		form = UserForm(request.POST)
+		form = UserCreationForm(request.POST)
 		if form.is_valid():
 
 			# Retrieve the user, set the password, and create him/her
