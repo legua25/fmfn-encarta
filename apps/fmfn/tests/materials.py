@@ -208,7 +208,7 @@ class FilterMaterialTest(TestCase):
 			user=1
 		)
 
-		material_2 = Material.objects.create(
+		Material.objects.create(
 			title='Actividad de Matematicas II',
 			description='Descripción de material mate',
 			link='http://twitter.com',
