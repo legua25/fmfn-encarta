@@ -36,7 +36,6 @@ class UserManager(ActiveManager, BaseUserManager):
 		return self._create(email_address, password, **extra_fields)
 	def create_superuser(self, email_address, password, **extra_fields):
 		return  self._create(email_address, password, is_superuser = True, **extra_fields)
-
 class User(Model, AbstractBaseUser, PermissionsMixin):
 
 	email_address = EmailField(
@@ -73,15 +72,13 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 		spec_id = 'users:photo:spec',
 		autoconvert = True,
 		processors = [ ResizeToFill(240, 240) ],
-		null = True,
-		blank = True,
 		options = { 'quality': 80 },
 		verbose_name = _('user photo')
 	)
 	campus = ForeignKey('fmfn.Campus',
 		related_name = 'users',
 		null = True,
-		blank = True,
+		default = None,
 		verbose_name = _('campus')
 	)
 	grades = ManyToManyField('fmfn.SchoolGrade',
@@ -91,8 +88,7 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	role = ForeignKey('fmfn.Role',
 		related_name = 'members',
 		null = True,
-		blank = True,
-		default = 1,
+		default = None,
 	    verbose_name = _('user role')
 	)
 
@@ -112,9 +108,7 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 
 		family_name = ' '.join(filter(lambda i: bool(i), [ self.father_family_name or '', self.mother_family_name or '' ]))
 		return ', '.join([ family_name, self.first_name ])
-
 	def get_short_name(self): return self.first_name
-
 	def belongs_to(self, name = None, **kwargs):
 
 		def _belongs_recursive(role, target):

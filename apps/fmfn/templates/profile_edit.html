@@ -5,8 +5,7 @@
 {% block content %}
     <form action="{% url 'users:edit' user_id %}" method="post">
         {% csrf_token %}
-        {{ user_form }}
-        {{ passwd_form }}
+        {{ form }}
         <button type="submit">Submit</button>
     </form>
 {% endblock content %}

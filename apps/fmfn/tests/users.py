@@ -248,7 +248,7 @@ class UsersTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
 
 	def test_self_profile_deletion_rejected_if_other_deleted(self):
-		""" User profiles are modified correctly on demand if role is account manager or above"""
+		""" User profiles are rejected from deletion if other tried to delete it without required base role or above"""
 
 		self.client.login(credentials = {
             'email_address': self.user_other.email_address,

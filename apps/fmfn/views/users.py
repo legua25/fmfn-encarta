@@ -9,7 +9,7 @@ from apps.fmfn.decorators import role_required
 from django.contrib.auth import get_user_model
 from apps.fmfn.models import ActionLog, users
 from django.views.generic import View
-from apps.fmfn.forms import UserCreationForm, ProfileForm, PasswordForm
+from apps.fmfn.forms import UserCreationForm, UserEditForm
 
 __all__ = [ 'create', 'edit' ]
 User = get_user_model()
@@ -38,7 +38,10 @@ class CreateUserView(View):
 			# Redirect to user list
 			return redirect(reverse_lazy('users:list'))
 
-		return render_to_response('users/create.html', context = RequestContext(request, locals()))
+		return render_to_response('users/create.html',
+			context = RequestContext(request, locals()),
+		    status = 401
+		)
 
 create = CreateUserView.as_view()
 
@@ -47,28 +50,22 @@ class EditUserView(View):
 	@method_decorator(login_required)
 	def get(self, request, user_id = 0):
 
-		user = User.objects.active().get(id = user_id)
-
-		user_form = ProfileForm(instance = user)
-		passwd_form = PasswordForm(user = user)
-		del user
+		form = UserEditForm(instance = User.objects.active().get(id = user_id))
 		return render_to_response('profile_edit.html', context = RequestContext(request, locals()))
 
 	@method_decorator(csrf_protect)
 	def post(self, request, user_id = 0):
 
-		user = User.objects.get(id = user_id)
-		user_form = ProfileForm(request.POST, instance = user)
-		passwd_form = PasswordForm(request.POST, user = user)
+		form = UserEditForm(request.POST, instance = User.objects.get(id = user_id))
 
-		if user_form.is_valid():
+		if form.is_valid():
 
-			user_form.instance.save()
-			if passwd_form.is_valid(): passwd_form.user.save()
-
+			form.instance.save()
 			return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user_id }))
 
-		del user
-		return render_to_response('profile_edit.html', context = RequestContext(request, locals()))
+		return render_to_response('profile_edit.html',
+			context = RequestContext(request, locals()),
+		    status = 401
+		)
 
 edit = EditUserView.as_view()
