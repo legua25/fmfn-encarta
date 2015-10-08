@@ -86,7 +86,7 @@ class CreateMaterialTest(TestCase):
 		self.assertEqual(status, 301)
 
 		# checking that the latest record's info matches the input
-		latest = Material.objects.get(id = 1)
+		latest = list(reversed(Material.objects.active()))[0]
 
 		self.assertEqual(latest.title, mock_data['title'])
 		self.assertEqual(latest.description, mock_data['description'])
@@ -178,4 +178,4 @@ class DeleteMaterialTest(TestCase):
 		# Test action log
 		self.assertEqual(len(ActionLog.objects.active()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
-		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
