@@ -14,7 +14,7 @@ User = get_user_model()
 
 class CreateMaterialTest(TestCase):
 
-	fixtures = [ 'grades' ]
+	fixtures = [ 'grades', 'roles', 'campus' ]
 
 	def setUp(self):
 
@@ -82,7 +82,8 @@ class CreateMaterialTest(TestCase):
 
 		# 302 status means the system redirected the user successfully
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(response.redirect_chain[-1], 302)
+		url, status = response.redirect_chain[-1]
+		self.assertEqual(status, 301)
 
 		# checking that the latest record's info matches the input
 		latest = Material.objects.get(id = 1)
@@ -95,10 +96,10 @@ class CreateMaterialTest(TestCase):
 
 		self.assertEqual(len(ActionLog.objects.active()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
-		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 201)
 class EditMaterialTest(TestCase):
 
-	fixtures = [ 'roles' ]
+	fixtures = [ 'grades', 'roles', 'campus' ]
 
 	def setUp(self):
 
@@ -129,8 +130,6 @@ class EditMaterialTest(TestCase):
 
 		# Redirection should have taken place - test this
 		self.assertEqual(response.status_code, 200)
-		url, status = response.redirect_chain[-1]
-		self.assertEqual(status, 301)
 
 		# Material should have been soft-deleted
 		self.material.refresh_from_db()
@@ -144,7 +143,7 @@ class EditMaterialTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 302)
 class DeleteMaterialTest(TestCase):
 
-	fixtures = [ 'roles' ]
+	fixtures = [ 'grades', 'roles', 'campus' ]
 
 	def setUp(self):
 
@@ -170,7 +169,7 @@ class DeleteMaterialTest(TestCase):
 		# Redirection should have taken place - test this
 		self.assertEqual(response.status_code, 200)
 		url, status = response.redirect_chain[-1]
-		self.assertEqual(status, 301)
+		self.assertEqual(status, 302)
 
 		# Material should have been soft-deleted
 		self.material.refresh_from_db()
