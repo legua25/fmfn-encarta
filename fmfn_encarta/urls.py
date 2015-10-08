@@ -24,25 +24,29 @@ urlpatterns = [
 		]))
 
 	])),
+
 	# Content management
-	# url(r'^content/', include([
+	 url(r'^content/', include([
 
-	# 	url(r'create/$', None, name = 'create'),  # GET, PUT
-	# 	url(r'^(?P<content_id>[\d]+)/', include([
+	 	url(r'create/$', views.materials.create, name = 'create'),  # GET, PUT
+	 	url(r'^(?P<content_id>[\d]+)/', include([
 
-	# 		url(r'^$', None, name = 'view'),  # GET
-	# 		url(r'^edit/$', None, name = 'edit')  # GET, POST, DELETE
+	 		url(r'^$', lambda request, content_id = 0: HttpResponse(''), name = 'view'),  # GET
+	 		url(r'^edit/$', views.materials.edit, name = 'edit')  # GET, POST, DELETE
 
-	# 	])),
-	# 	url(r'^tags/', include([
+	 	]))
 
-	# 		url(r'^$', None, name = 'list'),  # GET
-	# 		url(r'^create/$', None, name = 'create'),  # PUT
-	# 		url(r'^edit/$', None, name = 'edit')  # POST, DELETE
+	 ], namespace = 'content', app_name = 'apps.fmfn')),
 
-	# 	], namespace = 'content-tags', app_name = 'fmfn'))
+	# Tags
+	url(r'^tags/', include([
 
-	# ], namespace = 'content', app_name = 'apps.fmfn')),
+        url(r'^$', views.tags.tags, name = 'list'),  # GET
+        url(r'^create/$', views.tags.tags, name = 'create', kwargs = { 'action': 'create' }),  # POST
+        url(r'^(?P<tag_type>type|theme|language)/(?P<tag_id>[\d]+)/edit/$', views.tags.tags, name = 'edit', kwargs = { 'action': 'edit' })  # POST, DELETE
+
+    ], namespace = 'tags', app_name = 'fmfn')),
+
 	# Account management
 	url(r'^accounts/', include([
 
