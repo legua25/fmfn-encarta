@@ -6,7 +6,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.forms import *
 
-__all__ = [ 'UserEditForm', 'AdminProfileForm' ]
+__all__ = [ 'UserEditForm', 'AdminUserEditForm']
 User = get_user_model()
 
 class UserEditForm(ModelForm):
@@ -37,7 +37,7 @@ class UserEditForm(ModelForm):
 		model = User
 		fields = [ 'email_address' ]
 
-class AdminProfileForm(ModelForm):
+class AdminUserEditForm(ModelForm):
 
 	password = CharField(
 		max_length = 128,

@@ -9,7 +9,7 @@ from django.forms import *
 from imagekit.forms import ProcessedImageField as ImageField
 from django.forms import ModelForm as Form
 
-__all__ = ['UserCreationForm']
+__all__ = ['UserCreationForm', 'UserEditForm', 'AdminUserEditForm']
 User = get_user_model()
 
 class UserCreationForm(Form):
@@ -53,3 +53,68 @@ class UserCreationForm(Form):
 			'grades': CheckboxSelectMultiple(),
 			'role': RadioSelect()
 		}
+
+class UserEditForm(ModelForm):
+
+	password = CharField(
+		max_length = 128,
+		required = True,
+		widget = PasswordInput(attrs = { 'placeholder': _('Password') })
+	)
+	repeat = CharField(
+		max_length = 128,
+		required = True,
+		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
+	)
+
+	def clean(self):
+
+		ModelForm.clean(self)
+		password, repeat = self.cleaned_data.get('password', None), self.cleaned_data.get('repeat', None)
+
+		if password is not None:
+			if constant_time_compare(password, repeat): self.instance.set_password(password)
+			else: raise ValidationError(_('Passwords did not match'))
+
+		else: raise ValidationError(_('Invalid user account'))
+
+	class Meta(object):
+		model = User
+		fields = [ 'email_address' ]
+
+class AdminUserEditForm(ModelForm):
+
+	password = CharField(
+		max_length = 128,
+		required = True,
+		widget = PasswordInput(attrs = { 'placeholder': _('Password') })
+	)
+	repeat = CharField(
+		max_length = 128,
+		required = True,
+		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
+	)
+
+	def clean(self):
+
+		ModelForm.clean(self)
+		password, repeat = self.cleaned_data.get('password', None), self.cleaned_data.get('repeat', None)
+
+		if password is not None:
+			if constant_time_compare(password, repeat): self.user.set_password(password)
+			else: raise ValidationError(_('Passwords did not match'))
+
+		else: raise ValidationError(_('Invalid user account'))
+
+	class Meta(object):
+		model = User
+		fields = [
+			'first_name',
+			'father_family_name',
+			'mother_family_name',
+			'email_address',
+			'photo',
+			'grades',
+			'campus',
+			'role'
+		]

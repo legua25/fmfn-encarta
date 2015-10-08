@@ -113,11 +113,11 @@ class UsersTest(TestCase):
 			'father_family_name' : new_last_name_father,
 			'mother_family_name' : self.user.mother_family_name,
 			'email_address' : new_email,
+			'photo' : None,
 			'grades' : self.user.grades,
 			'campus' : self.user.campus,
 			'role' : self.user.role
         })
-			#'photo' : self.user.photo,
 
 		self.assertEqual(response.status_code, 200)
 		self.assertEqual(response.redirect_chain[-1], 302)
@@ -181,11 +181,12 @@ class UsersTest(TestCase):
 		new_last_name = 'Albert'
 		new_email = 'jalb@mail.com'
 
-
 		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
 			'first_name' : new_first_name,
 			'last_name' : new_last_name,
 			'email' : new_email,
+			'campus': self.user.campus,
+			'role': self.user.role
         })
 
 		self.assertEqual(response.status_code, 401)
@@ -193,11 +194,11 @@ class UsersTest(TestCase):
 
 		self.user.refresh_from_db()
 
-		#Check whether user has been correctly modified
+		#Check whether user has not been modified
 
-		self.assertEqual(self.user.first_name, new_first_name)
-		self.assertEqual(self.user.lastname, new_last_name)
-		self.assertEqual(self.user.email_address, new_email)
+		self.assertEqual(self.user.first_name, self.first_name)
+		self.assertEqual(self.user.mother_family_name, self.last_name_mother_admin)
+		self.assertEqual(self.user.email_address, self.email)
 
 		# The action should have been logged - check the action category (account control) and status code (401)
 
