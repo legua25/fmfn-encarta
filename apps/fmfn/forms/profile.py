@@ -1,39 +1,56 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth import get_user_model
 from django.forms import *
-from apps.fmfn.models import users
 
 __all__ = ['ProfileForm', 'AdminProfileForm']
+User = get_user_model()
 
 class ProfileForm(ModelForm):
 
-	class _Meta(object):
-		model = users
-		fields = ('email_address', 'password')
+	password = CharField(
+		max_length = 128,
+		required = True,
+		widget = PasswordInput(attrs = { 'placeholder': _('Password') })
+	)
 
-	def __init__(self, user, *args, **kwargs):
+	class Meta(object):
+		model = User
+		fields = [ 'email_address' ]
 
-		Form.__init__(self, *args, **kwargs)
-		self._user = user
+	def clean(self):
+
+		Form.clean(self)
+
+		password = self.cleaned_data['password']
+		self.instance.set_password(password)
 
 class AdminProfileForm(ModelForm):
 
-	class _Meta(object):
-		model = users
-		fields = (
+	password = CharField(
+		max_length = 128,
+		required = True,
+		widget = PasswordInput(attrs = { 'placeholder': _('Password') })
+	)
+
+	class Meta(object):
+		model = User
+		fields = [
 			'first_name',
-			'last_name_father',
-			'last_name_mother',
+			'father_family_name',
+			'mother_family_name',
 			'email_address',
-			'password',
 			'photo',
 			'grades',
-			'campus_id',
-			'role_id'
-		)
+			'campus',
+			'role'
+		]
 
-	def __init__(self, user, *args, **kwargs):
 
-		Form.__init__(self, *args, **kwargs)
-		self._user = user
+	def clean(self):
+
+		Form.clean(self)
+
+		password = self.cleaned_data['password']
+		self.instance.set_password(password)

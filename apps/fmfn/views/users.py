@@ -7,9 +7,9 @@ from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 from apps.fmfn.decorators import role_required
 from django.contrib.auth import get_user_model
-from apps.fmfn.models import ActionLog
+from apps.fmfn.models import ActionLog, users
 from django.views.generic import View
-from apps.fmfn.forms import UserCreationForm
+from apps.fmfn.forms import UserCreationForm, ProfileForm
 
 __all__ = [ 'create', 'edit' ]
 User = get_user_model()
@@ -45,20 +45,19 @@ create = CreateUserView.as_view()
 class EditUserView(View):
 
 	@method_decorator(login_required)
-	def get(self, request, username = '', password = ''):
+	def get(self, request, user_id = 0):
 
-		form = ProfileForm(request.user)
+		form = ProfileForm(instance = User.objects.active().get(id = user_id))
 		return render_to_response('profile_edit.html', context = RequestContext(request, locals()))
 
 	@method_decorator(csrf_protect)
-	def user(self, request, username = ''):
+	def post(self, request, user_id = 0):
 
-		users.objects.filter(username = username).update(**{
-			'username': request.POST['username'],
-			'email': request.POST['email'],
+		User.objects.filter(id = user_id).update(**{
+			'email_address': request.POST['email_address'],
 			'password': request.POST['password']
 		})
 
-		return redirect(reverse_lazy('view_profile', kwargs = { 'username': username }))
+		return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user_id }))
 
 edit = EditUserView.as_view()
