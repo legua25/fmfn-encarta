@@ -60,6 +60,7 @@ urlpatterns = [
 		]))
 
 	], namespace = 'accounts', app_name = 'apps.fmfn')),
+	
 	# User management
 	url(r'^users/', include([
 

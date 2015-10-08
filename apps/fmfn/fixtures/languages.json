@@ -1,0 +1,14 @@
+[
+	{
+		"pk": 1,
+		"model": "fmfn.Language",
+		"fields": { "name": "english" }
+	},
+	{
+		"pk": 2,
+		"model": "fmfn.Language",
+		"fields": {
+			"name": "spanish"
+		}
+	}
+]

@@ -77,6 +77,8 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	)
 	campus = ForeignKey('fmfn.Campus',
 		related_name = 'users',
+		null = True,
+		default = None,
 		verbose_name = _('campus')
 	)
 	grades = ManyToManyField('fmfn.SchoolGrade',
@@ -85,7 +87,8 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	)
 	role = ForeignKey('fmfn.Role',
 		related_name = 'members',
-		default = 1,
+		null = True,
+		default = None,
 	    verbose_name = _('user role')
 	)
 
@@ -110,9 +113,10 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 
 		def _belongs_recursive(role, target):
 
+			if role is None: return False
+
 			if role == target: return True
-			elif role.base is not None: return _belongs_recursive(role.base, target)
-			else: return False
+			return _belongs_recursive(role.base, target)
 
 		target = Role.objects.active().get(name = name, **kwargs)
 		return _belongs_recursive(self.role, target)

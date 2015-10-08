@@ -32,18 +32,14 @@ class LoginTest(TestCase):
 
 		# Create test users
 		User.objects.create_user(
-			username = 'test1@example.com',
-			email = 'test1@example.com',
+			email_address = 'test1@example.com',
 			password = 'asdfg123'
 		)
-
-		user = User.objects.create_user(
-			username = 'test2@example.com',
-			email = 'test2@example.com',
-			password = 'asdfg123'
+		User.objects.create_user(
+			email_address = 'test2@example.com',
+			password = 'asdfg123',
+			active = False
 		)
-		user.is_active = False
-		user.save()
 
 	def test_invalid_user(self):
 		""" Verifies the login view with invalid user credentials. In this alternative flow, the user is not validated,
@@ -124,15 +120,14 @@ class LoginTest(TestCase):
 
 		# The user is, indeed, the test user #1
 		user = response.wsgi_request.user
-		self.assertEqual(user.email, 'test1@example.com')
-		self.assertEqual(user.id, 1)
+		self.assertEqual(user.email_address, 'test1@example.com')
 	def test_already_logged_in(self):
 		""" Verifies the login view with an already authenticated user. This alternative flow should immediately redirect
 			the user to the main site. The redirection is logged under the "account control" category.
 		"""
 
 		# Test case: the logged in user can access the restricted "search" view
-		result = self.client.login(username = 'test1@example.com', password = 'asdfg123')
+		result = self.client.login(email_address = 'test1@example.com', password = 'asdfg123')
 		self.assertTrue(result)
 
 		response = self.client.get(reverse_lazy('accounts:login'), follow = True)
@@ -154,8 +149,7 @@ class LogoutTest(TestCase):
 
 		# Create test users
 		User.objects.create_user(
-			username = 'test1@example.com',
-			email = 'test1@example.com',
+			email_address = 'test1@example.com',
 			password = 'asdfg123'
 		)
 
@@ -166,7 +160,7 @@ class LogoutTest(TestCase):
 		"""
 
 		# Test case: a user logs out from the site
-		result = self.client.login(username = 'test1@example.com', email = 'test1@example.com', password = 'asdfg123')
+		result = self.client.login(email_address = 'test1@example.com', password = 'asdfg123')
 		self.assertTrue(result)
 
 		# Log the user out, then test aftermath
@@ -200,8 +194,7 @@ class RecoveryTest(TestCase):
 
 		# Create test users
 		self.user = User.objects.create_user(
-			username = 'test1@example.com',
-			email = 'test1@example.com',
+			email_address = 'test1@example.com',
 			password = 'asdfg123'
 		)
 
@@ -212,7 +205,7 @@ class RecoveryTest(TestCase):
 		"""
 
 		# Test case: the user is already logged in
-		result = self.client.login(username = 'test1@example.com', password = 'asdfg123')
+		result = self.client.login(email_address = 'test1@example.com', password = 'asdfg123')
 		self.assertTrue(result)
 
 		response = self.client.get(reverse_lazy('accounts:recover'), follow = True)
@@ -246,7 +239,7 @@ class RecoveryTest(TestCase):
 		"""
 
 		# Test case: invalid but possibly valid user data is used instead of the expected user
-		u = User(username = 'test2@example.com', email = 'test2@example.com')
+		u = User(email_address = 'test2@example.com')
 		u.set_password('asdfg123')
 		u.id = 3
 
@@ -268,7 +261,7 @@ class RecoveryTest(TestCase):
 		"""
 
 		# Test case: invalid but possibly valid user data is used instead of the expected user
-		u = User(username = 'test2@example.com', email = 'test2@example.com')
+		u = User(email_address = 'test2@example.com')
 		u.set_password('asdfg123')
 		u.id = 3
 
