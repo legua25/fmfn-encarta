@@ -7,8 +7,36 @@
 		<main id="content" class="row-fluid">
 			<div class="container-fluid">
 				<section class="col-xs-8 col-xs-offset-2">
-
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            {% if form.non_field_errors %}{% for error in form.non_field_errors %}
+                                <div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
+                                <form action="{% url 'content:create' %}" method="post" id ="material-form">
+                                    {% csrf_token %}
+                                    <div id="general" class="container-fluid">
+									<div class="col-xs-12 form-group">{{ form.title | add_class:'form-control' }}</div>
+                                    <div class="col-xs-12 form-group">{{ form.description | add_class:'form-control' }}</div>
+                                    <div class="col-xs-6 form-group">{{ form.content | add_class:'form-control' }}</div>
+                                    <div class="col-xs-6 form-group">{{ form.link | add_class:'form-control' }}</div>
+                                    <div class="col-xs-6 form-group">{{ form.suggested_ages | add_class:'form-control' }}</div>
+                                    <div class="col-xs-6 form-group">{{ form.types | add_class:'form-control' }}</div>
+                                    <div class="col-xs-6 form-group">{{ form.languages | add_class:'form-control' }}</div>
+                                    <div class="col-xs-6 form-group">{{ form.themes | add_class:'form-control' }}</div>
+                                    <div class="col-xs-6 form-group"><input type="submit"></div>
+								    </div>
+                                </form>
+                        </div>
+                    </div>
 				</section>
 			</div>
 		</main>
+
+        <script>
+        $(document).ready(function(){
+            $("#admin-lang").click(function(event){
+                event.preventDefault();
+
+            });
+        });
+    </script>
 	{% endblock content %}

@@ -24,7 +24,7 @@ class CreateMaterialView(View):
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
-	def post(self,request):
+	def post(self, request):
 
 		form = MaterialForm(request.POST)
 		if form.is_valid():
@@ -34,11 +34,11 @@ class CreateMaterialView(View):
 			material.user = request.user
 			material.save()
 
-			ActionLog.objects.log_content('Material "%s" created' % material.title, status = 201, user = request.user)
+			ActionLog.objects.log_content('Material "%s" created' % material.title, status = 200, user = request.user)
 			return redirect(reverse_lazy('index'))
 
 		ActionLog.objects.log_content('Failed to create material, validation error.', status = 401)
-		return render_to_response('content/',
+		return render_to_response('materials/create.html',
 			context = RequestContext(request, locals()),
 			status = 401
 		)

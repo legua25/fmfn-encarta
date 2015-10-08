@@ -6,20 +6,26 @@ from django.utils.http import urlsafe_base64_decode as base64_decode
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
-from apps.fmfn.forms import LoginForm, RecoveryForm
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseForbidden
 from django.utils.http import force_text
-from apps.fmfn.models import ActionLog
+from apps.fmfn.models import ActionLog, Language
 from django.views.generic import View
+from django.http import HttpResponse
+
+__all__ = [ 'tags_view', 'langs_view' ]
+
 
 class TagsView(View):
 
-	def get(self, request): pass
+	def get(self, request):pass
 
 	def put(self): pass
 
 	def post(self): pass
 
 	def delete(self): pass
+
+tags_view = TagsView.as_view()
+

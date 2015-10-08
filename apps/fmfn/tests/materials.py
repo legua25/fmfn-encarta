@@ -76,7 +76,7 @@ class CreateMaterialTest(TestCase):
 			'title': 'Matemáticas I',
 			'description': 'Descripción de material 1',
 			'link': 'http://www.google.com',
-			'user': User.objects.get(email_address = 'test1@example.com').id
+			'user': User.objects.get(email_address = 'test1@example.com')
 		}
 		response = self.client.post(reverse_lazy('content:create'), data = mock_data, follow = True)
 

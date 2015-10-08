@@ -30,18 +30,17 @@ urlpatterns = [
 	 	url(r'create/$', views.materials.create, name = 'create'),  # GET, PUT
 	 	url(r'^(?P<content_id>[\d]+)/', include([
 
-	 		url(r'^$', lambda request: HttpResponse(''), name = 'view'),  # GET
+	 		url(r'^$', lambda request, content_id = 0: HttpResponse(''), name = 'view'),  # GET
 	 		url(r'^edit/$', views.materials.edit, name = 'edit')  # GET, POST, DELETE
 
 	 	])),
-	# 	url(r'^tags/', include([
+	 	url(r'^tags/', include([
+			url(r'^$', views.tags.tags_view, name = 'list'),  # GET
+	 		url(r'^create/$', views.tags.tags_view, name = 'create'),  # PUT
+	 		url(r'^edit/$', views.tags.tags_view, name = 'edit')  # POST, DELETE
 
-	# 		url(r'^$', None, name = 'list'),  # GET
-	# 		url(r'^create/$', None, name = 'create'),  # PUT
-	# 		url(r'^edit/$', None, name = 'edit')  # POST, DELETE
+	 	], namespace = 'content-tags', app_name = 'fmfn'))
 
-	# 	], namespace = 'content-tags', app_name = 'fmfn'))
-	#
 	], namespace = 'content', app_name = 'apps.fmfn')),
 	
 	# Account management

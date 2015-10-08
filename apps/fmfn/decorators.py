@@ -38,4 +38,6 @@ def role_required(role, login_url = None, raise_exception = False):
 				if raise_exception: raise PermissionDenied
 				return False
 
+		return True
+
 	return user_passes_test(has_role, login_url = login_url)
