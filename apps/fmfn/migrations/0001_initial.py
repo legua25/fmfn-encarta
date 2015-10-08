@@ -109,8 +109,9 @@ class Migration(migrations.Migration):
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
                 ('title', models.CharField(max_length=128, verbose_name='title')),
                 ('content', models.FileField(upload_to=apps.fmfn.models.material.upload_to, null=True, verbose_name='content file', blank=True)),
-                ('link', models.URLField(null=True, verbose_name='content link', blank=True)),
-                ('description', models.CharField(max_length=1024, verbose_name='description')),
+                ('link', models.URLField(default='', null=True, verbose_name='content link', blank=True)),
+                ('description', models.CharField(max_length=1024, null=True, verbose_name='description', blank=True)),
+                ('languages', models.ManyToManyField(related_name='materials', verbose_name='material language', to='fmfn.Language', blank=True)),
             ],
             options={
                 'verbose_name': 'material',
@@ -195,11 +196,10 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
                 ('name', models.CharField(max_length=64, verbose_name='type name')),
-                ('materials', models.ManyToManyField(related_name='themes', verbose_name='tagged materials', to='fmfn.Material')),
             ],
             options={
-                'verbose_name': 'material theme',
-                'verbose_name_plural': 'material themes',
+                'verbose_name': 'material type',
+                'verbose_name_plural': 'material types',
             },
         ),
         migrations.CreateModel(
@@ -208,7 +208,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
                 ('name', models.CharField(max_length=64, verbose_name='type name')),
-                ('materials', models.ManyToManyField(related_name='types', verbose_name='tagged materials', to='fmfn.Material')),
             ],
             options={
                 'verbose_name': 'material type',
@@ -218,17 +217,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='material',
             name='suggested_ages',
-            field=models.ManyToManyField(related_name='materials', verbose_name='suggested ages', to='fmfn.SchoolGrade'),
+            field=models.ManyToManyField(related_name='materials', verbose_name='suggested ages', to='fmfn.SchoolGrade', blank=True),
+        ),
+        migrations.AddField(
+            model_name='material',
+            name='themes',
+            field=models.ManyToManyField(related_name='materials', verbose_name='material theme', to='fmfn.Theme', blank=True),
+        ),
+        migrations.AddField(
+            model_name='material',
+            name='types',
+            field=models.ManyToManyField(related_name='materials', verbose_name='material type', to='fmfn.Type', blank=True),
         ),
         migrations.AddField(
             model_name='material',
             name='user',
-            field=models.ForeignKey(related_name='materials', verbose_name='uploading user', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='language',
-            name='materials',
-            field=models.ManyToManyField(related_name='languages', verbose_name='tagged materials', to='fmfn.Material'),
+            field=models.ForeignKey(related_name='materials', verbose_name='uploading user', blank=True, to=settings.AUTH_USER_MODEL, null=True),
         ),
         migrations.AddField(
             model_name='comment',
@@ -243,7 +247,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='campus',
-            field=models.ForeignKey(related_name='users', verbose_name='campus', to='fmfn.Campus'),
+            field=models.ForeignKey(related_name='users', default=None, verbose_name='campus', to='fmfn.Campus', null=True),
         ),
         migrations.AddField(
             model_name='user',
@@ -258,7 +262,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='role',
-            field=models.ForeignKey(related_name='members', default=1, verbose_name='user role', to='fmfn.Role'),
+            field=models.ForeignKey(related_name='members', default=None, verbose_name='user role', to='fmfn.Role', null=True),
         ),
         migrations.AddField(
             model_name='user',

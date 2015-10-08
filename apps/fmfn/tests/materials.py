@@ -92,3 +92,4 @@ class MaterialTest(TestCase):
 		self.assertEqual(len(ActionLog.objects.active()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+
