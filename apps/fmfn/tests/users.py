@@ -67,6 +67,7 @@ class UsersTest(TestCase):
 		 	first_name = self.first_name,
 		 	father_family_name = self.last_name_father,
 			mother_family_name = self.last_name_mother,
+			role = Role.objects.get(id = 1),
 			campus = Campus.objects.active().filter(id = 1).get()
 		 )
 
@@ -78,6 +79,7 @@ class UsersTest(TestCase):
 		 	first_name = self.first_name_admin,
 		 	father_family_name = self.last_name_father_admin,
 			mother_family_name = self.last_name_mother_admin,
+			role = Role.objects.get(id = 4),
 			campus = Campus.objects.active().filter(id = 1).get()
 		 )
 			#grades = SchoolGrade.objects.active().filter(id__in = [ 1, 2 ]),
@@ -89,6 +91,7 @@ class UsersTest(TestCase):
 		 	first_name = self.first_name_other,
 		 	father_family_name = self.last_name_father_other,
 			mother_family_name = self.last_name_mother_other,
+			role = Role.objects.get(id = 1),
 			campus = Campus.objects.active().filter(id = 1).get()
 		 )
 
@@ -159,7 +162,7 @@ class UsersTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
 
 	def test_profiles_are_rejected_if_other_edited(self):
-		""" User profiles are modified correctly on demand if role is account manager or above"""
+		""" User profiles are rejected from edition if other role is not account manager or above"""
 
 		self.client.login(credentials = {
             'email_address': self.user_other.email_address,
@@ -199,22 +202,15 @@ class UsersTest(TestCase):
 	def test_profiles_are_correctly_deleted_admin(self):
 		""" User profiles are deleted correctly on demand if role is account manager or above"""
 
-		self.client.login(credentials = {
-            'email_address': self.user_admin.email_address,
-			'password': self.user_admin.password
-        })
+		self.client.login(email_address = self.email_admin, password = self.password_admin)
+		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
 
-		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
-			'is_active' : False,
-        })
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(response.redirect_chain[-1], 302)
-
-		self.user.refresh_from_db()
+		url, status = response.redirect_chain[-1]
+		self.assertEqual(status, 301)
 
 		#Check whether user has been correctly modified
-
-		self.assertEqual(self.user.is_active, False)
+		self.assertEqual(len(User.objects.active()), 2)
 
 		# The action should have been logged - check the action category (account control) and status code (200)
 
@@ -224,23 +220,13 @@ class UsersTest(TestCase):
 	def test_self_profile_deletion_is_rejected_if_self_deleted(self):
 		""" Self profile is modified correctly on demand if the user modified its own profile respecting the limitations on the fields"""
 
-		self.client.login(credentials = {
-            'email_address': self.user.email_address,
-			'password': self.user.password
-        })
+		self.client.login(email_address = self.email, password = self.email)
+		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
 
-		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
-			'is_active' : False
-        })
-
-		self.assertEqual(response.status_code, 401)
-		self.assertEqual(response.redirect_chain[-1], 302)
-
-		self.user.refresh_from_db()
+		self.assertEqual(response.status_code, 403)
 
 		#Check whether user has been correctly rejected from deletion:
-
-		self.assertEqual(self.user.is_active, True)
+		self.assertEqual(len(User.objects.active()), 3)
 
 		# The action should have been logged - check the action category (account control) and status code (401)
 
@@ -250,23 +236,13 @@ class UsersTest(TestCase):
 	def test_self_profile_deletion_rejected_if_other_deleted(self):
 		""" User profiles are rejected from deletion if other tried to delete it without required base role or above"""
 
-		self.client.login(credentials = {
-            'email_address': self.user_other.email_address,
-			'password': self.user_other.password
-        })
+		self.client.login(email_address = self.email_other, password = self.password_other)
+		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
 
-		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
-			'is_active' : False
-        })
+		self.assertEqual(response.status_code, 403)
 
-		self.assertEqual(response.status_code, 401)
-		self.assertEqual(response.redirect_chain[-1], 302)
-
-		self.user.refresh_from_db()
-
-		#Check whether user has been correctly rejected from deletion
-
-		self.assertEqual(self.user.is_active, True)
+		#Check whether user has been correctly rejected from deletion:
+		self.assertEqual(len(User.objects.active()), 3)
 
 		# The action should have been logged - check the action category (account control) and status code (401)
 

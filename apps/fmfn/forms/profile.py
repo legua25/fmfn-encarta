@@ -25,10 +25,10 @@ class UserEditForm(ModelForm):
 	def clean(self):
 
 		ModelForm.clean(self)
-		password, repeat = self.cleaned_data['password'], self.cleaned_data['repeat']
+		password, repeat = self.cleaned_data.get('password', None), self.cleaned_data.get('repeat', None)
 
-		if self.user is not None:
-			if constant_time_compare(password, repeat): self.user.set_password(password)
+		if password is not None:
+			if constant_time_compare(password, repeat): self.instance.set_password(password)
 			else: raise ValidationError(_('Passwords did not match'))
 
 		else: raise ValidationError(_('Invalid user account'))

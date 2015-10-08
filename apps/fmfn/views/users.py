@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse_lazy
 from apps.fmfn.decorators import role_required
 from django.contrib.auth import get_user_model
 from apps.fmfn.models import ActionLog, users
+from django.http import HttpResponseForbidden
 from django.views.generic import View
 from apps.fmfn.forms import UserCreationForm, UserEditForm
 
@@ -52,7 +53,7 @@ class EditUserView(View):
 
 		form = UserEditForm(instance = User.objects.active().get(id = user_id))
 		return render_to_response('profile_edit.html', context = RequestContext(request, locals()))
-
+	@method_decorator(login_required)
 	@method_decorator(csrf_protect)
 	def post(self, request, user_id = 0):
 
@@ -67,5 +68,19 @@ class EditUserView(View):
 			context = RequestContext(request, locals()),
 		    status = 401
 		)
+	@method_decorator(login_required)
+	@method_decorator(role_required('user manager'))
+	def delete(self, request, user_id = 0):
+
+		if user_id == request.user.id:
+
+			ActionLog.objects.log_account('Attempted to erase own account', status = 401, user = request.user)
+			return HttpResponseForbidden()
+
+		User.objects.active().filter(id = user_id).update(active = False)
+
+		ActionLog.objects.log_account('Deleted user "%s"' % user_id, user = request.user)
+		return redirect(reverse_lazy('index'), context = RequestContext(request, locals()))
+
 
 edit = EditUserView.as_view()
