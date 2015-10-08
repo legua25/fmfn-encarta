@@ -35,13 +35,11 @@ class LoginTest(TestCase):
 			email_address = 'test1@example.com',
 			password = 'asdfg123'
 		)
-
-		user = User.objects.create_user(
+		User.objects.create_user(
 			email_address = 'test2@example.com',
-			password = 'asdfg123'
+			password = 'asdfg123',
+			active = False
 		)
-		user.active = False
-		user.save()
 
 	def test_invalid_user(self):
 		""" Verifies the login view with invalid user credentials. In this alternative flow, the user is not validated,
@@ -123,7 +121,6 @@ class LoginTest(TestCase):
 		# The user is, indeed, the test user #1
 		user = response.wsgi_request.user
 		self.assertEqual(user.email_address, 'test1@example.com')
-		self.assertEqual(user.id, 1)
 	def test_already_logged_in(self):
 		""" Verifies the login view with an already authenticated user. This alternative flow should immediately redirect
 			the user to the main site. The redirection is logged under the "account control" category.
