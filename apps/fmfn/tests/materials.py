@@ -80,7 +80,7 @@ class CreateMaterialTest(TestCase):
 		}
 		response = self.client.post(reverse_lazy('content:create'), data = mock_data, follow = True)
 
-		# 302 status means the system redirected the user successfully
+		# 301 status means the system redirected the user successfully
 		self.assertEqual(response.status_code, 200)
 		url, status = response.redirect_chain[-1]
 		self.assertEqual(status, 301)
