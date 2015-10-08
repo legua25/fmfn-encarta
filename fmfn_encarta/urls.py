@@ -36,9 +36,9 @@ urlpatterns = [
 	 	])),
 	 	url(r'^tags/', include([
 
-	 		url(r'^$', None, name = 'list'),  # GET
-	 		url(r'^create/$', None, name = 'create'),  # PUT
-	 		url(r'^(?P<tag_id>[\d]+)/edit/$', None, name = 'edit')  # POST, DELETE
+	 		url(r'^$', views.tags.tags_view, name = 'list'),  # GET
+	 		url(r'^create/$', views.tags.tags_view, name = 'create'),  # PUT
+	 		url(r'^(?P<tag_id>[\d]+)/edit/$', views.tags.tags_view, name = 'edit')  # POST, DELETE
 
 	 	], namespace = 'content-tags', app_name = 'fmfn'))
 

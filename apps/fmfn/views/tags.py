@@ -67,7 +67,7 @@ class TagsView(View):
 		"""
 		if request.is_ajax():
 			tags = []
-			response_dict = {'type': None, 'data': []}
+			response_dict = {'version': '1.0.0', 'status': 200, 'type': None, 'data': []}
 			type = request.GET['type']
 
 			if type == 'theme':
@@ -89,8 +89,90 @@ class TagsView(View):
 
 			return response
 
-	def put(self, request):pass
+	def put(self, request):
 
-	def post(self, request): pass
+		if request.is_ajax():
+			response_dict = {'version': '1.0.0', 'status': 200, 'data': {}}
+			data = {}
+			type = request.PUT['type']
+			name = request.PUT['name']
 
-	def delete(self, request): pass
+			if type == 'theme':
+				data['type'] = 'theme'
+				tag = Theme.create(name=name)
+				tag.save()
+			elif type == 'type':
+				data['type'] = 'type'
+				tag = Type.create(name=name)
+				tag.save()
+			elif type == 'language':
+				data['language'] = 'language'
+				tag = Language.create(name=name)
+				tag.save()
+
+			data['id'] = tag.id
+			data['name'] = tag.name
+
+			response = JsonResponse(response_dict)
+
+			return response
+
+	def post(self, request, tag_id):
+
+		if request.is_ajax():
+			response_dict = {'version': '1.0.0', 'status': 200, 'data': {}}
+			data = {}
+			type = request.POST['type']
+			name = request.POST['data']['name']
+
+			if type == 'theme':
+				data['type'] = 'theme'
+				tag = Theme.objects.filter(id=tag_id)
+				tag.update(name=name)
+				tag.save()
+			elif type == 'type':
+				data['type'] = 'type'
+				tag = Theme.objects.filter(id=tag_id)
+				tag.update(name=name)
+				tag.save()
+			elif type == 'language':
+				data['language'] = 'language'
+				tag = Theme.objects.filter(id=tag_id)
+				tag.update(name=name)
+				tag.save()
+
+			data['id'] = tag.id
+			data['name'] = tag.name
+
+			response = JsonResponse(response_dict)
+
+			return response
+
+	def delete(self, request, tag_id):
+
+		if request.is_ajax():
+			response_dict = {'version': '1.0.0', 'status': 401}
+			data = {}
+			type = request.POST['type']
+
+			if type == 'theme':
+				data['type'] = 'theme'
+				tag = Theme.objects.filter(id=tag_id)
+				tag.update(active=False)
+				tag.save()
+			elif type == 'type':
+				data['type'] = 'type'
+				tag = Theme.objects.filter(id=tag_id)
+				tag.update(active=False)
+				tag.save()
+			elif type == 'language':
+				data['language'] = 'language'
+				tag = Theme.objects.filter(id=tag_id)
+				tag.update(active=False)
+				tag.save()
+
+			response = JsonResponse(response_dict)
+
+			return response
+
+tags_view = TagsView.as_view()
