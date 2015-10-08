@@ -76,6 +76,7 @@ urlpatterns = [
 	#  	]))
 
 	], namespace = 'users', app_name = 'apps.fmfn')),
+
 	# Management
 	# url(r'^manage/', include([
 
