@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from apps.fmfn.models import ActionLog, users
 from django.http import HttpResponseForbidden
 from django.views.generic import View
-from apps.fmfn.forms import UserCreationForm, UserEditForm
+from apps.fmfn.forms import UserCreationForm, UserEditForm, AdminProfileForm
 
 __all__ = [ 'create', 'edit' ]
 User = get_user_model()
@@ -50,14 +50,21 @@ class EditUserView(View):
 
 	@method_decorator(login_required)
 	def get(self, request, user_id = 0):
+		request_user = User.objects.get(id = request.user_id)
+		if request_user.role_id == 3 or request_user.role_id == 4:
+			form = AdminProfileForm(request.POST, instance = User.objects.get(id = user_id))
+		else:
+			form = UserEditForm(request.POST, instance = User.objects.active.get(id = user_id))
 
-		form = UserEditForm(instance = User.objects.active().get(id = user_id))
 		return render_to_response('profile_edit.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(csrf_protect)
 	def post(self, request, user_id = 0):
-
-		form = UserEditForm(request.POST, instance = User.objects.get(id = user_id))
+		request_user = User.objects.get(id = request.user.id)
+		if request_user.role_id == 3 or request_user.role_id == 4:
+			form = AdminProfileForm(request.POST, instance = User.objects.get(id = user_id))
+		else:
+			form = UserEditForm(request.POST, instance = User.objects.get(id = user_id))
 
 		if form.is_valid():
 

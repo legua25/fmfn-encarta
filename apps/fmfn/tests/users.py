@@ -100,22 +100,25 @@ class UsersTest(TestCase):
 	def test_profiles_are_correctly_edited_admin(self):
 		""" User profiles are modified correctly on demand if role is account manager or above"""
 
-		self.client.login(credentials = {
-            'email_address': self.user_admin.email_address,
-			'password': self.user_admin.password
-        })
+		self.client.login(email_address = self.email_admin, password = self.password_admin)
 
 		#Submit changes using post:
 		new_first_name = 'John'
-		new_last_name = 'Albert'
+		new_last_name_father = 'Albert'
+		new_last_name_mother = 'Einstein'
 		new_email = 'jalb@mail.com'
-
 
 		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
 			'first_name' : new_first_name,
-			'last_name' : new_last_name,
-			'email' : new_email,
+			'father_family_name' : new_last_name_father,
+			'mother_family_name' : self.user.mother_family_name,
+			'email_address' : new_email,
+			'grades' : self.user.grades,
+			'campus' : self.user.campus,
+			'role' : self.user.role
         })
+			#'photo' : self.user.photo,
+
 		self.assertEqual(response.status_code, 200)
 		self.assertEqual(response.redirect_chain[-1], 302)
 
@@ -124,13 +127,15 @@ class UsersTest(TestCase):
 		#Check whether user has been correctly modified
 
 		self.assertEqual(self.user.first_name, new_first_name)
-		self.assertEqual(self.user.lastname, new_last_name)
+		self.assertEqual(self.user.lastname, new_last_name_father)
 		self.assertEqual(self.user.email_address, new_email)
 
 		# The action should have been logged - check the action category (account control) and status code (200)
 
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+
+		self.client.logout()
 
 	def test_self_profile_is_modified_correctly_if_self_edited(self):
 		""" Self profile is modified correctly on demand if the user modified its own profile respecting the limitations on the fields"""
@@ -160,6 +165,8 @@ class UsersTest(TestCase):
 
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+
+		self.client.logout()
 
 	def test_profiles_are_rejected_if_other_edited(self):
 		""" User profiles are rejected from edition if other role is not account manager or above"""
@@ -197,6 +204,8 @@ class UsersTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
 
+		self.client.logout()
+
 # Delete:
 
 	def test_profiles_are_correctly_deleted_admin(self):
@@ -217,12 +226,13 @@ class UsersTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
 
+		self.client.logout()
+
 	def test_self_profile_deletion_is_rejected_if_self_deleted(self):
-		""" Self profile is modified correctly on demand if the user modified its own profile respecting the limitations on the fields"""
+		""" Self profile is rejected from deletion if the user requested its own profile deleted and does not have the minimum required role"""
 
-		self.client.login(email_address = self.email, password = self.email)
+		self.client.login(email_address = self.email, password = self.password)
 		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
-
 		self.assertEqual(response.status_code, 403)
 
 		#Check whether user has been correctly rejected from deletion:
@@ -232,6 +242,8 @@ class UsersTest(TestCase):
 
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
+
+		self.client.logout()
 
 	def test_self_profile_deletion_rejected_if_other_deleted(self):
 		""" User profiles are rejected from deletion if other tried to delete it without required base role or above"""
@@ -248,4 +260,6 @@ class UsersTest(TestCase):
 
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
+
+		self.client.logout()
 
