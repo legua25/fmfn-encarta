@@ -11,7 +11,7 @@ from apps.fmfn.models import ActionLog
 from django.views.generic import View
 from apps.fmfn.forms import UserCreationForm
 
-__all__ = [ 'create' ]
+__all__ = [ 'create', 'edit' ]
 User = get_user_model()
 
 class CreateUserView(View):
@@ -41,3 +41,24 @@ class CreateUserView(View):
 		return render_to_response('users/create.html', context = RequestContext(request, locals()))
 
 create = CreateUserView.as_view()
+
+class EditUserView(View):
+
+	@method_decorator(login_required)
+	def get(self, request, username = '', password = ''):
+
+		form = ProfileForm(request.user)
+		return render_to_response('profile_edit.html', context = RequestContext(request, locals()))
+
+	@method_decorator(csrf_protect)
+	def user(self, request, username = ''):
+
+		users.objects.filter(username = username).update(**{
+			'username': request.POST['username'],
+			'email': request.POST['email'],
+			'password': request.POST['password']
+		})
+
+		return redirect(reverse_lazy('view_profile', kwargs = { 'username': username }))
+
+edit = EditUserView.as_view()

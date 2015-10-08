@@ -1,11 +1,12 @@
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
-from apps.fmfn.models import SchoolGrade
-from apps.fmfn.models import Campus
-from apps.fmfn.models import Role
-from apps.fmfn.models import ActionLog
+from apps.fmfn.models import (
+	SchoolGrade,
+	Campus,
+	Role,
+	ActionLog
+)
 
 User = get_user_model()
 
@@ -19,7 +20,7 @@ class UsersTest(TestCase):
 	first_name_admin = 'Erick'
 	last_name_father_admin = 'Garcia'
 	last_name_mother_admin = 'Garcia'
-	email_admin = 'erick.garcia.garcia@gmail.com'
+	email_admin = 'test_admin@gmail.com'
 	password_admin = 'test_9s92hs'
 
 	# Self Professor User Data
@@ -69,6 +70,7 @@ class UsersTest(TestCase):
 			campus = Campus.objects.active().filter(id = 1).get()
 		 )
 
+		#self.assertEqual(self.user.password, self.user.email_address)
 
 		self.user_admin = User.objects.create_user(
 		 	email_address = self.email_admin,
@@ -89,7 +91,6 @@ class UsersTest(TestCase):
 			mother_family_name = self.last_name_mother_other,
 			campus = Campus.objects.active().filter(id = 1).get()
 		 )
-
 
 # Edit:
 

@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.forms import *
 from apps.fmfn.models import users
 
-__all__ = ['ProfileForm']
+__all__ = ['ProfileForm', 'AdminProfileForm']
 
 class ProfileForm(ModelForm):
 
@@ -17,11 +17,21 @@ class ProfileForm(ModelForm):
 		Form.__init__(self, *args, **kwargs)
 		self._user = user
 
-class ProfileForm(ModelForm):
+class AdminProfileForm(ModelForm):
 
 	class _Meta(object):
 		model = users
-		fields = ('first_name', 'last_name_father', 'last_name_mother','email_address', 'password')
+		fields = (
+			'first_name',
+			'last_name_father',
+			'last_name_mother',
+			'email_address',
+			'password',
+			'photo',
+			'grades',
+			'campus_id',
+			'role_id'
+		)
 
 	def __init__(self, user, *args, **kwargs):
 

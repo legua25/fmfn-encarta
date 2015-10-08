@@ -73,11 +73,15 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 		spec_id = 'users:photo:spec',
 		autoconvert = True,
 		processors = [ ResizeToFill(240, 240) ],
+		null = True,
+		blank = True,
 		options = { 'quality': 80 },
 		verbose_name = _('user photo')
 	)
 	campus = ForeignKey('fmfn.Campus',
 		related_name = 'users',
+		null = True,
+		blank = True,
 		verbose_name = _('campus')
 	)
 	grades = ManyToManyField('fmfn.SchoolGrade',
@@ -86,6 +90,8 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	)
 	role = ForeignKey('fmfn.Role',
 		related_name = 'members',
+		null = True,
+		blank = True,
 		default = 1,
 	    verbose_name = _('user role')
 	)

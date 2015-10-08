@@ -34,7 +34,7 @@ class LoginForm(Form):
 	def clean(self):
 
 		email, password = self.cleaned_data['email_address'], self.cleaned_data['password']
-		user = authenticate(password = password)
+		user = authenticate(email_address = email, password = password)
 
 		if user is not None:
 
@@ -118,7 +118,7 @@ class RecoveryForm(Form):
 		mail = EmailMultiAlternatives(
 			subject = _('Password recovery - Next steps'),
 			body = body,
-			to = [ user.email ]
+			to = [ user.email_address ]
 		)
 		mail.attach_alternative(body, 'text/html')
 		mail.send(True)
