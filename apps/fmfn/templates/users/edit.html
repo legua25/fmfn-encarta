@@ -17,7 +17,7 @@
 							<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
                                 <form action="{% url 'users:edit' user_id %}" method="post">
                                     {% csrf_token %}
-                                    {{ form }}
+                                    {{ form.as_p }}
                                     <button type="submit">Submit</button>
                                 </form>
                         </div>

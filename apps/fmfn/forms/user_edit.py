@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.utils.crypto import constant_time_compare
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth import get_user_model
 from django.forms import *
 

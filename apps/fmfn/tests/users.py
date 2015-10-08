@@ -56,6 +56,7 @@ class UsersTest(TestCase):
 				* The professor tries to delete its own account
 				* Other professor tries to delete other account
 		"""
+		# TODO: Enforce once tests pass without it and retry
 		# Configure the test client
 		self.client = Client(enforce_csrf_checks = False)
 
@@ -71,7 +72,7 @@ class UsersTest(TestCase):
 			campus = Campus.objects.active().filter(id = 1).get()
 		 )
 
-		#self.assertEqual(self.user.password, self.user.email_address)
+		self.assertEqual(self.user.email_address, self.email)
 
 		self.user_admin = User.objects.create_user(
 		 	email_address = self.email_admin,
@@ -82,8 +83,8 @@ class UsersTest(TestCase):
 			role = Role.objects.get(id = 4),
 			campus = Campus.objects.active().filter(id = 1).get()
 		 )
-			#grades = SchoolGrade.objects.active().filter(id__in = [ 1, 2 ]),
-			#role = Role.objects.active().filter(id = 1)
+
+		self.assertEqual(self.user_admin.email_address, self.email_admin)
 
 		self.user_other = User.objects.create_user(
 		 	email_address = self.email_other,
@@ -95,12 +96,18 @@ class UsersTest(TestCase):
 			campus = Campus.objects.active().filter(id = 1).get()
 		 )
 
+		self.assertEqual(self.user_other.email_address, self.email_other)
+
+
 # Edit:
 
 	def test_profiles_are_correctly_edited_admin(self):
 		""" User profiles are modified correctly on demand if role is account manager or above"""
 
-		self.client.login(email_address = self.email_admin, password = self.password_admin)
+		self.assertEqual(self.client.login(
+            email_address = self.email_admin,
+			password = self.password_admin
+        ), True)
 
 		#Submit changes using post:
 		new_first_name = 'John'
@@ -140,10 +147,10 @@ class UsersTest(TestCase):
 	def test_self_profile_is_modified_correctly_if_self_edited(self):
 		""" Self profile is modified correctly on demand if the user modified its own profile respecting the limitations on the fields"""
 
-		self.client.login(credentials = {
-            'email_address': self.user.email_address,
-			'password': self.user.password
-        })
+		self.assertEqual(self.client.login(
+            email_address = self.user.email_address,
+			password = self.user.password
+        ), True)
 
 		#Submit changes using post:
 		new_password = 'test_saldkjsal'
@@ -171,10 +178,10 @@ class UsersTest(TestCase):
 	def test_profiles_are_rejected_if_other_edited(self):
 		""" User profiles are rejected from edition if other role is not account manager or above"""
 
-		self.client.login(credentials = {
-            'email_address': self.user_other.email_address,
-			'password': self.user_other.password
-        })
+		self.assertEqual(self.client.login(
+            email_address = self.user_other.email_address,
+			password = self.user_other.password
+        ), True)
 
 		#Submit changes using post:
 		new_first_name = 'John'
@@ -212,7 +219,11 @@ class UsersTest(TestCase):
 	def test_profiles_are_correctly_deleted_admin(self):
 		""" User profiles are deleted correctly on demand if role is account manager or above"""
 
-		self.client.login(email_address = self.email_admin, password = self.password_admin)
+		self.assertEqual(self.client.login(
+            email_address = self.email_admin,
+			password = self.password_admin
+        ), True)
+
 		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
 
 		self.assertEqual(response.status_code, 200)
@@ -232,7 +243,11 @@ class UsersTest(TestCase):
 	def test_self_profile_deletion_is_rejected_if_self_deleted(self):
 		""" Self profile is rejected from deletion if the user requested its own profile deleted and does not have the minimum required role"""
 
-		self.client.login(email_address = self.email, password = self.password)
+		self.assertEqual(self.client.login(
+            email_address = self.user.email_address,
+			password = self.user.password
+        ), True)
+
 		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
 		self.assertEqual(response.status_code, 403)
 
@@ -249,7 +264,11 @@ class UsersTest(TestCase):
 	def test_self_profile_deletion_rejected_if_other_deleted(self):
 		""" User profiles are rejected from deletion if other tried to delete it without required base role or above"""
 
-		self.client.login(email_address = self.email_other, password = self.password_other)
+		self.assertEqual(self.client.login(
+            email_address = self.user_other.email_address,
+			password = self.user_other.password
+        ), True)
+
 		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
 
 		self.assertEqual(response.status_code, 403)
