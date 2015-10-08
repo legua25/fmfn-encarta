@@ -119,9 +119,10 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 
 		def _belongs_recursive(role, target):
 
+			if role is None: return False
+
 			if role == target: return True
-			elif role.base is not None: return _belongs_recursive(role.base, target)
-			else: return False
+			return _belongs_recursive(role.base, target)
 
 		target = Role.objects.active().get(name = name, **kwargs)
 		return _belongs_recursive(self.role, target)

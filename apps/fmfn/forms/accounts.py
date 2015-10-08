@@ -84,7 +84,7 @@ class RecoveryForm(Form):
 			# Locate the user account by email address
 			email = self.cleaned_data['email_address']
 
-			try: user = User.objects.get(email = email)
+			try: user = User.objects.get(email_address = email)
 			except User.DoesNotExist: raise ValidationError(_('Provided email address does not exist in our records'))
 			else:
 
