@@ -9,36 +9,28 @@ __all__ = [ 'MaterialForm' ]
 
 class MaterialForm(Form):
 
-	def clean(self):
-
-		Form.clean(self)
-
-		if 'link' in self.cleaned_data and 'content' in self.cleaned_data:
-			raise ValidationError(_('Cannot set a document and an external link in the same material'))
-		elif 'link' not in self.cleaned_data and 'content' in self.cleaned_data:
-			raise ValidationError(_('Cannot upload an empty material'))
-
 	class Meta(object):
 
 		model = Material
-
 		fields = [
 			'title',
+			'description',
 			'content',
 			'link',
-			'description',
 			'suggested_ages',
 			'types',
 			'themes',
-			'languages'
+			'languages',
+			'user'
 		]
 		widgets = {
-			'title': TextInput(attrs = { 'placeholder': _('1) Escribe el titulo') }),
-			'link': URLInput(attrs = { 'placeholder': _('Content link (optional)') }),
-			'description': Textarea(attrs = { 'placeholder': _('2) Escribe la descripción') }),
+			'title': TextInput(attrs = { 'placeholder': _('Material title') }),
+			'description': Textarea(attrs = { 'placeholder': _('Brief description on this material'), 'rows': 6, 'style': 'resize: none;' }),
+			'content': ClearableFileInput(attrs = { 'placeholder': _('Documentation') }),
+			'link': URLInput(attrs = { 'placeholder': _('Link to reference') }),
 			'suggested_ages': CheckboxSelectMultiple(),
-			'types': CheckboxSelectMultiple(),
-			'themes': CheckboxSelectMultiple(),
-			'languages':CheckboxSelectMultiple()
+			'types': CheckboxSelectMultiple(),  # TODO: This will be replaced for Select2's implementation later
+			'themes': CheckboxSelectMultiple(),  # TODO: This will be replaced for Select2's implementation later
+			'languages': CheckboxSelectMultiple(),  # TODO: This will be replaced for Select2's implementation later
+			'user': HiddenInput()
 		}
-

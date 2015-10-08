@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load i18n widget_tweaks %}
 
-	{% block title %}{% trans 'Register Material' %}{% endblock title %}
+	{% block title %}{% trans 'Edit Material' %}{% endblock title %}
 	{% block content %}
 		<nav class="navbar navbar-static-top navbar-inverse"></nav>
 		<main id="content" class="row-fluid">
@@ -9,11 +9,17 @@
 				<section class="col-md-8 col-md-offset-2">
                     <div class="panel panel-default">
 						<div class="panel-heading">
-							<h3>{% trans 'Register Material' %}</h3>
+							<div class="container-fluid">
+								<h3>{% trans 'Edit Material' %}</h3>
+								<p class="col-xs-10">
+									{% blocktrans with material.title as title %}Use this form to edit the contents of
+									material titled "{{ title }}" or delete it.{% endblocktrans %}
+								</p>
+							</div>
 						</div>
 	                    <div class="panel-body">{% if form.non_field_errors %}{% for error in form.non_field_errors %}
 							<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
-							<form action="{% url 'content:create' %}" method="post">
+							<form action="{% url 'content:edit' content_id %}" method="post">
 								{% csrf_token %}
 								<div id="general" class="container-fluid">
 									<h4>{% trans 'General information' %}</h4>
@@ -92,8 +98,9 @@
 									</div>
 								</div>
 								<hr />
-								<div class="col-xs-10 col-xs-offset-1 col-md-2 col-md-offset-5">
+								<div class="text-center">
 									<button class="btn btn-primary" type="submit">{% trans 'Submit' %}</button>
+									<button class="btn btn-danger input-sm col-xs-offset-1" type="button">{% trans 'Delete' %}</button>
 								</div>
 							</form>
 						</div>

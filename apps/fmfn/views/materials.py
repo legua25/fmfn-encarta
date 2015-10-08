@@ -10,38 +10,37 @@ from apps.fmfn.models import Material, ActionLog
 from apps.fmfn.forms import MaterialForm
 from apps.fmfn.decorators import role_required
 from django.views.generic import View
+from django.http import JsonResponse
 
 __all__ = [ 'create', 'edit' ]
 
 class CreateMaterialView(View):
 
-	#@method_decorator(login_required)
-	#@method_decorator(role_required('content manager'))
+	@method_decorator(login_required)
+	@method_decorator(role_required('content manager'))
 	def get(self, request):
 
-		form = MaterialForm()
+		form = MaterialForm(initial = { 'user': request.user })
 		return render_to_response('materials/create.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
+	@method_decorator(csrf_protect)
 	def post(self, request):
 
-		form = MaterialForm(request.POST)
+		form = MaterialForm(request.POST, request.FILES, initial = { 'user': request.user })
 		if form.is_valid():
 
-			# TODO: Adjust material creation - use ModelForm instead
 			material = form.instance
-			material.user = request.user
-			material.save()
+			form.save()
+			ActionLog.objects.log_content('Registered new material entry (id: %s)' % material.id, user = request.user, status = 201)
 
-			ActionLog.objects.log_content('Material "%s" created' % material.title, status = 201, user = request.user)
-			return redirect(reverse_lazy('index'))
+			return redirect(reverse_lazy('content:view', kwargs = { 'content_id': material.id }))
 
-		ActionLog.objects.log_content('Failed to create material, validation error.', status = 401)
+		ActionLog.objects.log_content('Failed to register new material entry', user = request.user, status = 401)
 		return render_to_response('materials/create.html',
 			context = RequestContext(request, locals()),
 			status = 401
 		)
-		# TODO: Redirect user to form (again) and present errors
 
 create = CreateMaterialView.as_view()
 
@@ -51,33 +50,45 @@ class EditMaterialView(View):
 	@method_decorator(role_required('content manager'))
 	def get(self, request, content_id = 0):
 
-		ActionLog.objects.log_content('Requested material "%s"' % content_id, status = 200, user = request.user)
+		material = Material.objects.get(id = content_id)
+		form = MaterialForm(instance = material, initial = { 'user': request.user })
 
-		form = MaterialForm(request.POST, instance = Material.objects.active().get(id = content_id))
-		return render_to_response('materials/create.html', context = RequestContext(request, locals()))
+		return render_to_response('materials/edit.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
+	@method_decorator(csrf_protect)
 	def post(self, request, content_id = 0):
 
-		form = MaterialForm(request.POST, instance = Material.objects.active().get(id = content_id))
+		material = Material.objects.get(id = content_id)
+		form = MaterialForm(request.POST, request.FILES,
+			instance = material,
+			initial = { 'user': request.user }
+		)
 
 		if form.is_valid():
 
 			material = form.instance
-			material.save()
+			form.save()
+			ActionLog.objects.log_content('Edited material entry (id: %s)' % material.id, user = request.user, status = 201)
 
-			ActionLog.objects.log_content('Edited material "%s"' % content_id, status = 200, user = request.user)
-			return redirect(reverse_lazy('content:view', kwargs = { 'content_id': content_id }))
+			return redirect(reverse_lazy('content:view', kwargs = { 'content_id': material.id }))
 
-		ActionLog.objects.log_content('Failed to edit material "%s"' % content_id, status = 401, user = request.user)
-		return render_to_response('materials/create.html', context = RequestContext(request, locals()))
+		ActionLog.objects.log_content('Attempted to edit material entry (id: %s)' % material.id, user = request.user, status = 401)
+		return render_to_response('materials/edit.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
+	@method_decorator(csrf_protect)
 	def delete(self, request, content_id = 0):
 
-		Material.objects.active().filter(id = content_id).update(active = False)
+		material = Material.objects.get(id = content_id)
 
-		ActionLog.objects.log_content('Deleted material "%s"' % content_id, status = 200, user = request.user)
-		return redirect(reverse_lazy('search'))
+		ActionLog.objects.log_content('Deleted material (id: %s)' % material.id, status = 200, user = request.user)
+		material.delete()
+
+		return JsonResponse(data = {
+			'version': '1.0.0',
+			'status': 200,
+			'material': { 'id': material.id, 'status': 'delete' }
+		}, content_type = 'application/json')
 
 edit = EditMaterialView.as_view()
