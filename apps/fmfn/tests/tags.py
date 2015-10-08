@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.core.urlresolvers import reverse_lazy
 from django.test import TestCase, Client
+from django.contrib.auth import get_user_model
 from apps.fmfn.models import (
 	Type,
 	Theme,
@@ -9,6 +10,8 @@ from apps.fmfn.models import (
 	ActionLog
 )
 import json
+
+User = get_user_model()
 
 class TagsTest(TestCase):
 	""" Defines a generic test for a material tag
@@ -18,6 +21,13 @@ class TagsTest(TestCase):
 	def setUp(self):
 		#Create an instance of Client that will receive XML Requests
 		self.client = Client(HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+		User.objects.create_user(
+			email_address = 'test1@example.com',
+			password = 'asdfg123'
+		)
+
+		self.client.login(email_address = 'test2@example.com', password = 'asdfg123')
 
 	class Meta(object):
 		abstract = True

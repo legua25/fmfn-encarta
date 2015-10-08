@@ -25,24 +25,24 @@ urlpatterns = [
 
 	])),
 	# Content management
-	# url(r'^content/', include([
+	 url(r'^content/', include([
 
-	# 	url(r'create/$', None, name = 'create'),  # GET, PUT
-	# 	url(r'^(?P<content_id>[\d]+)/', include([
+	 	url(r'create/$', None, name = 'create'),  # GET, PUT
+	 	url(r'^(?P<content_id>[\d]+)/', include([
 
-	# 		url(r'^$', None, name = 'view'),  # GET
-	# 		url(r'^edit/$', None, name = 'edit')  # GET, POST, DELETE
+	 		url(r'^$', None, name = 'view'),  # GET
+	 		url(r'^edit/$', None, name = 'edit')  # GET, POST, DELETE
 
-	# 	])),
-	# 	url(r'^tags/', include([
+	 	])),
+	 	url(r'^tags/', include([
 
-	# 		url(r'^$', None, name = 'list'),  # GET
-	# 		url(r'^create/$', None, name = 'create'),  # PUT
-	# 		url(r'^edit/$', None, name = 'edit')  # POST, DELETE
+	 		url(r'^$', None, name = 'list'),  # GET
+	 		url(r'^create/$', None, name = 'create'),  # PUT
+	 		url(r'^(?P<tag_id>[\d]+)/edit/$', None, name = 'edit')  # POST, DELETE
 
-	# 	], namespace = 'content-tags', app_name = 'fmfn'))
+	 	], namespace = 'content-tags', app_name = 'fmfn'))
 
-	# ], namespace = 'content', app_name = 'apps.fmfn')),
+	 ], namespace = 'content', app_name = 'apps.fmfn')),
 	# Account management
 	url(r'^accounts/', include([
 
