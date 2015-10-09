@@ -22,8 +22,6 @@ class MaterialTag(Model):
 		verbose_name = _('type name')
 	)
 
-	materials = None
-
 	objects = TagManager()
 	def __str__(self):
 		return self.name

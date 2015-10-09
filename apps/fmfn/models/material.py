@@ -24,8 +24,6 @@ class Material(Model):
 
 	title = CharField(
 		max_length = 128,
-		null = False,
-		blank = False,
 		verbose_name = _('title')
 	)
 	content = FileField(
@@ -37,13 +35,10 @@ class Material(Model):
 	link = URLField(
 		null = True,
 		blank = True,
-		default = '',
 		verbose_name = _('content link')
 	)
 	description = CharField(
 		max_length = 1024,
-		null = True,
-		blank = True,
 		verbose_name = _('description')
 	)
 	suggested_ages = ManyToManyField('fmfn.SchoolGrade',
@@ -52,14 +47,14 @@ class Material(Model):
 		verbose_name = _('suggested ages')
 	)
 	types = ManyToManyField('fmfn.Type',
-	    related_name= 'materials',
+	    related_name = 'materials',
         blank = True,
-	    verbose_name= _('material type')
+	    verbose_name = _('material type')
 	)
 	themes =  ManyToManyField('fmfn.Theme',
-	    related_name= 'materials',
+	    related_name = 'materials',
         blank = True,
-	    verbose_name= _('material theme'),
+	    verbose_name = _('material theme'),
 	)
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = 'materials',
@@ -72,6 +67,7 @@ class Material(Model):
         blank = True,
 	    verbose_name= _('material language'),
 	)
+
 	def __str__(self): return self.title
 
 	class Meta(object):
