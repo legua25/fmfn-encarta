@@ -58,7 +58,35 @@ class MaterialTest(TestCase):
 		self.assertEqual(len(ActionLog.objects.active()), 1)
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 201)
-	def test_material_edited(self): pass
+
+	def test_material_edited(self):
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		test_material = Material.objects.create(
+								title = 'Material a editar',
+		                        description = 'Descripcion de prueba',
+		                        link = 'http://blah.com'
+		)
+		test_data = {
+			'title': 'Material editado',
+			'description': 'Descripción editada',
+			'link': 'http://www.hola.com'
+		}
+		response = self.client.post(reverse_lazy('content:edit', kwargs= {'content_id':test_material.id}), data=test_data, follow=True)
+		test_material = Material.objects.get(id=1)
+		# Check the response status sequence
+		self.assertEqual(response.status_code, 200)
+		url, status = response.redirect_chain[-1]
+		self.assertEqual(status, 302)
+		# Check the action log
+		self.assertTrue(bool(ActionLog.objects.active()))
+		self.assertEqual(len(ActionLog.objects.active()), 1)
+		self.assertEqual(test_data['title'],test_material.title)
+		self.assertEqual(test_data['description'],test_material.description)
+		self.assertEqual(test_data['link'],test_material.link)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200 )
+
 	def test_material_deleted(self):
 
 		material = Material.objects.create(
