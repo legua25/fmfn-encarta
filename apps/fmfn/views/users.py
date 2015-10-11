@@ -55,7 +55,7 @@ class EditUserView(View):
 		user_target = User.objects.get(id = user_id)
 
 		# Is the user role an admin?
-		if request.user.role_id == 3 or request.user.role_id == 4:
+		if request.user.belongs_to('user manager'):
 			form = AdminUserEditForm(instance = user_target)
 			return render_to_response('users/edit.html', context = RequestContext(request, locals()))
 		else:
@@ -76,8 +76,7 @@ class EditUserView(View):
 	def post(self, request, user_id = 0):
 		ActionLog.objects.log_debug('EditUser:POST', status = 200, user = request.user)
 
-		form = AdminUserEditForm(request.POST, instance = User.objects.get(id = user_id))
-
+		form = AdminUserEditForm(request.POST, request.FILES, instance = User.objects.get(id = user_id))
 		if form.is_valid():
 
 			form.instance.save()
@@ -99,10 +98,10 @@ class EditUserView(View):
 			ActionLog.objects.log_users('Attempted to patch other account', status = 401, user = request.user)
 			return HttpResponseForbidden('Forbidden Patch Operation Requested')
 
-		form = UserEditForm(request.POST, instance = User.objects.get(id = user_id))
+		form = UserEditForm(request.POST, request.FILES, instance = User.objects.get(id = user_id))
 
 		if form.is_valid():
-			ActionLog.objects.log_users('User ' + user_id + ' account modified', status = 200, user = request.user)
+			ActionLog.objects.log_users('User %s account modified' % user_id, status = 200, user = request.user)
 			form.instance.save()
 			return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user_id }))
 
@@ -117,6 +116,8 @@ class EditUserView(View):
 	@method_decorator(role_required('user manager'))
 	def delete(self, request, user_id = 0):
 		ActionLog.objects.log_debug('EditUser:delete', status = 200, user = request.user)
+
+		# User shouldn't be able to delete their own account
 		if user_id == request.user.id:
 
 			ActionLog.objects.log_account('Attempted to erase own account', status = 401, user = request.user)

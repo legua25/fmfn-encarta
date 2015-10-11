@@ -9,34 +9,19 @@ from apps.fmfn.models import (
 	ActionLog
 )
 
+__all__ = [
+	'AdminEditTest',
+	'ExternalEditTest',
+	'SelfEditTest'
+]
 User = get_user_model()
 
-__all__ = [
-	'UsersTest'
-]
+class _EditUserTest(TestCase):
 
-class UsersTest(TestCase):
-
-	# Admin User Data
-	first_name_admin = 'Erick'
-	last_name_father_admin = 'Garcia'
-	last_name_mother_admin = 'Garcia'
-	email_admin = 'test_admin@gmail.com'
-	password_admin = 'test_9s92hs'
-
-	# Self Professor User Data
-	first_name = 'Daniel'
-	last_name_father = 'Blanco'
-	last_name_mother = 'Castillo'
-	email = 'daniel.blanco.castillo@gmail.com'
-	password = 'test_jk1ls'
-
-	# Other Professor User Data
-	first_name_other = 'Pepe'
-	last_name_father_other = 'Troll'
-	last_name_mother_other = 'Del Campo'
-	email_other = 'ptdco@gmail.com'
-	password_other = 'test_kswmc'
+	email_address = ''
+	password = ''
+	role = Role.objects.get(id = 1)
+	should_pass = False
 
 	fixtures = [
 		'grades',
@@ -45,235 +30,79 @@ class UsersTest(TestCase):
 	]
 
 	def setUp(self):
-		"""Tests associated with the "Edit User" view. Both the normal flow and all alternative flows are tested, regarding the
-		following scenarios:
 
-			Edit:
-				* The admin posts user data changes
-				* The professor posts data changes to its own account
-				* Other professor posts data changes to other account
-			Delete:
-				* The admin deletes a user
-				* The professor tries to delete its own account
-				* Other professor tries to delete other account
-		"""
-		# TODO: Enforce once tests pass without it and retry
-		# Configure the test client
 		self.client = Client(enforce_csrf_checks = False)
 
-		# Create the users required for the tests
-
-		self.user = User.objects.create_user(
-		 	email_address = self.email,
-		 	password = self.password,
-		 	first_name = self.first_name,
-		 	father_family_name = self.last_name_father,
-			mother_family_name = self.last_name_mother,
+		user = User.objects.create_user(
+			email_address = 'test@example.com',
+			password = 'asdfg',
 			role = Role.objects.get(id = 1),
-			campus = Campus.objects.active().filter(id = 1).get()
-		 )
+			campus = Campus.objects.get(id = 1)
+		)
+		self.user_id = user.id
 
-		self.assertEqual(self.user.email_address, self.email)
+		if self.email_address != 'test@example.com' and self.password != 'asdfg':
 
-		self.user_admin = User.objects.create_user(
-		 	email_address = self.email_admin,
-		 	password = self.password_admin,
-		 	first_name = self.first_name_admin,
-		 	father_family_name = self.last_name_father_admin,
-			mother_family_name = self.last_name_mother_admin,
-			role = Role.objects.get(id = 4),
-			campus = Campus.objects.active().filter(id = 1).get()
-		 )
+			self.user = User.objects.create_user(
+				email_address = self.email_address,
+				password = self.password,
+				role = self.role,
+				campus = Campus.objects.get(id = 1)
+			)
+		else: self.user = user
 
-		self.assertEqual(self.user_admin.email_address, self.email_admin)
+	def test_edit_profile(self):
 
-		self.user_other = User.objects.create_user(
-		 	email_address = self.email_other,
-		 	password = self.password_other,
-		 	first_name = self.first_name_other,
-		 	father_family_name = self.last_name_father_other,
-			mother_family_name = self.last_name_mother_other,
-			role = Role.objects.get(id = 1),
-			campus = Campus.objects.active().filter(id = 1).get()
-		 )
+		self.client.login(email_address = self.email_address, password = self.password)
+		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user_id }), data = {
+			'first_name': 'John',
+			'father_family_name': 'Doe'
+		}, follow = True)
 
-		self.assertEqual(self.user_other.email_address, self.email_other)
+		if self.should_pass:
 
+			self.assertEqual(response.status_code, 200)
+			url, status = response.redirect_chain[-1]
+			self.assertIn(status, [ 301, 302 ])
 
-# Edit:
+			user = User.objects.get(id = self.user_id)
+			self.assertEqual(user.first_name, 'John')
+			self.assertEqual(user.father_family_name, 'Doe')
 
-	def test_edit_user_admin(self):
-		""" User profiles are modified correctly on demand if role is account manager or above"""
+			self.assertTrue(bool(ActionLog.objects.active()))
 
-		self.login_user(self.email_admin, self.password_admin)
+			log = ActionLog.objects.latest('action_date')
+			self.assertEqual(log.category, 1)
+			self.assertEqual(log.status, 200)
+		else:
 
-		#Submit changes using post:
-		new_first_name = 'John'
-		new_last_name_father = 'Albert'
-		new_last_name_mother = 'Einstein'
-		new_email = 'jalb@mail.com'
+			self.assertEqual(response.status_code, 401)
 
-		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
-			'first_name' : new_first_name,
-			'father_family_name' : new_last_name_father,
-			'mother_family_name' : self.user.mother_family_name,
-			'email_address' : new_email,
-			'photo' : None,
-			'grades' : self.user.grades,
-			'campus' : self.user.campus,
-			'role' : self.user.role
-        })
+			user = User.objects.get(id = self.user_id)
+			self.assertNotEqual(user.first_name, 'John')
+			self.assertNotEqual(user.father_family_name, 'Doe')
 
-		self.assertEqual(response.status_code, 200)
-		self.assertEqual(response.redirect_chain[-1], 302)
+			self.assertTrue(bool(ActionLog.objects.active()))
 
-		self.user.refresh_from_db()
+			log = ActionLog.objects.latest('action_date')
+			self.assertEqual(log.category, 1)
+			self.assertEqual(log.status, 401)
 
-		#Check whether user has been correctly modified
+class AdminEditTest(_EditUserTest):
 
-		self.assertEqual(self.user.first_name, new_first_name)
-		self.assertEqual(self.user.lastname, new_last_name_father)
-		self.assertEqual(self.user.email_address, new_email)
+	email_address = 'test_admin@example.com'
+	password = 'asdfg'
+	role = Role.objects.get(id = 3)
+	should_pass = True
 
-		# The action should have been logged - check the action category (account control) and status code (200)
+class ExternalEditTest(_EditUserTest):
 
-		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
-		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+	email_address = 'test2@example.com'
+	password = 'asdfgh'
+	should_pass = False
 
-		self.client.logout()
+class SelfEditTest(_EditUserTest):
 
-	def test_edit_user_self(self):
-		""" Self profile is modified correctly on demand if the user modified its own profile respecting the limitations on the fields"""
-
-		self.login_user(self.email, self.password)
-
-		#Submit changes using post:
-		new_password = 'test_saldkjsal'
-
-		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
-			'password' : new_password,
-			'repeat' : new_password
-        })
-
-		self.assertEqual(response.status_code, 200)
-		self.assertEqual(response.redirect_chain[-1], 302)
-
-		self.user.refresh_from_db()
-
-		#Check whether user has been correctly modified
-
-		self.assertEqual(self.user.check_password(new_password), True)
-
-		# The action should have been logged - check the action category (account control) and status code (200)
-
-		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
-		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
-
-		self.client.logout()
-
-	def test_edit_user_other_cant(self):
-		""" User profiles are rejected from edition if other role is not account manager or above"""
-
-		self.login_user(self.email_other, self.password_other)
-
-		#Submit changes using post:
-		new_first_name = 'John'
-		new_last_name = 'Albert'
-		new_email = 'jalb@mail.com'
-
-		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
-			'first_name' : new_first_name,
-			'last_name' : new_last_name,
-			'email' : new_email,
-			'campus': self.user.campus,
-			'role': self.user.role
-        }, follow= True)
-
-		self.assertEqual(response.status_code, 401)
-		self.assertEqual(response.redirect_chain[-1], 302)
-
-		self.user.refresh_from_db()
-
-		#Check whether user has not been modified
-
-		self.assertEqual(self.user.first_name, self.first_name)
-		self.assertEqual(self.user.mother_family_name, self.last_name_mother_admin)
-		self.assertEqual(self.user.email_address, self.email)
-
-		# The action should have been logged - check the action category (account control) and status code (401)
-
-		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
-		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
-
-		self.client.logout()
-
-# Delete:
-
-	def test_delete_user_admin(self):
-		""" User profiles are deleted correctly on demand if role is account manager or above"""
-
-		self.login_user(self.email_admin, self.password_admin)
-
-		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
-
-		self.assertEqual(response.status_code, 200)
-		url, status = response.redirect_chain[-1]
-		self.assertEqual(status, 301)
-
-		#Check whether user has been correctly modified
-		self.assertEqual(len(User.objects.active()), 2)
-
-		# The action should have been logged - check the action category (account control) and status code (200)
-
-		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
-		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
-
-		self.client.logout()
-
-	def test_delete_user_self_cant(self):
-		""" Self profile is rejected from deletion if the user requested its own profile deleted and does not have the minimum required role"""
-
-		self.login_user(self.email, self.password)
-
-		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
-
-		self.assertEqual(response.status_code, 403)
-
-		#Check whether user has been correctly rejected from deletion:
-		self.assertEqual(len(User.objects.active()), 3)
-
-		# The action should have been logged - check the action category (account control) and status code (401)
-
-		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
-		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
-
-		self.client.logout()
-
-	def test_delete_user_other_cant(self):
-		""" User profiles are rejected from deletion if other tried to delete it without required base role or above"""
-
-		self.login_user(self.email_other, self.password_other)
-
-		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
-
-		self.assertEqual(response.status_code, 403)
-
-		#Check whether user has been correctly rejected from deletion:
-		self.assertEqual(len(User.objects.active()), 3)
-
-		# The action should have been logged - check the action category (account control) and status code (401)
-
-		self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
-		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
-
-		self.client.logout()
-
-
-	def login_user(self, target_email, target_password):
-
-		self.assertEqual(auth.get_user(self.client).is_anonymous(), True)
-
-		self.assertEqual(self.client.login(
-            email_address = target_email,
-			password = target_password
-        ), True)
+	email_address = 'test@example.com',
+	password = 'asdfg'
+	should_pass = True

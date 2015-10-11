@@ -73,7 +73,7 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 		autoconvert = True,
 		processors = [ ResizeToFill(240, 240) ],
 		options = { 'quality': 80 },
-		verbose_name = _('user photo')
+		verbose_name = _('user photo (JPEG)')
 	)
 	campus = ForeignKey('fmfn.Campus',
 		related_name = 'users',
