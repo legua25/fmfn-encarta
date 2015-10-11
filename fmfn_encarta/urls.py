@@ -24,6 +24,7 @@ urlpatterns = [
 		]))
 
 	])),
+
 	# Content management
 	 url(r'^content/', include([
 
@@ -33,16 +34,19 @@ urlpatterns = [
 	 		url(r'^$', lambda request, content_id = 0: HttpResponse(''), name = 'view'),  # GET
 	 		url(r'^edit/$', views.materials.edit, name = 'edit')  # GET, POST, DELETE
 
-	 	])),
-	 	url(r'^tags/', include([
-			
-	 		url(r'^$', views.tags.tags, name = 'list'),  # GET
-	 		url(r'^create/$', views.tags.tags, name = 'create'),  # PUT
-	 		url(r'^(?P<tag_type>type|theme|language)/(?P<tag_id>[\d]+)/edit/$', views.tags.tags, name = 'edit')  # POST, DELETE
-
-	 	], namespace = 'content-tags', app_name = 'fmfn'))
+	 	]))
 
 	 ], namespace = 'content', app_name = 'apps.fmfn')),
+
+	# Tags
+	url(r'^tags/', include([
+
+        url(r'^$', views.tags.tags, name = 'list'),  # GET
+        url(r'^create/$', views.tags.tags, name = 'create', kwargs = { 'action': 'create' }),  # POST
+        url(r'^(?P<tag_type>type|theme|language)/(?P<tag_id>[\d]+)/edit/$', views.tags.tags, name = 'edit', kwargs = { 'action': 'edit' })  # POST, DELETE
+
+    ], namespace = 'tags', app_name = 'fmfn')),
+
 	# Account management
 	url(r'^accounts/', include([
 
