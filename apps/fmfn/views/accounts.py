@@ -33,8 +33,9 @@ class LoginView(View):
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():
 
+			redirect_url = request.GET.get('next', reverse_lazy('index'))
 			ActionLog.objects.log_account('User redirected since already logged in', user = request.user, status = 302)
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		# Create the login form and render the template
 		form = LoginForm()
@@ -45,8 +46,9 @@ class LoginView(View):
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():
 
+			redirect_url = request.GET.get('next', reverse_lazy('index'))
 			ActionLog.objects.log_account('User redirected since already logged in', user = request.user, status = 302)
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		form = LoginForm(request.POST)
 		if form.is_valid():
@@ -78,8 +80,9 @@ class LogoutView(View):
 		ActionLog.objects.log_account('User logged out from site', user = user)
 
 		# Proceed to log out the user
+		redirect_url = request.GET.get('next', reverse_lazy('accounts:login'))
 		logout_from_site(request)
-		return redirect(reverse_lazy('accounts:login'))
+		return redirect(redirect_url)
 
 logout = LogoutView.as_view()
 
@@ -90,8 +93,9 @@ class RecoverView(View):
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():
 
+			redirect_url = request.GET.get('next', reverse_lazy('index'))
 			ActionLog.objects.log_account('User redirected since already logged in', user = request.user, status = 302)
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		# This view is based on recovery stage. There are two stages: "recover" and "reset".
 			# In "recover", the user account is identified and a next steps mail is sent to the user's email address
@@ -128,8 +132,9 @@ class RecoverView(View):
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():
 
+			redirect_url = request.GET.get('next', reverse_lazy('index'))
 			ActionLog.objects.log_account('User redirected since already logged in', user = request.user, status = 302)
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		if stage == 'recover':
 
