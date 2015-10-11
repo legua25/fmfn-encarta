@@ -41,9 +41,16 @@ class _TagTest(TestCase):
 			campus = Campus.objects.get(id = 1)
 		)
 
+	def _action_log_tests(self, log_count, status):
+
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 1))
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 4)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, status)
+
 	def test_create_tag(self):
 
 		tag_count = len(self.tag_class.objects.active())
+		log_count = len(ActionLog.objects.active())
 		self.assertEqual(tag_count, 0)
 
 		# Test case: a tag creation request arrives
@@ -58,8 +65,13 @@ class _TagTest(TestCase):
 
 		# Check material count
 		self.assertEqual(len(self.tag_class.objects.active()), (tag_count + 1))
+
+		# Check action log
+		self._action_log_tests(log_count, 201)
+
 	def test_list_tags(self):
 
+		log_count = len(ActionLog.objects.active())
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
 		response = self.client.get(reverse_lazy('tags:list'), data = {
 			'type': self.tag_name,
@@ -67,8 +79,12 @@ class _TagTest(TestCase):
 
 		# Check status code
 		self.assertEqual(response.status_code, 200)
+
+		# Check action log
+		self._action_log_tests(log_count, 200)
 	def test_list_filtered_tags(self):
 
+		log_count = len(ActionLog.objects.active())
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
 		response = self.client.get(reverse_lazy('tags:list'), data = {
 			'type': self.tag_name,
@@ -77,8 +93,12 @@ class _TagTest(TestCase):
 
 		# Check status code
 		self.assertEqual(response.status_code, 200)
+
+		# Check action log
+		self._action_log_tests(log_count, 200)
 	def test_edit_tag(self):
 
+		log_count = len(ActionLog.objects.active())
 		tag = self.tag_class.objects.create(name = 'test')
 
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
@@ -91,9 +111,13 @@ class _TagTest(TestCase):
 
 		# Check tag changes
 		self.assertEqual(len(self.tag_class.objects.filter(name = 'test1')), 1)
+
+		# Check action log
+		self._action_log_tests(log_count, 201)
 	def test_delete_tag(self):
 
 		tag = self.tag_class.objects.create(name = 'test')
+		log_count = len(ActionLog.objects.active())
 		tag_count = len(self.tag_class.objects.active())
 
 		# Test case: a tag creation request arrives
@@ -105,6 +129,10 @@ class _TagTest(TestCase):
 
 		# Check material count
 		self.assertEqual(len(self.tag_class.objects.active()), (tag_count - 1))
+
+		# Check action log
+		self._action_log_tests(log_count, 200)
+
 class TypeTagTest(_TagTest):
 	tag_class = Type
 class ThemeTagTest(_TagTest):
