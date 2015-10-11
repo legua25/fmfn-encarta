@@ -80,7 +80,7 @@ class UserEditForm(ModelForm):
 
 	class Meta(object):
 		model = User
-		fields = [ 'email_address' ]
+		fields = [ 'photo' ]
 
 class AdminUserEditForm(ModelForm):
 
@@ -105,6 +105,7 @@ class AdminUserEditForm(ModelForm):
 			else: raise ValidationError(_('Passwords did not match'))
 
 		else: raise ValidationError(_('Invalid user account'))
+
 
 	class Meta(object):
 		model = User

@@ -14,14 +14,10 @@
 						</div>
 						<div class="panel-body">{% if form.non_field_errors %}{% for error in form.non_field_errors %}
 							<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
-                                <form action="{% url 'users:edit' user_id %}" method="post">
+                                <form action="{% url 'users:edit' user_id %}" method="patch">
                                     {% csrf_token %}
                                     {{ form.as_p }}
                                     <button type="submit">Submit</button>
-                                </form>
-                                 <form action="{% url 'users:edit' user_id %}" method="delete">
-                                    {% csrf_token %}
-                                    <button type="submit">Delete user</button>
                                 </form>
                         </div>
 					</div>

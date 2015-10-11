@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth import get_user_model
+from django.contrib import auth
 from apps.fmfn.models import (
 	SchoolGrade,
 	Campus,
@@ -101,13 +102,10 @@ class UsersTest(TestCase):
 
 # Edit:
 
-	def test_profiles_are_correctly_edited_admin(self):
+	def test_edit_user_admin(self):
 		""" User profiles are modified correctly on demand if role is account manager or above"""
 
-		self.assertEqual(self.client.login(
-            email_address = self.email_admin,
-			password = self.password_admin
-        ), True)
+		self.login_user(self.email_admin, self.password_admin)
 
 		#Submit changes using post:
 		new_first_name = 'John'
@@ -144,19 +142,17 @@ class UsersTest(TestCase):
 
 		self.client.logout()
 
-	def test_self_profile_is_modified_correctly_if_self_edited(self):
+	def test_edit_user_self(self):
 		""" Self profile is modified correctly on demand if the user modified its own profile respecting the limitations on the fields"""
 
-		self.assertEqual(self.client.login(
-            email_address = self.user.email_address,
-			password = self.user.password
-        ), True)
+		self.login_user(self.email, self.password)
 
 		#Submit changes using post:
 		new_password = 'test_saldkjsal'
 
 		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), data = {
-			'password' : new_password
+			'password' : new_password,
+			'repeat' : new_password
         })
 
 		self.assertEqual(response.status_code, 200)
@@ -175,13 +171,10 @@ class UsersTest(TestCase):
 
 		self.client.logout()
 
-	def test_profiles_are_rejected_if_other_edited(self):
+	def test_edit_user_other_cant(self):
 		""" User profiles are rejected from edition if other role is not account manager or above"""
 
-		self.assertEqual(self.client.login(
-            email_address = self.user_other.email_address,
-			password = self.user_other.password
-        ), True)
+		self.login_user(self.email_other, self.password_other)
 
 		#Submit changes using post:
 		new_first_name = 'John'
@@ -194,7 +187,7 @@ class UsersTest(TestCase):
 			'email' : new_email,
 			'campus': self.user.campus,
 			'role': self.user.role
-        })
+        }, follow= True)
 
 		self.assertEqual(response.status_code, 401)
 		self.assertEqual(response.redirect_chain[-1], 302)
@@ -216,13 +209,10 @@ class UsersTest(TestCase):
 
 # Delete:
 
-	def test_profiles_are_correctly_deleted_admin(self):
+	def test_delete_user_admin(self):
 		""" User profiles are deleted correctly on demand if role is account manager or above"""
 
-		self.assertEqual(self.client.login(
-            email_address = self.email_admin,
-			password = self.password_admin
-        ), True)
+		self.login_user(self.email_admin, self.password_admin)
 
 		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
 
@@ -240,15 +230,13 @@ class UsersTest(TestCase):
 
 		self.client.logout()
 
-	def test_self_profile_deletion_is_rejected_if_self_deleted(self):
+	def test_delete_user_self_cant(self):
 		""" Self profile is rejected from deletion if the user requested its own profile deleted and does not have the minimum required role"""
 
-		self.assertEqual(self.client.login(
-            email_address = self.user.email_address,
-			password = self.user.password
-        ), True)
+		self.login_user(self.email, self.password)
 
 		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
+
 		self.assertEqual(response.status_code, 403)
 
 		#Check whether user has been correctly rejected from deletion:
@@ -261,13 +249,10 @@ class UsersTest(TestCase):
 
 		self.client.logout()
 
-	def test_self_profile_deletion_rejected_if_other_deleted(self):
+	def test_delete_user_other_cant(self):
 		""" User profiles are rejected from deletion if other tried to delete it without required base role or above"""
 
-		self.assertEqual(self.client.login(
-            email_address = self.user_other.email_address,
-			password = self.user_other.password
-        ), True)
+		self.login_user(self.email_other, self.password_other)
 
 		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user.id }), follow = True)
 
@@ -283,3 +268,12 @@ class UsersTest(TestCase):
 
 		self.client.logout()
 
+
+	def login_user(self, target_email, target_password):
+
+		self.assertEqual(auth.get_user(self.client).is_anonymous(), True)
+
+		self.assertEqual(self.client.login(
+            email_address = target_email,
+			password = target_password
+        ), True)
