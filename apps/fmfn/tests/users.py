@@ -39,12 +39,8 @@ class _EditUserTest(TestCase):
 			role = Role.objects.get(id = 1),
 			campus = Campus.objects.get(id = 1)
 		)
-		print('%s: created 1: %s, %s' % (self.__class__.__name__,user.email_address, 'asdfg'))
-
 		self.user_id = user.id
 
-		#Specific Test user: Admin, External
-		print('%s, check 2.0: %s, %s' % (self.__class__.__name__, self.email_address, self.password))
 		if self.email_address != 'test@example.com':
 
 			self.user = User.objects.create_user(
@@ -53,7 +49,6 @@ class _EditUserTest(TestCase):
 				role = self.role,
 				campus = Campus.objects.get(id = 1)
 			)
-			print('%s, created 2: %s, %s' % (self.__class__.__name__, self.email_address, self.password))
 		else: self.user = user
 
 	def test_edit_profile(self):
@@ -70,10 +65,18 @@ class _EditUserTest(TestCase):
 		self.assertTrue(login_result)
 
 		user_target = User.objects.get(id = self.user_id)
+		print('%s: user_target %s, %s, %s' % (
+			self.__class__.__name__,
+			user_target.email_address,
+			type(user_target.campus),
+			type(user_target.role)
+			)
+		)
 		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user_id }), data = {
 			'first_name': 'John',
 			'mother_family_name': user_target.mother_family_name,
 			'father_family_name': 'Doe',
+			'email_address': user_target.email_address,
 			'role': user_target.role,
 			'campus': user_target.campus,
 			'password': self.password,
