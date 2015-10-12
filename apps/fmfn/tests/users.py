@@ -58,16 +58,24 @@ class _EditUserTest(TestCase):
 
 	def test_edit_profile(self):
 
+		login_result = self.client.login(email_address = self.email_address, password = self.password)
+
 		print('%s: log in %s, %s, %s' % (
 			self.__class__.__name__,
 			self.email_address,
 			self.password,
-			self.client.login(email_address = self.email_address, password = self.password))
+			login_result
+			)
 		)
+		self.assertTrue(login_result)
 
+		user_target = User.objects.get(id = self.user_id)
 		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user_id }), data = {
 			'first_name': 'John',
+			'mother_family_name': user_target.mother_family_name,
 			'father_family_name': 'Doe',
+			'role': user_target.role,
+			'campus': user_target.campus,
 			'password': self.password,
 			'repeat': self.password
 		}, follow = True)
@@ -75,6 +83,9 @@ class _EditUserTest(TestCase):
 		if self.should_pass:
 
 			self.assertEqual(response.status_code, 200)
+
+			# Get Last Redirect:
+			self.assertGreater(len(response.redirect_chain), 0)
 			url, status = response.redirect_chain[-1]
 			self.assertIn(status, [ 301, 302 ])
 
@@ -99,7 +110,7 @@ class _EditUserTest(TestCase):
 
 			log = ActionLog.objects.latest('action_date')
 			self.assertEqual(log.category, 1)
-			self.assertEqual(log.status, 401)
+			self.assertIn(log.status, [401, 403])
 
 class AdminEditTest(_EditUserTest):
 
