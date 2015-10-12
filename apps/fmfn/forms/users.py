@@ -9,7 +9,11 @@ from django.forms import *
 from imagekit.forms import ProcessedImageField as ImageField
 from django.forms import ModelForm as Form
 
-__all__ = ['UserCreationForm', 'UserEditForm', 'AdminUserEditForm', 'UserVisualizationForm']
+__all__ = [
+	'UserCreationForm',
+	'BasicEditForm',
+	'AdminEditForm'
+]
 User = get_user_model()
 
 class UserCreationForm(Form):
@@ -25,9 +29,9 @@ class UserCreationForm(Form):
 		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
 	)
 
-	def clear(self):
+	def clean(self):
 
-		Form.clear(self)
+		Form.clean(self)
 
 		password, repeat = self.cleaned_data['password'], self.cleaned_data['repeat']
 		if not constant_time_compare(password, repeat): raise ValidationError('Passwords do not match')
@@ -54,7 +58,7 @@ class UserCreationForm(Form):
 			'role': RadioSelect()
 		}
 
-class UserEditForm(ModelForm):
+class UserEditForm(Form):
 
 	password = CharField(
 		max_length = 128,
@@ -67,93 +71,55 @@ class UserEditForm(ModelForm):
 		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
 	)
 
+	is_managed = False
+
 	def clean(self):
 
-		ModelForm.clean(self)
-		password, repeat = self.cleaned_data.get('password', None), self.cleaned_data.get('repeat', None)
+		Form.clean(self)
 
-		if password is not None:
-			if constant_time_compare(password, repeat): self.instance.set_password(password)
-			else: raise ValidationError(_('Passwords did not match'))
-
-		else: raise ValidationError(_('No password given.'))
+		password, repeat = self.cleaned_data['password'], self.cleaned_data['repeat']
+		if not constant_time_compare(password, repeat): raise ValidationError('Passwords do not match')
 
 	class Meta(object):
+
+		model = User
+		fields = []
+class BasicEditForm(UserEditForm):
+
+	class Meta(object):
+
 		model = User
 		fields = [ 'photo' ]
+class AdminEditForm(UserEditForm):
 
-class AdminUserEditForm(ModelForm):
-
-	password = CharField(
-		max_length = 128,
-		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Password') })
+	role = ModelChoiceField(Role.objects.active(),
+	    empty_label = None,
+	    required = False,
+	    widget = RadioSelect()
 	)
-	repeat = CharField(
-		max_length = 128,
-		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
+	grades = ModelMultipleChoiceField(SchoolGrade.objects.active(),
+		required = False,
+		widget = CheckboxSelectMultiple()
 	)
 
-	def clean(self):
-
-		ModelForm.clean(self)
-		password, repeat = self.cleaned_data.get('password', None), self.cleaned_data.get('repeat', None)
-
-		if password is not None:
-			if constant_time_compare(password, repeat): self.instance.set_password(password)
-			else: raise ValidationError(_('Passwords did not match'))
-
-		else: raise ValidationError(_('No password given'))
-
+	is_managed = True
 
 	class Meta(object):
+
 		model = User
 		fields = [
+			'photo',
+			'email_address',
 			'first_name',
 			'father_family_name',
 			'mother_family_name',
-			'email_address',
-			'photo',
-			'grades',
 			'campus',
-			'role'
+			'role',
+			'grades'
 		]
-
-class UserVisualizationForm(ModelForm):
-
-	password = CharField(
-		max_length = 128,
-		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Password') })
-	)
-	repeat = CharField(
-		max_length = 128,
-		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
-	)
-
-	def clean(self):
-
-		ModelForm.clean(self)
-		password, repeat = self.cleaned_data.get('password', None), self.cleaned_data.get('repeat', None)
-
-		if password is not None:
-			if constant_time_compare(password, repeat): self.instance.set_password(password)
-			else: raise ValidationError(_('Passwords did not match'))
-
-		else: raise ValidationError(_('No password given'))
-
-
-	class Meta(object):
-		model = User
-		fields = [
-			'first_name',
-			'father_family_name',
-			'mother_family_name',
-			'email_address',
-			'photo',
-			'grades',
-			'campus',
-			'role'
-		]
+		widgets = {
+			'email_address': EmailInput(attrs = { 'placeholder': _('Email address') }),
+			'first_name': TextInput(attrs = { 'placeholder': _('First name') }),
+			'father_family_name': TextInput(attrs = { 'placeholder': _('Father\'s family name') }),
+			'mother_family_name': TextInput(attrs = { 'placeholder': _('Mother\'s family name') })
+		}

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from apps.fmfn.forms import UserCreationForm, BasicEditForm, AdminEditForm
 from django.shortcuts import render_to_response, redirect, RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
@@ -7,12 +8,15 @@ from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 from apps.fmfn.decorators import role_required
 from django.contrib.auth import get_user_model
-from apps.fmfn.models import ActionLog, users
 from django.http import HttpResponseForbidden
+from apps.fmfn.models import ActionLog
 from django.views.generic import View
-from apps.fmfn.forms import UserCreationForm, UserEditForm, AdminUserEditForm, UserVisualizationForm
+from django.http import JsonResponse
 
-__all__ = [ 'create', 'edit' , 'view']
+__all__ = [
+	'create',
+	'edit'
+]
 User = get_user_model()
 
 class CreateUserView(View):
@@ -28,7 +32,7 @@ class CreateUserView(View):
 	def post(self, request):
 
 		# Create and validate the form
-		form = UserCreationForm(request.POST)
+		form = UserCreationForm(request.POST, request.FILES)
 		if form.is_valid():
 
 			# Retrieve the user, set the password, and create him/her
@@ -49,112 +53,65 @@ create = CreateUserView.as_view()
 class EditUserView(View):
 
 	@method_decorator(login_required)
+	@method_decorator(role_required('teacher'))
 	def get(self, request, user_id = 0):
 
-		ActionLog.objects.log_debug('EditUser:GET', status = 200, user = request.user)
-		user_target = User.objects.get(id = user_id)
-
-		# Is the user role an admin?
-		if request.user.belongs_to('user manager'):
-			form = AdminUserEditForm(instance = user_target)
-			return render_to_response('users/edit.html', context = RequestContext(request, locals()))
+		try: u = User.objects.get(id = user_id)
+		except User.DoesNotExist: return HttpResponseForbidden()
 		else:
-			# Is an non admin user role trying to edit someone else?
-			if user_target.id != request.user.role_id:
-				ActionLog.objects.log_users('Attempted to view/edit other user account without enough privileges', status = 401, user = request.user)
-				return HttpResponseForbidden('Forbidden Get Operation Requested')
 
-			# Display a bounded form with the user details
+			if request.user.belongs_to('user manager'): form = AdminEditForm(instance = u)
 			else:
-				form = UserEditForm(instance = user_target)
-				return render_to_response('users/patch.html', context = RequestContext(request, locals()))
 
+				if request.user.id == user_id: form = BasicEditForm(instance = u)
+				else: return HttpResponseForbidden()
 
-	@method_decorator(login_required)
+		return render_to_response('users/edit.html', context = RequestContext(request, locals()))
 	@method_decorator(csrf_protect)
-	@method_decorator(role_required('user manager'))
+	@method_decorator(login_required)
+	@method_decorator(role_required('teacher'))
 	def post(self, request, user_id = 0):
 
-		#Redirect petition to its correct predefined behavior:
-		method = request.POST.get('_method', 'post')
-
-		if method == 'POST':
-			ActionLog.objects.log_debug('EditUser:POST', status = 200, user = request.user)
-		if method == 'PATCH':
-			ActionLog.objects.log_debug('EditUser:Patch', status = 200, user = request.user)
-			return self.patch(request, user_id)
-		elif method == 'DELETE':
-			return self.delete(request, user_id)
+		try: u = User.objects.get(id = user_id)
+		except User.DoesNotExist: return HttpResponseForbidden()
 		else:
-			ActionLog.objects.log_debug('EditUser unknown method: %s' % method, status = 403, user = request.user)
-			return HttpResponseForbidden()
 
-		#Post default behaviour
-		form = AdminUserEditForm(request.POST, request.FILES, instance = User.objects.get(id = user_id))
+			if request.user.belongs_to('user manager'): form = AdminEditForm(request.POST, request.FILES, instance = u)
+			else:
+
+				if request.user.id == user_id: form = BasicEditForm(request.POST, request.FILES, instance = u)
+				else: return HttpResponseForbidden()
+
+		# Validate the form and, if valid, save the user
 		if form.is_valid():
 
-			form.instance.save()
-			return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user_id }))
+			user = form.instance
+			ActionLog.objects.log_account('Edited user profile information (email address: %s)' % user.email_address, user = request.user)
+			form.save()
 
-		# form is not valid, show form errors:
-		ActionLog.objects.log_users('Invalid form submitted at user post', status = 401, user = request.user)
-		return render_to_response('users/edit.html',
-			context = RequestContext(request, locals()),
-		    status = 401
-		)
+			return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user.id }))
 
-	@method_decorator(login_required)
-	@method_decorator(csrf_protect)
-	def patch(self, request, user_id = 0):
-		ActionLog.objects.log_debug('EditUser:PATCH', status = 200, user = request.user)
-
-		if request.user.id != user_id:
-			ActionLog.objects.log_users('Attempted to patch other account', status = 401, user = request.user)
-			return HttpResponseForbidden('Forbidden Patch Operation Requested')
-
-		form = UserEditForm(request.POST, request.FILES, instance = User.objects.get(id = user_id))
-
-		if form.is_valid():
-			ActionLog.objects.log_users('User %s account modified' % user_id, status = 200, user = request.user)
-			form.instance.save()
-			return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user_id }))
-
-		# form is not valid, show form errors:
-		ActionLog.objects.log_users('Invalid form submitted at user patch', status = 401, user = request.user)
-		return render_to_response('users/edit.html',
-			context = RequestContext(request, locals()),
-		    status = 401
-		)
-
+		# Log the error and resend the form
+		ActionLog.objects.log_account('Attempted to edit user profile information (email address: %s)' % u.email_address, user = request.user)
+		return render_to_response('users/edit.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('user manager'))
 	def delete(self, request, user_id = 0):
-		ActionLog.objects.log_debug('EditUser:delete', status = 200, user = request.user)
 
-		# User shouldn't be able to delete their own account
-		if user_id == request.user.id:
+		try: u = User.objects.get(id = user_id)
+		except User.DoesNotExist:
 
-			ActionLog.objects.log_account('Attempted to erase own account', status = 401, user = request.user)
+			ActionLog.objects.log_account('Attempted to delete user account', user = request.user)
 			return HttpResponseForbidden()
+		else:
 
-		User.objects.active().filter(id = user_id).update(active = False)
+			u.delete()
+			ActionLog.objects.log_account('Deleted user account (email address: %s)' % u.email_address, user = request.user)
 
-		ActionLog.objects.log_account('Deleted user "%s"' % user_id, user = request.user)
-		return redirect(reverse_lazy('index'), context = RequestContext(request, locals()))
-
+			return JsonResponse({
+				'version': '1.0.0',
+				'status': 200
+			}, context = RequestContext(request, locals()))
 
 edit = EditUserView.as_view()
 
-class ConsultUserView(View):
-
-	@method_decorator(login_required)
-	def get(self, request, user_id = 0):
-		user_target = User.objects.get(id = user_id)
-		form = UserVisualizationForm(instance = user_target)
-		return render_to_response('users/view.html', context = RequestContext(request, locals()))
-
-	@method_decorator(login_required)
-	def post(self, request, user_id = 0):
-		# Redirect to user list
-			return redirect(reverse_lazy('index'), context = RequestContext(request, locals()))
-view = ConsultUserView.as_view()

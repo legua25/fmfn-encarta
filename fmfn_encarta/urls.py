@@ -69,7 +69,7 @@ urlpatterns = [
 	# 	url(r'^api/$', None, name = 'filter'),  # POST
 	 	url(r'^(?P<user_id>[\d]+)/', include([
 
-	 		url(r'^$', views.users.view, name = 'view'),  # GET, POST
+	 		url(r'^$',  lambda request, user_id = 0: HttpResponse(''), name = 'view'),  # GET, POST
 	 		url(r'^edit/$', views.users.edit, name = 'edit'),  # GET, POST, DELETE
 
 		])),
