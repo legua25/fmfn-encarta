@@ -67,7 +67,8 @@
 											<p class="col-xs-12 text-center"><strong>{% trans 'Themes & Topics' %}</strong></p>{% if form.themes.errors %}{% for error in form.themes.errors %}
 											<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
 											<div id="tags-themes" class="col-xs-12 navbar navbar-default form-group">
-												<ul id="id_themes" class="nav nav-pills nav-stacked">{% for theme in form.fields.themes.choices %}
+												{% comment %}
+                                                <ul id="id_themes" class="nav nav-pills nav-stacked">{% for theme in form.fields.themes.choices %}
 													<li>
 														<a href="#">
 															<label for="id_themes_{{ forloop.counter }}" class="checkbox">
@@ -77,6 +78,8 @@
 														</a>
 													</li>{% endfor %}
 												</ul>
+												{% endcomment %}
+                                                {{ form.themes }}
 											</div>
 										</div>
 										<div class="col-xs-4">

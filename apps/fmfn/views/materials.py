@@ -31,6 +31,7 @@ class CreateMaterialView(View):
 		if form.is_valid():
 
 			material = form.instance
+			material.user = request.user
 			form.save()
 			ActionLog.objects.log_content('Registered new material entry (id: %s)' % material.id, user = request.user, status = 201)
 

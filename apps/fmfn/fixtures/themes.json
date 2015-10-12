@@ -1,0 +1,18 @@
+[
+	{
+		"fields": {
+			"active": true,
+			"name": "Calculus"
+		},
+		"model": "fmfn.Theme",
+		"pk": 1
+	},
+	{
+		"fields": {
+			"active": true,
+			"name": "Cuisine"
+		},
+		"model": "fmfn.Theme",
+		"pk": 2
+	}
+]
