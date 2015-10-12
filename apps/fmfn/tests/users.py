@@ -72,16 +72,18 @@ class _EditUserTest(TestCase):
 			type(user_target.role)
 			)
 		)
-		response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user_id }), data = {
-			'first_name': 'John',
-			'mother_family_name': user_target.mother_family_name,
-			'father_family_name': 'Doe',
-			'email_address': user_target.email_address,
-			'role': user_target.role,
-			'campus': user_target.campus,
-			'password': self.password,
-			'repeat': self.password
-		}, follow = True)
+		with open('./media/users/test.jpg') as fp:
+			response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user_id }), data = {
+				'first_name': 'John',
+				'mother_family_name': user_target.mother_family_name,
+				'father_family_name': 'Doe',
+				'photo': fp,
+				'email_address': user_target.email_address,
+				'role': user_target.role,
+				'campus': user_target.campus,
+				'password': self.password,
+				'repeat': self.password
+			}, follow = True)
 
 		if self.should_pass:
 
@@ -92,9 +94,20 @@ class _EditUserTest(TestCase):
 			url, status = response.redirect_chain[-1]
 			self.assertIn(status, [ 301, 302 ])
 
+		# User Edit Data Integrity Tests:
 			user = User.objects.get(id = self.user_id)
-			self.assertEqual(user.first_name, 'John')
-			self.assertEqual(user.father_family_name, 'Doe')
+
+			# Advanced form should accept these changes:
+			if self.user.belongs_to('user manager'):
+				self.assertEqual(user.first_name, 'John')
+				self.assertEqual(user.father_family_name, 'Doe')
+			else:
+			# Basic form should not accept these changes:
+				self.assertNotEqual(user.first_name, 'John')
+				self.assertNotEqual(user.father_family_name, 'Doe')
+
+			# Both should accept this change:
+			self.assertNotEqual(user.photo.name, 'users/default.png')
 
 			self.assertTrue(bool(ActionLog.objects.active()))
 
@@ -105,9 +118,11 @@ class _EditUserTest(TestCase):
 
 			self.assertIn(response.status_code, [401, 403])
 
+			# Check no changes were accepted:
 			user = User.objects.get(id = self.user_id)
 			self.assertNotEqual(user.first_name, 'John')
 			self.assertNotEqual(user.father_family_name, 'Doe')
+			self.assertEqual(user.photo.name, 'users/default.png')
 
 			self.assertTrue(bool(ActionLog.objects.active()))
 
@@ -133,3 +148,4 @@ class SelfEditTest(_EditUserTest):
 	email_address = 'test@example.com'
 	password = 'asdfg'
 	should_pass = True
+
