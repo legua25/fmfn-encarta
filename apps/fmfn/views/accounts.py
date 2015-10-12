@@ -30,11 +30,14 @@ class LoginView(View):
 
 	def get(self, request):
 
+		# Get redirect URL
+		redirect_url = request.REQUEST.get('next', reverse_lazy('index'))
+
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():
 
 			ActionLog.objects.log_account('User redirected since already logged in', user = request.user, status = 302)
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		# Create the login form and render the template
 		form = LoginForm()
@@ -42,11 +45,14 @@ class LoginView(View):
 	@method_decorator(csrf_protect)
 	def post(self, request):
 
+		# Get redirect URL
+		redirect_url = request.REQUEST.get('next', reverse_lazy('index'))
+
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():
 
 			ActionLog.objects.log_account('User redirected since already logged in', user = request.user, status = 302)
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		form = LoginForm(request.POST)
 		if form.is_valid():
@@ -56,7 +62,7 @@ class LoginView(View):
 			ActionLog.objects.log_account('User logged in to site (current permissions: %s)' % user.groups, user = user, status = 200)
 			login_to_site(request, user)
 
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		# Login failed - report errors back to the user
 		ActionLog.objects.log_account('Failed attempt to log in to site (requested account: %s)' % form.cleaned_data['email_address'], status = 401)
