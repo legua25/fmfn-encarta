@@ -105,6 +105,7 @@ class _TagTest(TestCase):
 
 		# Check material count
 		self.assertEqual(len(self.tag_class.objects.active()), (tag_count - 1))
+
 class TypeTagTest(_TagTest):
 	tag_class = Type
 class ThemeTagTest(_TagTest):

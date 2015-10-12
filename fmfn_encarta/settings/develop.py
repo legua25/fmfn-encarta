@@ -29,3 +29,4 @@ class Development(Settings):
 	}
 
 	STATIC_ROOT = join(Settings.BASE_DIR, 'static')
+	MEDIA_ROOT = join(Settings.BASE_DIR, 'media')
