@@ -28,7 +28,9 @@ User = get_user_model()
 
 class LoginView(View):
 	""" This view handles user session creation. When a user is sent to this view, the user is prompted to provide login
-		credentials.
+		credentials. These credentials are validated and matched to a user account, hence authenticating him/her. When
+		the user is authenticated, the user is logged in to the site and redirected to the last page he/she visited or
+		the home page if no page was previously visited.
 	"""
 
 	def get(self, request):
