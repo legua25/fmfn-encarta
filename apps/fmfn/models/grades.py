@@ -17,6 +17,8 @@ class Campus(Model):
 		verbose_name = _('date added')
 	)
 
+	def __str__(self): return self.name
+
 	class Meta(object):
 
 		verbose_name = _('campus')

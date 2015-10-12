@@ -25,12 +25,7 @@ from apps.fmfn.models import (
 __all__ = [ 'tags' ]
 
 class TagsView(View):
-
-	@method_decorator(login_required)
-	@method_decorator(ajax_required)
-	@method_decorator(role_required('content manager'))
-	def get(self, request):
-		"""
+	"""
 		Inputs: request.GET['query'] (optional): The filter criteria to use in order to select tags. Defaults to None.
 		Outputs:
 
@@ -69,18 +64,22 @@ class TagsView(View):
 			{ "type": "language", "data": [ { "id": 1, "name": "inglés" } ] }
 		"""
 
-		type = request.GET['type']
+	@method_decorator(login_required)
+	@method_decorator(ajax_required)
+	@method_decorator(role_required('content manager'))
+	def get(self, request, tag_type = ''):
+
 		filters = request.GET.get('filter', '')
 
-		if type == 'theme': data = Theme.objects.active().filter(name__icontains = filters)
-		elif type == 'type': data = Type.objects.active().filter(name__icontains = filters)
-		elif type == 'language': data = Language.objects.active().filter(name__icontains = filters)
+		if tag_type == 'theme': data = Theme.objects.active().filter(name__icontains = filters)
+		elif tag_type == 'type': data = Type.objects.active().filter(name__icontains = filters)
+		elif tag_type == 'language': data = Language.objects.active().filter(name__icontains = filters)
 		else: return HttpResponseForbidden()
 
 		return JsonResponse({
 			'version': '1.0.0',
 			'status': 200,
-			'type': type,
+			'type': tag_type,
 			'data': [ { 'id': tag.id, 'name': tag.name } for tag in data ]
 		})
 	@method_decorator(login_required)
@@ -90,18 +89,18 @@ class TagsView(View):
 
 		if action == 'create':
 
-			type = request.POST['type']
 			name = request.POST['name']
 
-			if type == 'theme': tag = Theme.objects.create(name = name)
-			elif type == 'type': tag = Type.objects.create(name = name)
-			elif type == 'language': tag = Language.objects.create(name = name)
+			if tag_type == 'theme': tag = Theme.objects.create(name = name)
+			elif tag_type == 'type': tag = Type.objects.create(name = name)
+			elif tag_type == 'language': tag = Language.objects.create(name = name)
 			else: return HttpResponseForbidden()
 
+			ActionLog.objects.log_content('Created new tag (category: %s)' % tag_type, user = request.user, status = 201)
 			return JsonResponse({
 				'version': '1.0.0',
 				'status': 201,
-				'data': { 'type': type, 'id': tag.id, 'name': tag.name }
+				'data': { 'type': tag_type, 'id': tag.id, 'name': tag.name }
 			}, status = 201)
 
 		elif action == 'edit':
@@ -124,6 +123,7 @@ class TagsView(View):
 				tag.name = name
 				tag.save()
 
+			ActionLog.objects.log_content('Edited tag (category: %s, id: %s)' % (tag_type, tag_id), user = request.user)
 			return JsonResponse({
 				'version': '1.0.0',
 				'status': 200,
@@ -132,13 +132,14 @@ class TagsView(View):
 	@method_decorator(login_required)
 	@method_decorator(ajax_required)
 	@method_decorator(role_required('content manager'))
-	def delete(self, request, tag_type = '', tag_id = 0, action = ''):
+	def delete(self, request, tag_type = '', tag_id = 0, **kwargs):
 
 		if tag_type == 'theme': Theme.objects.get(id = tag_id).delete()
 		elif tag_type == 'type': Type.objects.get(id = tag_id).delete()
 		elif tag_type == 'language': Language.objects.get(id = tag_id).delete()
 		else: return HttpResponseForbidden()
 
+		ActionLog.objects.log_content('Deleted tag (id: %s)' % tag_id, user = request.user)
 		return JsonResponse({
 			'version': '1.0.0',
 			'status': 200

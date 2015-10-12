@@ -7,6 +7,7 @@ from django.contrib import admin
 from apps.fmfn import views
 
 from django.http import HttpResponse
+from django.template import Template, Context
 
 redirect = RedirectView.as_view
 
@@ -17,9 +18,9 @@ urlpatterns = [
 
 		url(r'^$', redirect(url = reverse_lazy('search')), name = 'index'),  # GET
 		url(r'^search/$', include([
-			# TODO: Remove this lambda - it's useless and does nothing
-			url(r'^$', lambda request: HttpResponse(''), name = 'search'),  # GET
-	#  		url(r'^api/$', None, name = 'filter')  # POST
+
+			url(r'^$', views.search.search, name = 'search'),  # GET
+	 		url(r'^api/$', views.search.search, name = 'filter')  # POST
 
 		]))
 
@@ -39,11 +40,11 @@ urlpatterns = [
 	 ], namespace = 'content', app_name = 'apps.fmfn')),
 
 	# Tags
-	url(r'^tags/', include([
+	url(r'^tags/(?P<tag_type>type|theme|language)/', include([
 
         url(r'^$', views.tags.tags, name = 'list'),  # GET
         url(r'^create/$', views.tags.tags, name = 'create', kwargs = { 'action': 'create' }),  # POST
-        url(r'^(?P<tag_type>type|theme|language)/(?P<tag_id>[\d]+)/edit/$', views.tags.tags, name = 'edit', kwargs = { 'action': 'edit' })  # POST, DELETE
+        url(r'^(?P<tag_id>[\d]+)/edit/$', views.tags.tags, name = 'edit', kwargs = { 'action': 'edit' })  # POST, DELETE
 
     ], namespace = 'tags', app_name = 'fmfn')),
 
@@ -66,6 +67,12 @@ urlpatterns = [
 
 	# 	url(r'^$', None, name = 'list'),  # GET
 	# 	url(r'^api/$', None, name = 'filter'),  # POST
+	 	url(r'^(?P<user_id>[\d]+)/', include([
+
+	 		url(r'^$',  lambda request, user_id = 0: HttpResponse(''), name = 'view'),  # GET, POST
+	 		url(r'^edit/$', views.users.edit, name = 'edit'),  # GET, POST, DELETE
+
+		])),
 		url(r'^create/$', views.users.create, name = 'create'),  # GET, POST
 	# 	url(r'^(?P<user_id>[\d]+)/', include([
 
@@ -73,9 +80,7 @@ urlpatterns = [
 	# 		url(r'^edit/$', None, name = 'edit'),  # GET, POST, DELETE
 	# 		url(r'^portfolio/$', None, name = 'portfolio')  # GET, PUT, DELETE
 
-	#  	]))
-
-	], namespace = 'users', app_name = 'apps.fmfn')),
+	 ], namespace = 'users', app_name = 'apps.fmfn')),
 	# Management
 	# url(r'^manage/', include([
 

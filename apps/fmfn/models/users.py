@@ -15,6 +15,8 @@ from django.db.models import *
 from imagekit.models.fields import ProcessedImageField as ImageField
 from _base import Model, ActiveManager
 
+def upload_photo(instance, filename): return 'users/%s/%s' % (instance.id, filename)
+
 class UserManager(ActiveManager, BaseUserManager):
 
 	def _create(self, email_address = None, password = None, **kwargs):
@@ -69,9 +71,11 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	)
 	photo = ImageField(
 		format = 'JPEG',
-		spec_id = 'users:photo:spec',
 		autoconvert = True,
+		upload_to = upload_photo,
 		processors = [ ResizeToFill(240, 240) ],
+		blank = True,
+		default = 'users/default.png',
 		options = { 'quality': 80 },
 		verbose_name = _('user photo')
 	)
