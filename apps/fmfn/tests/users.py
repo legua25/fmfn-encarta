@@ -79,8 +79,8 @@ class _EditUserTest(TestCase):
 				'father_family_name': 'Doe',
 				'photo': fp,
 				'email_address': user_target.email_address,
-				'role': user_target.role,
-				'campus': user_target.campus,
+				'role': user_target.role.id,
+				'campus': user_target.campus.id,
 				'password': self.password,
 				'repeat': self.password
 			}, follow = True)
