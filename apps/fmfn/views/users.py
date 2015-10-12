@@ -10,9 +10,9 @@ from django.contrib.auth import get_user_model
 from apps.fmfn.models import ActionLog, users
 from django.http import HttpResponseForbidden
 from django.views.generic import View
-from apps.fmfn.forms import UserCreationForm, UserEditForm, AdminUserEditForm
+from apps.fmfn.forms import UserCreationForm, UserEditForm, AdminUserEditForm, UserVisualizationForm
 
-__all__ = [ 'create', 'edit' ]
+__all__ = [ 'create', 'edit' , 'view']
 User = get_user_model()
 
 class CreateUserView(View):
@@ -74,8 +74,20 @@ class EditUserView(View):
 	@method_decorator(csrf_protect)
 	@method_decorator(role_required('user manager'))
 	def post(self, request, user_id = 0):
-		ActionLog.objects.log_debug('EditUser:POST', status = 200, user = request.user)
 
+		#Redirect petition to its correct predefined behavior:
+		if request.POST.get('_method', 'post'):
+			ActionLog.objects.log_debug('EditUser:POST', status = 200, user = request.user)
+		elif request.POST.get('_method', 'patch'):
+			ActionLog.objects.log_debug('EditUser:patch', status = 200, user = request.user)
+			return self.patch(request, user_id)
+		elif request.POST.get('_method', 'delete'):
+			ActionLog.objects.log_debug('EditUser:delete', status = 200, user = request.user)
+			return self.delete(request, user_id)
+		else:
+			return HttpResponseForbidden()
+
+		#Post default behaviour
 		form = AdminUserEditForm(request.POST, request.FILES, instance = User.objects.get(id = user_id))
 		if form.is_valid():
 
@@ -130,3 +142,17 @@ class EditUserView(View):
 
 
 edit = EditUserView.as_view()
+
+class ConsultUserView(View):
+
+	@method_decorator(login_required)
+	def get(self, request, user_id = 0):
+		user_target = User.objects.get(id = user_id)
+		form = UserVisualizationForm(instance = user_target)
+		return render_to_response('users/view.html', context = RequestContext(request, locals()))
+
+	@method_decorator(login_required)
+	def post(self, request, user_id = 0):
+		# Redirect to user list
+			return redirect(reverse_lazy('index'), context = RequestContext(request, locals()))
+view = ConsultUserView.as_view()

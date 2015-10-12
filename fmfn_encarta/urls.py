@@ -7,6 +7,7 @@ from django.contrib import admin
 from apps.fmfn import views
 
 from django.http import HttpResponse
+from django.template import Template, Context
 
 redirect = RedirectView.as_view
 
@@ -68,7 +69,7 @@ urlpatterns = [
 	# 	url(r'^api/$', None, name = 'filter'),  # POST
 	 	url(r'^(?P<user_id>[\d]+)/', include([
 
-	 		url(r'^$', lambda request, user_id = 0: HttpResponse(''), name = 'view'),  # GET
+	 		url(r'^$', views.users.view, name = 'view'),  # GET, POST
 	 		url(r'^edit/$', views.users.edit, name = 'edit'),  # GET, POST, PATCH, DELETE
 
 		])),
