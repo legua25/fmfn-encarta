@@ -205,7 +205,7 @@ class RecoveryTest(TestCase):
 		self.client = Client(enforce_csrf_checks = False)
 
 		# Create test users
-		User.objects.create_user(
+		self.user = User.objects.create_user(
 			email_address = 'test1@example.com',
 			password = 'asdfg123',
 			role = Role.objects.get(id = 2),

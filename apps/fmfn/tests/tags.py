@@ -48,7 +48,7 @@ class _TagTest(TestCase):
 
 		# Test case: a tag creation request arrives
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.post(reverse_lazy('tags:create'), data = {
+		response = self.client.post(reverse_lazy('tags:create', kwargs = { 'tag_type': self.tag_name }), data = {
 			'type': self.tag_name,
 			'name': 'philosophy'
 		}, follow = True)
@@ -61,7 +61,7 @@ class _TagTest(TestCase):
 	def test_list_tags(self):
 
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.get(reverse_lazy('tags:list'), data = {
+		response = self.client.get(reverse_lazy('tags:list', kwargs = { 'tag_type': self.tag_name }), data = {
 			'type': self.tag_name,
 		}, follow = True)
 
@@ -70,7 +70,7 @@ class _TagTest(TestCase):
 	def test_list_filtered_tags(self):
 
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.get(reverse_lazy('tags:list'), data = {
+		response = self.client.get(reverse_lazy('tags:list', kwargs = { 'tag_type': self.tag_name }), data = {
 			'type': self.tag_name,
 			'filter': 'tag'
 		}, follow = True)
