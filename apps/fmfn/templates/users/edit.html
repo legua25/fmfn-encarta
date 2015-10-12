@@ -16,11 +16,13 @@
 							<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
                                 <form action="{% url 'users:edit' user_id %}" method="post">
                                     {% csrf_token %}
+                                    <input type="hidden" name="_method" value="POST">
                                     {{ form.as_p }}
                                     <button type="submit">Submit</button>
                                 </form>
-                                 <form action="{% url 'users:edit' user_id %}" method="delete">
+                                 <form action="{% url 'users:edit' user_id %}" method="post">
                                     {% csrf_token %}
+                                       <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit">Delete user</button>
                                 </form>
                         </div>

@@ -70,7 +70,7 @@ urlpatterns = [
 	 	url(r'^(?P<user_id>[\d]+)/', include([
 
 	 		url(r'^$', views.users.view, name = 'view'),  # GET, POST
-	 		url(r'^edit/$', views.users.edit, name = 'edit'),  # GET, POST, PATCH, DELETE
+	 		url(r'^edit/$', views.users.edit, name = 'edit'),  # GET, POST, DELETE
 
 		])),
 		url(r'^create/$', views.users.create, name = 'create'),  # GET, POST

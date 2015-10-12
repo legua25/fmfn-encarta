@@ -76,15 +76,17 @@ class EditUserView(View):
 	def post(self, request, user_id = 0):
 
 		#Redirect petition to its correct predefined behavior:
-		if request.POST.get('_method', 'post'):
+		method = request.POST.get('_method', 'post')
+
+		if method == 'POST':
 			ActionLog.objects.log_debug('EditUser:POST', status = 200, user = request.user)
-		elif request.POST.get('_method', 'patch'):
-			ActionLog.objects.log_debug('EditUser:patch', status = 200, user = request.user)
+		if method == 'PATCH':
+			ActionLog.objects.log_debug('EditUser:Patch', status = 200, user = request.user)
 			return self.patch(request, user_id)
-		elif request.POST.get('_method', 'delete'):
-			ActionLog.objects.log_debug('EditUser:delete', status = 200, user = request.user)
+		elif method == 'DELETE':
 			return self.delete(request, user_id)
 		else:
+			ActionLog.objects.log_debug('EditUser unknown method: %s' % method, status = 403, user = request.user)
 			return HttpResponseForbidden()
 
 		#Post default behaviour
