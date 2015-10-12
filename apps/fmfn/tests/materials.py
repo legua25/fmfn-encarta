@@ -34,15 +34,15 @@ class MaterialTest(TestCase):
 	def test_material_created(self):
 
 		material_count = len(Material.objects.active())
+		log_count = len(ActionLog.objects.active())
 
 		# Test case: a valid submission arrives
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
 		response = self.client.post(reverse_lazy('content:create'), data = {
 			'title': 'A material test',
 			'description': 'This material works best for testing purposes',
-			'link': 'http://127.0.0.1:8000/search/',
-			'languages': Language.objects.active().filter(id = 1),
-			'suggested_ages': [ g.id for g in SchoolGrade.objects.filter(id__in = [ 3, 4 ]) ]
+			'link':'http://www.google.com'
 		}, follow = True)
 
 		# Check the response status sequence
@@ -54,13 +54,16 @@ class MaterialTest(TestCase):
 		self.assertEqual(len(Material.objects.active()), (material_count + 1))
 
 		# Check the action log
+
 		self.assertTrue(bool(ActionLog.objects.active()))
-		self.assertEqual(len(ActionLog.objects.active()), 1)
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 2))
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
-		self.assertEqual(ActionLog.objects.latest('action_date').status, 201)
+
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
 
 	def test_material_edited(self):
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		log_count = len(ActionLog.objects.active())
 
 		test_material = Material.objects.create(
 								title = 'Material a editar',
@@ -73,19 +76,18 @@ class MaterialTest(TestCase):
 			'link': 'http://www.hola.com'
 		}
 		response = self.client.post(reverse_lazy('content:edit', kwargs= {'content_id':test_material.id}), data=test_data, follow=True)
-		test_material = Material.objects.get(id=1)
+		test_material = Material.objects.active().get(title = 'Material editado')
 		# Check the response status sequence
 		self.assertEqual(response.status_code, 200)
 		url, status = response.redirect_chain[-1]
 		self.assertEqual(status, 302)
 		# Check the action log
 		self.assertTrue(bool(ActionLog.objects.active()))
-		self.assertEqual(len(ActionLog.objects.active()), 1)
-		self.assertEqual(test_data['title'],test_material.title)
-		self.assertEqual(test_data['description'],test_material.description)
-		self.assertEqual(test_data['link'],test_material.link)
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 2))
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200 )
+		self.assertEqual(test_data['description'],test_material.description)
+		self.assertEqual(test_data['link'],test_material.link)
 
 	def test_material_deleted(self):
 
@@ -121,3 +123,68 @@ class MaterialTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
 
+	def test_too_much_content(self):
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		with open('test_data/oli.txt','r') as file :
+			test_data = {
+				'title': 'Material editado',
+				'description': 'Descripción editada',
+				'link': 'http://www.hola.com',
+				'content': file
+			}
+			response = self.client.post(reverse_lazy('content:create'),data=test_data)
+		# Check the response status sequence
+		self.assertEqual(response.status_code, 401)
+		# Check the action log
+		self.assertTrue(bool(ActionLog.objects.active()))
+		self.assertEqual(len(ActionLog.objects.active()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
+
+
+	def test_not_enough_content(self):
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+
+		response = self.client.post(reverse_lazy('content:create'), data = {
+			'title': 'A material test',
+			'description': 'This material works best for testing purposes',
+		})
+		# Check the response status
+		self.assertEqual(response.status_code, 401)
+
+		# Check the action log
+		self.assertTrue(bool(ActionLog.objects.active()))
+		self.assertEqual(len(ActionLog.objects.active()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 401 )
+
+	def test_material_detail(self):
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		test_material = Material.objects.create(
+								title = 'Material a editar',
+		                        description = 'Descripcion de prueba',
+		                        link = 'http://blah.com'
+		)
+		response = self.client.get(reverse_lazy('content:view',kwargs={'content_id':test_material.id}))
+		self.assertEqual(response.status_code,200)
+		# Check the action log
+		self.assertTrue(bool(ActionLog.objects.active()))
+		self.assertEqual(len(ActionLog.objects.active()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200 )
+
+	def test_file_uploaded(self):
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		with open('test_data/oli.txt', 'r') as file:
+			response = self.client.post(reverse_lazy('content:create'), data = {
+				'title': 'file test',
+				'description': 'This material works best for testing purposes',
+				'content':file
+			}, follow = True)
+		#check that the file exists in destination path
+		saved_file = list(Material.objects.active())[-1].content
+		self.assertEqual(response.status_code,200)
+		self.assertTrue(cmp(saved_file,file))
