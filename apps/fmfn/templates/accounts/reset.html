@@ -1,32 +1,28 @@
 {% extends 'base/base.html' %}
 {% load i18n widget_tweaks %}
 
-	{% block title %}{% trans 'Recover password' %}{% endblock title %}
-	{% block content %}
-		<nav class="navbar navbar-static-top navbar-inverse"></nav>
-		<main id="content" class="row-fluid">
-			<div class="container-fluid">
-				<section class="col-xs-4 col-xs-offset-4">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3>{% trans 'Reset account password' %}</h3>
-							<p>{% blocktrans %}Choose a new password for your account. Please follow recommendations on strong passwords
-								from system administrators or trained personnel.{% endblocktrans %}</p>
-						</div>
-						<div class="panel-body">{% if form.non_field_errors %}{% for error in form.non_field_errors %}
-							<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
-							<form action="{% url 'accounts:reset' user_id token %}" method="post">
-								{% csrf_token %}
-								<div class="form-group">{{ form.password | add_class:'form-control' }}</div>
-								<div class="form-group">{{ form.repeat | add_class:'form-control' }}</div>
-								<hr />
-								<div class="col-xs-offset-5">
-									<button class="btn btn-primary" type="submit">{% trans 'Reset' %}</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</section>
-			</div>
-		</main>
-	{% endblock content %}
+{% block title %}{% trans 'Resetea contraseña' %}{% endblock %}
+{% block content %}
+    <div class="login">
+
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert-box alert">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="title"> Cambia tu contraseña</div>
+        <div class="message"> A continuacion agrega tu nueva contraseña.
+            Ten en cuenta las medidas de seguridad y recomencaciones de password.
+        </div>
+        <form action="{% url 'accounts:reset' user_id token %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">{{ form.password | add_class:'form-control' | attr:'required' }}</div>
+            <div class="form-group">{{ form.repeat | add_class:'form-control' | attr:'required' }}</div>
+            <hr/>
+            <div class="col-xs-offset-5">
+                <button class="btn btn-primary" type="submit">{% trans 'Reset' %}</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
