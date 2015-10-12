@@ -1,31 +1,38 @@
-{% extends 'base/base.html' %}
-{% load i18n roles %}
+{% extends "base/base-2cols.html" %}
 
-	{% block title %}{% trans 'Home' %}{% endblock title %}
-	{% block content %}
-		<nav class="navbar navbar-static-top navbar-inverse"></nav>
-		<main id="content" class="row-fluid">
-			<div class="container-fluid">
-				<section class="col-xs-10 col-xs-offset-1">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3>{% trans 'Home' %}</h3>
-						</div>
-						<div class="panel-body">
-							<nav class="navbar navbar-default">
-								<ul class="nav nav-pills nav-justified">
-									<li><a href="{% url 'search' %}"><span class="glyphicon glyphicon-search"></span> {% trans 'Search' %}</a></li>
-									<li><a href="#"><span class="glyphicon glyphicon-star"></span> {% trans 'Favorites' %}</a></li>{% if user|has_role:'user manager' %}
-									<li><a href=""><span class="glyphicon glyphicon-user"></span> {% trans 'Users' %}</a></li>{% if user|has_role:'administrator' %}
-									<li><a href="#"><span class="glyphicon glyphicon-stats"></span> {% trans 'Statistics' %}</a></li>{% endif %}
-									<li><a href="{% url 'users:view' user.id %}"><span class="glyphicon glyphicon-cog"></span> {% trans 'Profile' %}</a></li>{% if user|has_role:'content manager' %}
-									<li><a href="{% url 'content:create' %}"><span class="glyphicon glyphicon-cloud-upload"></span> {% trans 'Create material' %}</a></li>{% endif %}{% endif %}
-									<li><a href="{% url 'accounts:logout' %}"><span class="glyphicon glyphicon-log-out"></span> {% trans 'Logout' %}</a></li>
-								</ul>
-							</nav>
-						</div>
-					</div>
-				</section>
-			</div>
-		</main>
-	{% endblock content %}
+{% block busqueda-active %}
+    active
+{% endblock %}
+
+{% block canvas %}
+    <div id="search-bar">
+        <p>¿Conoces el titulo?</p>
+        <input type="text">
+        <div id="age-tags" class="search-section">
+            <p>Selecciona una edad</p>
+            <label class="tag"> Preescolar </label>
+            <label class="tag"> Primaria baja </label>
+            <label class="tag"> Preescolar </label>
+            <label class="tag"> Primaria baja </label>
+        </div>
+        <div id="type-tags" class="search-section">
+            <p>Selecciona un tipo de material</p>
+            <label for="#" class="tag"> Juego </label>
+            <label for="#" class="tag"> Didactico </label>
+            <label for="#" class="tag"> Lectura </label>
+        </div>
+        <div id="lang-tags" class="search-section">
+            <p>Selecciona un lenguaje</p>
+            <label for="#" class="tag"> Español </label>
+            <label for="#" class="tag"> Otomi </label>
+            <label for="#" class="tag"> Ingles </label>
+        </div>
+        <button>Buscar</button>
+    </div>
+
+    <div id="results">
+        {% block results %}
+            Ejemplo de material
+        {% endblock %}
+    </div>
+{% endblock %}

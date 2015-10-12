@@ -1,0 +1,142 @@
+html, body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: $normal;
+  color: $main-black;
+  height: 100%;
+  width: 100%;
+  background-color: $deep-blue;
+}
+
+#header {
+  @include grid-column(12);
+  padding-top: 5px;
+  padding-bottom: 15px;
+  background-color: #FEC200;
+  color: #78131C;
+  text-transform: uppercase;
+  font-weight: $bold;
+  border-bottom: solid 1px darken(#FEC200, 5%);
+}
+
+#navigation {
+  @include grid-column(2);
+  background-color: #f6f6f6;
+  height: $elements-height;
+  padding-left: 0px;
+  padding-right: 0px;
+  border-right: solid #CCC 1px;
+  position: relative;
+  overflow-y: scroll;
+
+  .navigation-item {
+    display: block;
+    border-bottom: solid #CCC 1px;
+    padding: 20px 20px 20px 20px;
+    width: 100%;
+
+    i {
+      margin-right: 5px;
+    }
+
+    &:hover {
+      border-left: solid #78131C 5px;
+      color: #78131C;
+    }
+
+  }
+
+  .active {
+    border-left: solid #78131C 5px;
+    color: #78131C;
+  }
+
+  a:last-child {
+    color: white;
+  }
+
+  .last {
+    background-color: #333333;
+    border-bottom: none;
+    position: absolute;
+    bottom: 0;
+    color: white;
+
+    &:hover {
+      border-left: none;
+      color: white;
+    }
+  }
+}
+
+#canvas {
+  @include grid-column(10);
+  background-color: #E6E6E6;
+  height: $elements-height;
+  overflow: scroll;
+  padding-left: 0;
+}
+
+.ninenty {
+  width: 95%;
+  padding: 20px 20px 20px 20px;
+  background-color: white;
+  margin-left: 2.5%;
+  box-shadow: 0px 3px 5px #888888;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #0078a0;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  font-weight: $light;
+  color: #f6f6f6;
+  @include border-top-radius(3px);
+  @include border-right-radius(3px);
+  @include border-bottom-radius(3px);
+  @include border-left-radius(3px);
+  margin: 3px 3px 3px 3px;
+}
+
+.heading {
+  @extend h3;
+}
+
+.sub-heading {
+  font-size: 20px;
+  font-weight: $light;
+  border-bottom: solid $mild-black 1px;
+  width: 40%;
+  margin-bottom: 20px;
+  padding-top: 30px;
+}
+
+//form classes
+
+.form {
+  width: 100%;
+  .three-elements {
+    width: 33%;
+    display: inline-block;
+    padding-right: 5px;
+  }
+  .element-in-block{
+    width: 33%;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  button{
+    width: 100%;
+    color: white;
+  }
+}
+
+.error{
+  @include border-top-radius(3px);
+  @include border-right-radius(3px);
+  @include border-bottom-radius(3px);
+  @include border-left-radius(3px);
+}

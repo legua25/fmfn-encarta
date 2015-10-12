@@ -1,30 +1,24 @@
 {% extends 'base/base.html' %}
 {% load i18n widget_tweaks %}
 
-	{% block title %}{% trans 'Log in' %}{% endblock title %}
-	{% block content %}
-		<nav class="navbar navbar-static-top navbar-inverse"></nav>
-		<main id="content" class="row-fluid">
-			<div class="container-fluid">
-				<section class="col-xs-4 col-xs-offset-4">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3>{% trans 'Welcome back!' %}</h3>
-						</div>
-						<div class="panel-body">{% if form.non_field_errors %}{% for error in form.non_field_errors %}
-							<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
-							<form action="{% url 'accounts:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" method="post">
-								{% csrf_token %}
-								<div class="form-group">{{ form.email_address | add_class:'form-control' }}</div>
-								<div class="form-group">{{ form.password | add_class:'form-control' }}</div>
-								<hr />
-								<div class="col-xs-offset-5">
-									<button class="btn btn-primary" type="submit">{% trans 'Log in' %}</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</section>
-			</div>
-		</main>
-	{% endblock content %}
+{% block content %}
+    <div class="login">
+
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert-box alert">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="title"> Sistema Encarta</div>
+        <div class="content">
+            <form action="{% url 'accounts:login' %}" method="post">{% csrf_token %}
+                <div class="form-group">{{ form.email_address | attr:'required' }}</div>
+                <div class="form-group">{{ form.password | attr:'required' }}</div>
+                <button class="btn btn-primary" type="submit">{% trans 'Ingresar' %}</button>
+            </form>
+        </div>
+
+        <a href="{% url 'accounts:recover' %}">¿olvidaste tu contraseña?</a>
+    </div>
+{% endblock %}
