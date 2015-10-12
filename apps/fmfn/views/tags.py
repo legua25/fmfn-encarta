@@ -25,12 +25,7 @@ from apps.fmfn.models import (
 __all__ = [ 'tags' ]
 
 class TagsView(View):
-
-	@method_decorator(login_required)
-	@method_decorator(ajax_required)
-	@method_decorator(role_required('content manager'))
-	def get(self, request):
-		"""
+	"""
 		Inputs: request.GET['query'] (optional): The filter criteria to use in order to select tags. Defaults to None.
 		Outputs:
 
@@ -69,12 +64,16 @@ class TagsView(View):
 			{ "type": "language", "data": [ { "id": 1, "name": "inglés" } ] }
 		"""
 
-		type = request.GET['type']
+	@method_decorator(login_required)
+	@method_decorator(ajax_required)
+	@method_decorator(role_required('content manager'))
+	def get(self, request, tag_type = ''):
+
 		filters = request.GET.get('filter', '')
 
-		if type == 'theme': data = Theme.objects.active().filter(name__icontains = filters)
-		elif type == 'type': data = Type.objects.active().filter(name__icontains = filters)
-		elif type == 'language': data = Language.objects.active().filter(name__icontains = filters)
+		if tag_type == 'theme': data = Theme.objects.active().filter(name__icontains = filters)
+		elif tag_type == 'type': data = Type.objects.active().filter(name__icontains = filters)
+		elif tag_type == 'language': data = Language.objects.active().filter(name__icontains = filters)
 		else: return HttpResponseForbidden()
 
 		return JsonResponse({
