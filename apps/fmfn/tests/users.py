@@ -54,24 +54,10 @@ class _EditUserTest(TestCase):
 	def test_edit_profile(self):
 
 		login_result = self.client.login(email_address = self.email_address, password = self.password)
-
-		print('%s: log in %s, %s, %s' % (
-			self.__class__.__name__,
-			self.email_address,
-			self.password,
-			login_result
-			)
-		)
 		self.assertTrue(login_result)
 
 		user_target = User.objects.get(id = self.user_id)
-		print('%s: user_target %s, %s, %s' % (
-			self.__class__.__name__,
-			user_target.email_address,
-			type(user_target.campus),
-			type(user_target.role)
-			)
-		)
+
 		with open('./media/users/test.jpg') as fp:
 			response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user_id }), data = {
 				'first_name': 'John',

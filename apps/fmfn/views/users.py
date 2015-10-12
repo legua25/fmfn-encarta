@@ -58,7 +58,6 @@ class EditUserView(View):
 
 		try: u = User.objects.get(id = user_id)
 		except User.DoesNotExist:
-			print('Invalid user profile information request : (user_id: %s) %s' % (user_id, request.user))
 			response = HttpResponseForbidden()
 			ActionLog.objects.log_account(
 				'Invalid user profile information request : (user_id: %s)' % user_id,
@@ -74,7 +73,6 @@ class EditUserView(View):
 				if int(request.user.id) == int(user_id): form = BasicEditForm(instance = u)
 				else:
 					response = HttpResponseForbidden()
-					print('Attempted to view user profile information without enough privileges : (user_id: %s) %s' % (user_id, request.user))
 					ActionLog.objects.log_account(
 						'Attempted to view user profile information without enough privileges : (user_id: %s)' % user_id,
 						user = request.user,
@@ -90,7 +88,6 @@ class EditUserView(View):
 
 		try: u = User.objects.get(id = user_id)
 		except User.DoesNotExist:
-			print('User requested to edit does not exist: (user_id: %s) requested by %s' % (user_id, request.user.email_address))
 			response = HttpResponseForbidden()
 			ActionLog.objects.log_account('User requested to edit does not exist: (user_id: %s)' % user_id, user = request.user, status = response.status_code)
 			return response
@@ -100,7 +97,6 @@ class EditUserView(View):
 			else:
 				if int(request.user.id) == int(user_id): form = BasicEditForm(request.POST, request.FILES, instance = u)
 				else:
-					print('Attempted to edit user profile information without enough privileges : (user_id: %s) request.user: (%s, %s)' % (user_id, request.user.id, request.user.email_address))
 					response = HttpResponseForbidden()
 					ActionLog.objects.log_account(
 						'Attempted to edit user profile information without enough privileges : (user_id: %s)' % user_id,
@@ -113,7 +109,6 @@ class EditUserView(View):
 		if form.is_valid():
 
 			user = form.instance
-			print('Edited user profile information successfully (user_id: %s) request: %s' % (user_id, request.user.email_address))
 			ActionLog.objects.log_account(
 				'Edited user profile information (email address: %s)' % user.email_address, user = request.user)
 			form.save(commit=True)
@@ -121,7 +116,6 @@ class EditUserView(View):
 			return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user.id }))
 
 		# Log the error and resend the form
-		print('Attempted to edit user profile information with invalid detail(s) (email address: %s) %s errors: %s' % (u.email_address, request.user.email_address, form.errors.as_json()))
 		ActionLog.objects.log_account(
 			'Attempted to edit user profile information with invalid detail(s) (email address: %s)' % u.email_address,
 			user = request.user,
@@ -134,7 +128,6 @@ class EditUserView(View):
 
 		try: u = User.objects.get(id = user_id)
 		except User.DoesNotExist:
-			print('Attempted to delete user profile information without enough privileges : (user_id: %s) %s' % user_id, request.user.email_address)
 			response = HttpResponseForbidden()
 			ActionLog.objects.log_account(
 				'Attempted to delete user account',
@@ -146,7 +139,6 @@ class EditUserView(View):
 		else:
 
 			u.delete()
-			print('Deleted user profile information (email address: %s) %s' % user_id, request.user.email_address)
 			ActionLog.objects.log_account('Deleted user account (email address: %s)' % u.email_address, user = request.user.email)
 
 			return JsonResponse({
