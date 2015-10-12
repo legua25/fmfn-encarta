@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 from django.contrib.auth.tokens import default_token_generator as tokens
 from django.utils.http import urlsafe_base64_encode as b64, force_str
 from django.core.urlresolvers import reverse_lazy, reverse
+from apps.fmfn.models import ActionLog, Role, Campus
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
-from apps.fmfn.models import ActionLog
 
 __all__ = [
 	'LoginTest',
@@ -25,6 +25,8 @@ class LoginTest(TestCase):
 			* The user attempts to log in again with a valid session in use
 	"""
 
+	fixtures = [ 'roles', 'campus', 'grades' ]
+
 	def setUp(self):
 
 		# Configure the test client
@@ -33,11 +35,15 @@ class LoginTest(TestCase):
 		# Create test users
 		User.objects.create_user(
 			email_address = 'test1@example.com',
-			password = 'asdfg123'
+			password = 'asdfg123',
+			role = Role.objects.get(id = 2),
+			campus = Campus.objects.get(id = 1)
 		)
 		User.objects.create_user(
 			email_address = 'test2@example.com',
 			password = 'asdfg123',
+			role = Role.objects.get(id = 2),
+			campus = Campus.objects.get(id = 1),
 			active = False
 		)
 
@@ -142,6 +148,8 @@ class LogoutTest(TestCase):
 		the framework, which is already validated.
 	"""
 
+	fixtures = [ 'roles', 'campus', 'grades' ]
+
 	def setUp(self):
 
 		# Configure the test client
@@ -150,7 +158,9 @@ class LogoutTest(TestCase):
 		# Create test users
 		User.objects.create_user(
 			email_address = 'test1@example.com',
-			password = 'asdfg123'
+			password = 'asdfg123',
+			role = Role.objects.get(id = 2),
+			campus = Campus.objects.get(id = 1)
 		)
 
 	def test_logout_user(self):
@@ -187,15 +197,19 @@ class RecoveryTest(TestCase):
 			* The user provides a totally new password for the user account
 	"""
 
+	fixtures = [ 'roles', 'campus', 'grades' ]
+
 	def setUp(self):
 
 		# Configure the test client
 		self.client = Client(enforce_csrf_checks = False)
 
 		# Create test users
-		self.user = User.objects.create_user(
+		User.objects.create_user(
 			email_address = 'test1@example.com',
-			password = 'asdfg123'
+			password = 'asdfg123',
+			role = Role.objects.get(id = 2),
+			campus = Campus.objects.get(id = 1)
 		)
 
 	def test_already_logged_in(self):
