@@ -25,7 +25,6 @@ from apps.fmfn.models import (
 __all__ = [ 'tags' ]
 
 class TagsView(View):
-
 	@method_decorator(login_required)
 	@method_decorator(ajax_required)
 	@method_decorator(role_required('content manager'))
@@ -69,16 +68,20 @@ class TagsView(View):
 			{ "type": "language", "data": [ { "id": 1, "name": "inglés" } ] }
 		"""
 
+		# Retrieve parameters
 		type = request.GET['type']
 		filters = request.GET.get('filter', '')
 
+		# Query all tags from the specified tag, if valid
 		if type == 'theme': data = Theme.objects.active().filter(name__icontains = filters)
 		elif type == 'type': data = Type.objects.active().filter(name__icontains = filters)
 		elif type == 'language': data = Language.objects.active().filter(name__icontains = filters)
 		else:
+			# If type is invalid, return error
 			ActionLog.objects.log_tags('Failed to display %s tags' % type, user = request.user, status = 401)
 			return HttpResponseForbidden()
 
+		# Return tags list JSON
 		ActionLog.objects.log_tags('Displayed %s tags' % type, user = request.user, status = 200)
 		return JsonResponse({
 			'version': '1.0.0',
@@ -91,29 +94,50 @@ class TagsView(View):
 	@method_decorator(role_required('content manager'))
 	def post(self, request, tag_id = 0, tag_type = '', action = ''):
 
+		# Tag creation request
 		if action == 'create':
 
+			# Retrieve parameters
 			type = request.POST['type']
 			name = request.POST['name']
 
-			if type == 'theme': tag = Theme.objects.create(name = name)
-			elif type == 'type': tag = Type.objects.create(name = name)
-			elif type == 'language': tag = Language.objects.create(name = name)
+			# Determine tag type, if valid
+			if type == 'type': tag_cls = Type
+			elif type == 'theme': tag_cls = Theme
+			elif type == 'language': tag_cls = Language
 			else:
+				# If not valid, return error
 				ActionLog.objects.log_tags('Failed to create tag entry (id: %s)' % tag_id, user = request.user, status = 401)
 				return HttpResponseForbidden()
 
-			ActionLog.objects.log_tags('Created tag entry (id: %s)' % tag_id, user = request.user, status = 201)
+			# Ensure that a tag with the same name does not exist
+			if bool(tag_cls.objects.filter(name__iexact = name)) is False:
+
+				# Create tag
+				tag = tag_cls.objects.create(name = name)
+
+				# Return response JSON
+				ActionLog.objects.log_tags('Created tag entry (id: %s)' % tag_id, user = request.user, status = 201)
+				return JsonResponse({
+					'version': '1.0.0',
+					'status': 201,
+					'data': { 'type': type, 'id': tag.id, 'name': tag.name }
+				}, status = 201)
+
+			# Return duplicate tag response JSON
+			ActionLog.objects.log_tags('Failed to create tag entry (id: %s)' % tag_id, user = request.user, status = 302)
 			return JsonResponse({
 				'version': '1.0.0',
-				'status': 201,
-				'data': { 'type': type, 'id': tag.id, 'name': tag.name }
-			}, status = 201)
+				'status': 302
+			}, status = 302)
 
+		# Tag edition request
 		elif action == 'edit':
 
+			# Retrieve tag name
 			name = request.POST['name']
 
+			# Determine tag type and update tag name
 			if tag_type == 'theme':
 
 				tag = Theme.objects.get(id = tag_id)
@@ -132,6 +156,7 @@ class TagsView(View):
 
 			ActionLog.objects.log_tags('Edited tag entry (id: %s)' % tag.id, user = request.user, status = 201)
 
+			# Return response JSON
 			return JsonResponse({
 				'version': '1.0.0',
 				'status': 200,
@@ -142,13 +167,16 @@ class TagsView(View):
 	@method_decorator(role_required('content manager'))
 	def delete(self, request, tag_type = '', tag_id = 0, action = ''):
 
+		# Determine tag type and delete specified tag, if valid
 		if tag_type == 'theme': Theme.objects.get(id = tag_id).delete()
 		elif tag_type == 'type': Type.objects.get(id = tag_id).delete()
 		elif tag_type == 'language': Language.objects.get(id = tag_id).delete()
 		else:
+			# If not valid, return an error
 			ActionLog.objects.log_tags('Failed to delete tag entry (id: %s)' % tag_id, user = request.user, status = 401)
 			return HttpResponseForbidden()
 
+		# Return response JSON
 		ActionLog.objects.log_tags('Deleted tag entry (id: %s)' % tag_id, user = request.user, status = 200)
 		return JsonResponse({
 			'version': '1.0.0',
