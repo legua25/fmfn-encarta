@@ -11,8 +11,8 @@ from apps.fmfn.models import (
 )
 
 __all__ = [
-	'AdminEditTest',
 	'ExternalEditTest',
+	'AdminEditTest',
 	'SelfEditTest'
 ]
 User = get_user_model()
@@ -21,8 +21,9 @@ class _EditUserTest(TestCase):
 
 	email_address = ''
 	password = ''
-	role = Role.objects.get(id = 1)
+	role = Role.objects.get(id = 2)
 	should_pass = False
+	use_self = False
 
 	fixtures = [
 		'grades',
@@ -34,16 +35,15 @@ class _EditUserTest(TestCase):
 
 		self.client = Client(enforce_csrf_checks = False)
 
-		#Self user
 		user = User.objects.create_user(
 			email_address = 'test@example.com',
 			password = 'asdfg',
-			role = Role.objects.get(id = 1),
+			role = Role.objects.get(id = 2),
 			campus = Campus.objects.get(id = 1)
 		)
 		self.user_id = user.id
 
-		if self.email_address != 'test@example.com':
+		if not self.use_self:
 
 			self.user = User.objects.create_user(
 				email_address = self.email_address,
@@ -53,19 +53,19 @@ class _EditUserTest(TestCase):
 			)
 		else: self.user = user
 
-	def test_edit_profile(self):
+		self.client.login(email_address = self.email_address, password = self.password)
 
-		login_result = self.client.login(email_address = self.email_address, password = self.password)
-		self.assertTrue(login_result)
+	def test_edit_profile(self):
 
 		user_target = User.objects.get(id = self.user_id)
 
-		with open('./media/users/test.jpg') as fp:
+		with open('./media/users/test.jpg') as f:
+
 			response = self.client.post(reverse_lazy('users:edit', kwargs = { 'user_id': self.user_id }), data = {
 				'first_name': 'John',
 				'mother_family_name': user_target.mother_family_name,
 				'father_family_name': 'Doe',
-				'photo': fp,
+				'photo': f,
 				'email_address': user_target.email_address,
 				'role': user_target.role.id,
 				'campus': user_target.campus.id,
@@ -77,20 +77,19 @@ class _EditUserTest(TestCase):
 
 			self.assertEqual(response.status_code, 200)
 
-			# Get Last Redirect:
-			self.assertGreater(len(response.redirect_chain), 0)
 			url, status = response.redirect_chain[-1]
 			self.assertIn(status, [ 301, 302 ])
 
-		# User Edit Data Integrity Tests:
 			user = User.objects.get(id = self.user_id)
 
 			# Advanced form should accept these changes:
 			if self.user.belongs_to('user manager'):
+
 				self.assertEqual(user.first_name, 'John')
 				self.assertEqual(user.father_family_name, 'Doe')
 			else:
-			# Basic form should not accept these changes:
+
+				# Basic form should not accept these changes:
 				self.assertNotEqual(user.first_name, 'John')
 				self.assertNotEqual(user.father_family_name, 'Doe')
 
@@ -104,7 +103,7 @@ class _EditUserTest(TestCase):
 			self.assertEqual(log.status, 200)
 		else:
 
-			self.assertIn(response.status_code, [401, 403])
+			self.assertIn(response.status_code, [ 401, 403 ])
 
 			# Check no changes were accepted:
 			user = User.objects.get(id = self.user_id)
@@ -129,11 +128,13 @@ class ExternalEditTest(_EditUserTest):
 
 	email_address = 'test_external@example.com'
 	password = 'te_asdfg'
-	should_pass = False
+	role = Role.objects.get(id = 2)
 
 class SelfEditTest(_EditUserTest):
 
 	email_address = 'test@example.com'
 	password = 'asdfg'
+	role = Role.objects.get(id = 2)
 	should_pass = True
+	use_self = True
 

@@ -101,9 +101,8 @@ class EditUserView(View):
 		if form.is_valid():
 
 			user = form.instance
-			ActionLog.objects.log_account(
-				'Edited user profile information (email address: %s)' % user.email_address, user = request.user)
-			form.save(commit=True)
+			ActionLog.objects.log_account('Edited user profile information (email address: %s)' % user.email_address, user = request.user)
+			form.save(commit = True)
 
 			return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user.id }))
 
