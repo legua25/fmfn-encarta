@@ -9,7 +9,7 @@ from uuid import uuid4
 
 __all__ = [ 'Material' ]
 
-def upload_to(instance, filename):
+def upload_to(filename):
 
 	name, ext = filename.rsplit('.', 1)
 	return '%s-%s.%s' % (name, uuid4().hex, ext)
@@ -29,7 +29,7 @@ class Material(Model):
 	content = FileField(
 		null = True,
 		blank = True,
-		upload_to = upload_to,
+		upload_to = 'materials/files',
 		verbose_name = _('content file')
 	)
 	link = URLField(
@@ -38,6 +38,8 @@ class Material(Model):
 		verbose_name = _('content link')
 	)
 	description = CharField(
+		null = True,
+		blank=True,
 		max_length = 1024,
 		verbose_name = _('description')
 	)
