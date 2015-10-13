@@ -12,7 +12,7 @@
 
         <div class="title"> Sistema Encarta</div>
         <div class="content">
-            <form action="{% url 'accounts:login' %}" method="post">{% csrf_token %}
+            <form action="{% url 'accounts:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" method="post">{% csrf_token %}
                 <div class="form-group">{{ form.email_address | attr:'required' }}</div>
                 <div class="form-group">{{ form.password | attr:'required' }}</div>
                 <button class="btn btn-primary" type="submit">{% trans 'Ingresar' %}</button>
