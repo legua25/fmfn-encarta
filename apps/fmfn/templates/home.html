@@ -1,10 +1,38 @@
-<!DOCTYPE html>
-	<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title></title>
-	</head>
-	<body>
-		{{ user }}
-	</body>
-</html>
+{% extends "base/base-2cols.html" %}
+
+{% block busqueda-active %}
+    active
+{% endblock %}
+
+{% block canvas %}
+    <div id="search-bar">
+        <p>¿Conoces el titulo?</p>
+        <input type="text">
+        <div id="age-tags" class="search-section">
+            <p>Selecciona una edad</p>
+            <label class="tag"> Preescolar </label>
+            <label class="tag"> Primaria baja </label>
+            <label class="tag"> Preescolar </label>
+            <label class="tag"> Primaria baja </label>
+        </div>
+        <div id="type-tags" class="search-section">
+            <p>Selecciona un tipo de material</p>
+            <label for="#" class="tag"> Juego </label>
+            <label for="#" class="tag"> Didactico </label>
+            <label for="#" class="tag"> Lectura </label>
+        </div>
+        <div id="lang-tags" class="search-section">
+            <p>Selecciona un lenguaje</p>
+            <label for="#" class="tag"> Español </label>
+            <label for="#" class="tag"> Otomi </label>
+            <label for="#" class="tag"> Ingles </label>
+        </div>
+        <button>Buscar</button>
+    </div>
+
+    <div id="results">
+        {% block results %}
+            Ejemplo de material
+        {% endblock %}
+    </div>
+{% endblock %}

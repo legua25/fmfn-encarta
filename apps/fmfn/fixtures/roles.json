@@ -6,7 +6,7 @@
 			"active": true,
 			"base_permissions": [],
 			"base": null,
-			"name": "teacher",
+			"name": "parent",
 			"description": ""
 		}
 	},
@@ -17,7 +17,7 @@
 			"active": true,
 			"base_permissions": [],
 			"base": 1,
-			"name": "administrator",
+			"name": "teacher",
 			"description": ""
 		}
 	},
@@ -40,6 +40,17 @@
 			"base_permissions": [],
 			"base": 3,
 			"name": "content manager",
+			"description": ""
+		}
+	},
+	{
+		"pk": 5,
+		"model": "fmfn.Role",
+		"fields": {
+			"active": true,
+			"base_permissions": [],
+			"base": 4,
+			"name": "administrator",
 			"description": ""
 		}
 	}

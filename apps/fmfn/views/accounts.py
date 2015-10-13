@@ -27,14 +27,22 @@ __all__ = [
 User = get_user_model()
 
 class LoginView(View):
+	""" This view handles user session creation. When a user is sent to this view, the user is prompted to provide login
+		credentials. These credentials are validated and matched to a user account, hence authenticating him/her. When
+		the user is authenticated, the user is logged in to the site and redirected to the last page he/she visited or
+		the home page if no page was previously visited.
+	"""
 
 	def get(self, request):
+
+		# Get redirect URL
+		redirect_url = request.REQUEST.get('next', reverse_lazy('index'))
 
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():
 
 			ActionLog.objects.log_account('User redirected since already logged in', user = request.user, status = 302)
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		# Create the login form and render the template
 		form = LoginForm()
@@ -42,11 +50,14 @@ class LoginView(View):
 	@method_decorator(csrf_protect)
 	def post(self, request):
 
+		# Get redirect URL
+		redirect_url = request.REQUEST.get('next', reverse_lazy('index'))
+
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():
 
 			ActionLog.objects.log_account('User redirected since already logged in', user = request.user, status = 302)
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		form = LoginForm(request.POST)
 		if form.is_valid():
@@ -56,7 +67,7 @@ class LoginView(View):
 			ActionLog.objects.log_account('User logged in to site (current permissions: %s)' % user.groups, user = user, status = 200)
 			login_to_site(request, user)
 
-			return redirect(reverse_lazy('index'))
+			return redirect(redirect_url)
 
 		# Login failed - report errors back to the user
 		ActionLog.objects.log_account('Failed attempt to log in to site (requested account: %s)' % form.cleaned_data['email_address'], status = 401)
@@ -69,6 +80,9 @@ class LoginView(View):
 login = LoginView.as_view()
 
 class LogoutView(View):
+	""" View that handles the user session invalidation logic. When a user is pointed to this view, the session is logged,
+		invalidated and the user is redirected to the login page to sign up again (this is the default behavior).
+	"""
 
 	@method_decorator(login_required)
 	def get(self, request):
@@ -84,6 +98,17 @@ class LogoutView(View):
 logout = LogoutView.as_view()
 
 class RecoverView(View):
+	""" View that handles user account recovery. Recovery is carried on in two phases, each using two steps. These phases
+		are "recovery" and "reset". In "recovery" phase, the account is located by means of user input and an email address
+		is sent to the account to retake the process in a later time. The "reset" phase allows the user to change the
+		account's password. The email sent by recovery has an expiry date of a week since the emission date and is a one-time
+		only token to change the password: once used, the link is invalidated.
+
+		This view allows changing the password of a logged-out user only. If the user was already logged in, the attempt
+		is blocked since this could imply an attack. Also, the generated token is protected against tampering to prevent
+		faking the request and hijacking user sessions. Once a password is changed, all active sessions (if any) are invalidated
+		and the user is redirected to login.
+	"""
 
 	def get(self, request, user_id = '', token = '', stage = ''):
 

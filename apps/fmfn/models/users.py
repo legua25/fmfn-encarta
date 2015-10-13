@@ -15,6 +15,8 @@ from django.db.models import *
 from imagekit.models.fields import ProcessedImageField as ImageField
 from _base import Model, ActiveManager
 
+def upload_photo(instance, filename): return 'users/%s/%s' % (instance.id, filename)
+
 class UserManager(ActiveManager, BaseUserManager):
 
 	def _create(self, email_address = None, password = None, **kwargs):
@@ -69,9 +71,11 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 	)
 	photo = ImageField(
 		format = 'JPEG',
-		spec_id = 'users:photo:spec',
 		autoconvert = True,
+		upload_to = upload_photo,
 		processors = [ ResizeToFill(240, 240) ],
+		blank = True,
+		default = 'users/default.png',
 		options = { 'quality': 80 },
 		verbose_name = _('user photo')
 	)
@@ -109,13 +113,13 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 		family_name = ' '.join(filter(lambda i: bool(i), [ self.father_family_name or '', self.mother_family_name or '' ]))
 		return ', '.join([ family_name, self.first_name ])
 	def get_short_name(self): return self.first_name
-	def belongs_to(self, name = None, **kwargs):
+	def belongs_to(self, name = '', **kwargs):
 
 		def _belongs_recursive(role, target):
 
 			if role is None: return False
 
-			if role == target: return True
+			if role.id == target.id: return True
 			return _belongs_recursive(role.base, target)
 
 		target = Role.objects.active().get(name = name, **kwargs)
