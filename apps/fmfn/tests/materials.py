@@ -123,7 +123,7 @@ class MaterialTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
 
-	def _test_too_much_content(self):
+	def test_too_much_content(self):
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
 
 		with open('test_data/oli.txt','r') as file :
@@ -143,7 +143,7 @@ class MaterialTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
 
 
-	def _test_not_enough_content(self):
+	def test_not_enough_content(self):
 
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
 
