@@ -57,14 +57,20 @@ class EditUserView(View):
 	def get(self, request, user_id = 0):
 
 		try: u = User.objects.get(id = user_id)
-		except User.DoesNotExist: return HttpResponseForbidden()
+		except User.DoesNotExist:
+
+			ActionLog.objects.log_account('Invalid user profile information request : (user_id: %s)' % user_id, user = request.user, status = 401)
+			return HttpResponseForbidden()
 		else:
 
 			if request.user.belongs_to('user manager'): form = AdminEditForm(instance = u)
 			else:
 
-				if request.user.id == user_id: form = BasicEditForm(instance = u)
-				else: return HttpResponseForbidden()
+				if request.user.id == int(user_id): form = BasicEditForm(instance = u)
+				else:
+
+					ActionLog.objects.log_account('Attempted to view user profile information without enough privileges : (user_id: %s)' % user_id, user = request.user, status = 401)
+					return HttpResponseForbidden()
 
 		return render_to_response('users/edit.html', context = RequestContext(request, locals()))
 	@method_decorator(csrf_protect)
@@ -73,26 +79,35 @@ class EditUserView(View):
 	def post(self, request, user_id = 0):
 
 		try: u = User.objects.get(id = user_id)
-		except User.DoesNotExist: return HttpResponseForbidden()
+		except User.DoesNotExist:
+
+			ActionLog.objects.log_account('User requested to edit does not exist: (user_id: %s)' % user_id, user = request.user, status = 401)
+			return HttpResponseForbidden()
 		else:
 
 			if request.user.belongs_to('user manager'): form = AdminEditForm(request.POST, request.FILES, instance = u)
 			else:
+				if request.user.id == int(user_id): form = BasicEditForm(request.POST, request.FILES, instance = u)
+				else:
 
-				if request.user.id == user_id: form = BasicEditForm(request.POST, request.FILES, instance = u)
-				else: return HttpResponseForbidden()
+					ActionLog.objects.log_account(
+						'Attempted to edit user profile information without enough privileges : (user_id: %s)' % user_id,
+						user = request.user,
+						status = 401
+					)
+					return HttpResponseForbidden()
 
 		# Validate the form and, if valid, save the user
 		if form.is_valid():
 
 			user = form.instance
 			ActionLog.objects.log_account('Edited user profile information (email address: %s)' % user.email_address, user = request.user)
-			form.save()
+			form.save(commit = True)
 
 			return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user.id }))
 
 		# Log the error and resend the form
-		ActionLog.objects.log_account('Attempted to edit user profile information (email address: %s)' % u.email_address, user = request.user)
+		ActionLog.objects.log_account('Attempted to edit user profile information with invalid detail(s) (email address: %s)' % u.email_address, user = request.user, status = 401)
 		return render_to_response('users/edit.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('user manager'))
@@ -101,12 +116,13 @@ class EditUserView(View):
 		try: u = User.objects.get(id = user_id)
 		except User.DoesNotExist:
 
-			ActionLog.objects.log_account('Attempted to delete user account', user = request.user)
+			ActionLog.objects.log_account('Attempted to delete user account', user = request.user, status = 401)
 			return HttpResponseForbidden()
+
 		else:
 
 			u.delete()
-			ActionLog.objects.log_account('Deleted user account (email address: %s)' % u.email_address, user = request.user)
+			ActionLog.objects.log_account('Deleted user account (email address: %s)' % u.email_address, user = request.user.email)
 
 			return JsonResponse({
 				'version': '1.0.0',

@@ -67,20 +67,17 @@ urlpatterns = [
 
 	# 	url(r'^$', None, name = 'list'),  # GET
 	# 	url(r'^api/$', None, name = 'filter'),  # POST
+		url(r'^create/$', views.users.create, name = 'create'),  # GET, POST
 	 	url(r'^(?P<user_id>[\d]+)/', include([
 
 	 		url(r'^$',  lambda request, user_id = 0: HttpResponse(''), name = 'view'),  # GET, POST
 	 		url(r'^edit/$', views.users.edit, name = 'edit'),  # GET, POST, DELETE
-
-		])),
-		url(r'^create/$', views.users.create, name = 'create'),  # GET, POST
-	# 	url(r'^(?P<user_id>[\d]+)/', include([
-
-	# 		url(r'^$', None, name = 'view'),  # GET
-	# 		url(r'^edit/$', None, name = 'edit'),  # GET, POST, DELETE
 	# 		url(r'^portfolio/$', None, name = 'portfolio')  # GET, PUT, DELETE
 
-	 ], namespace = 'users', app_name = 'apps.fmfn')),
+		]))
+
+	], namespace = 'users', app_name = 'apps.fmfn')),
+
 	# Management
 	# url(r'^manage/', include([
 
