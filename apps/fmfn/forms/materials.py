@@ -14,10 +14,12 @@ class MaterialForm(Form):
 		cleaned_data = super(MaterialForm,self).clean()
 		content = cleaned_data.get('content')
 		link = cleaned_data.get('link')
-		if content and link:
-			raise ValidationError({'content':_('Materials must have either a link or a document')})
-		if not content and not link:
+
+		if content is not None and link is not None:
 			raise ValidationError({'content':_('Materials cannot have both a link and a document')})
+		elif content is None and link is None:
+			raise ValidationError({'content':_('Materials must have either a link or a document')})
+		#TODO Review validation
 
 	class Meta(object):
 

@@ -13,7 +13,7 @@ input[type="time"],
 input[type="url"],
 input[type="color"],
 textarea {
-  background-color: #f1f1f1;
+  background-color: lighten(#f1f1f1,3%);
   @include border-top-radius(3px);
   @include border-right-radius(3px);
   @include border-bottom-radius(3px);

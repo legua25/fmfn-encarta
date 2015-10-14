@@ -20,7 +20,7 @@
         <form action="{% url 'users:create' %}" method="post" enctype="multipart/form-data" class="form">
             {% csrf_token %}
             <!-- General info section -->
-            <div id="general" class="container-fluid">
+            <div id="general">
                 <div class="sub-heading">{% trans 'General Information' %}</div>
                 <div id="user-first-name"
                      class="three-elements">{{ form.first_name | add_class:'error' | attr:'required' }}</div>
@@ -53,7 +53,7 @@
                 <!--Campus section-->
 
                 <!--Rol section-->
-                <div class="sub-heading">{% trans 'Select the rol of user' %}</div>
+                <div class="sub-heading">{% trans 'Select the role of user' %}</div>
                 <div id="user-roles">
                     <div id="id_role">
                         {{ form.role.errors }}
