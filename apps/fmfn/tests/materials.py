@@ -18,7 +18,15 @@ __all__ = [
 User = get_user_model()
 
 class MaterialTest(TestCase):
-
+	""" Material CRUD tests:
+		- test_material_created: basic material creation flow
+		- test_material_edited: basic material edition flow
+		- test_material_deleted: basic material deletion flow
+		- test_too_much_content: alternative flow where the user inputs both a link and a file
+		- test_not_enough_content: alternative flow where the user doesn't input a file nor a link
+		- test_material_detail: basic material display flow
+		- test_file_uploaded: checks that a file is correctly uploaded to the destination path
+	"""
 	fixtures = [ 'roles', 'grades', 'campus' ]
 
 	def setUp(self):
@@ -31,6 +39,11 @@ class MaterialTest(TestCase):
 			campus = Campus.objects.get(id = 1)
 		)
 
+	""" After executing content/create function, verifies that:
+		- the http responses are successful
+		- the ActionLog contains the latest operation registry
+		- the latest entry in the log contains a 302 response code
+	"""
 	def test_material_created(self):
 
 		material_count = len(Material.objects.active())
@@ -54,7 +67,6 @@ class MaterialTest(TestCase):
 		self.assertEqual(len(Material.objects.active()), (material_count + 1))
 
 		# Check the action log
-
 		self.assertTrue(bool(ActionLog.objects.active()))
 		self.assertEqual(len(ActionLog.objects.active()), (log_count + 2))
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)

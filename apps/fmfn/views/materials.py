@@ -15,6 +15,8 @@ from django.http import JsonResponse
 __all__ = [ 'create', 'edit','view' ]
 
 class CreateMaterialView(View):
+	""" This view handles list, create, read, update and delete operations on Materials
+	"""
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
