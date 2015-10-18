@@ -71,12 +71,19 @@ urlpatterns = [
 	 	url(r'^(?P<user_id>[\d]+)/', include([
 
 	 		url(r'^$',  lambda request, user_id = 0: HttpResponse(''), name = 'view'),  # GET, POST
-	 		url(r'^edit/$', views.users.edit, name = 'edit'),  # GET, POST, DELETE
-	# 		url(r'^portfolio/$', None, name = 'portfolio')  # GET, PUT, DELETE
+	 		url(r'^edit/$', views.users.edit, name = 'edit')  # GET, POST, DELETE
 
 		]))
 
 	], namespace = 'users', app_name = 'apps.fmfn')),
+
+	# Portfolio (favorites) management
+	url(r'^portfolio/', include([
+
+		url(r'^$', views.portfolio.manage, name = 'list'),  # GET
+		url(r'^(?P<content_id>[\d]+)/$', views.portfolio.manage, name = 'edit')  # PUT, DELETE
+
+	], namespace = 'portfolio', app_name = 'fmfn')),
 
 	# Management
 	# url(r'^manage/', include([
