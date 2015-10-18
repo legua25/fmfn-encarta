@@ -47,8 +47,8 @@ class Theme(MaterialTag):
 
 	class Meta(object):
 
-		verbose_name = _('material type')
-		verbose_name_plural = _('material types')
+		verbose_name = _('material theme')
+		verbose_name_plural = _('material themes')
 		app_label = 'fmfn'
 
 class Language(MaterialTag):
