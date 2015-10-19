@@ -12147,6 +12147,13 @@ html, body {
 }
 
 /* line 113, ../sass/helpers/_base.scss */
+.emphasis {
+  font-weight: 700;
+  padding-top: 15px;
+  padding-bottom: 5px;
+}
+
+/* line 119, ../sass/helpers/_base.scss */
 .sub-heading {
   font-size: 20px;
   font-weight: 300;
@@ -12156,30 +12163,37 @@ html, body {
   padding-top: 30px;
 }
 
-/* line 124, ../sass/helpers/_base.scss */
+/* line 130, ../sass/helpers/_base.scss */
 .form {
   width: 100%;
 }
-/* line 126, ../sass/helpers/_base.scss */
+/* line 132, ../sass/helpers/_base.scss */
 .form .three-elements {
   width: 33%;
   display: inline-block;
   padding-right: 5px;
 }
-/* line 131, ../sass/helpers/_base.scss */
+/* line 137, ../sass/helpers/_base.scss */
 .form .element-in-block {
   width: 33%;
   display: block;
   margin-bottom: 10px;
 }
-/* line 137, ../sass/helpers/_base.scss */
+/* line 143, ../sass/helpers/_base.scss */
 .form .two-elements {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
   width: 41.66667%;
   float: left;
 }
-/* line 141, ../sass/helpers/_base.scss */
+/* line 147, ../sass/helpers/_base.scss */
+.form .two-elements-exact {
+  padding-left: 0.9375rem;
+  padding-right: 0.9375rem;
+  width: 50%;
+  float: left;
+}
+/* line 151, ../sass/helpers/_base.scss */
 .form .middle-element {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
@@ -12187,30 +12201,32 @@ html, body {
   float: left;
   text-align: center;
 }
-/* line 146, ../sass/helpers/_base.scss */
+/* line 156, ../sass/helpers/_base.scss */
 .form button {
+  margin-top: 20px;
   width: 100%;
   color: white;
 }
-/* line 151, ../sass/helpers/_base.scss */
+/* line 162, ../sass/helpers/_base.scss */
 .form .two-buttons {
   width: 100%;
   display: block;
   text-align: center;
+  margin-top: 20px;
 }
-/* line 155, ../sass/helpers/_base.scss */
+/* line 167, ../sass/helpers/_base.scss */
 .form .two-buttons button {
   display: inline-block;
   width: 47%;
   margin-right: 2%;
   color: white;
 }
-/* line 160, ../sass/helpers/_base.scss */
+/* line 172, ../sass/helpers/_base.scss */
 .form .two-buttons button.delete {
   background-color: #b30000;
 }
 
-/* line 167, ../sass/helpers/_base.scss */
+/* line 179, ../sass/helpers/_base.scss */
 .error {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;

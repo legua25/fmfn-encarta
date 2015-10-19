@@ -48,7 +48,8 @@
                 <!--Campus section-->
                 <div class="sub-heading">{% trans 'Select the campus of the user' %}</div>
                 <div id="user-campus">
-                    {{ form.campus.errors }}{{ form.campus | add_class:'error element-in-block' | attr:'required' }}
+                    {{ form.campus.errors }}
+                    {{ form.campus | add_class:'error element-in-block' | attr:'required' }}
                 </div>
                 <!--Campus section-->
 

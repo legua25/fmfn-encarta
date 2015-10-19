@@ -110,6 +110,12 @@ html, body {
   font-weight: $light;
 }
 
+.emphasis{
+  font-weight: $bold;
+  padding-top: 15px;
+  padding-bottom: 5px;
+}
+
 .sub-heading {
   font-size: 20px;
   font-weight: $light;
@@ -138,12 +144,17 @@ html, body {
     @include grid-column(5);
   }
 
+  .two-elements-exact{
+    @include grid-column(6);
+  }
+
   .middle-element{
     @include grid-column(2);
     text-align: center;
   }
 
   button{
+    margin-top: 20px;
     width: 100%;
     color: white;
   }
@@ -152,6 +163,7 @@ html, body {
     width: 100%;
     display: block;
     text-align: center;
+    margin-top: 20px;
     button{
       display: inline-block;
       width: 47%;
