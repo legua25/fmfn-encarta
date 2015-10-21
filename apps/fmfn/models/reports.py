@@ -50,6 +50,7 @@ class ActionLogManager(ActiveManager):
 
 	def log_account(self, action, status = 200, user = None): return self._log(1, action, status, user)
 	def log_content(self, action, status = 200, user = None): return self._log(2, action, status, user)
+	def log_tags(self, action, status = 200, user = None): return self._log(4, action, status, user)
 
 	def _log(self, category, action, status, user):
 
@@ -69,7 +70,8 @@ class ActionLog(Model):
 	category = PositiveSmallIntegerField(
 		choices = [
 			(1, _('account control')),
-			(2, _('content management'))
+			(2, _('content management')),
+			(4, _('tag management'))
 		],
 		verbose_name = _('performed action category')
 	)
