@@ -78,8 +78,7 @@ class _TagTest(TestCase):
 
 		# Test case: a tag creation request arrives
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.post(reverse_lazy('tags:create'), data = {
-			'type': self.tag_name,
+		response = self.client.post(reverse_lazy('tags:create', kwargs = { 'tag_type': self.tag_name }), data = {
 			'name': 'philosophy'
 		}, follow = True)
 
@@ -97,8 +96,7 @@ class _TagTest(TestCase):
 		log_count = len(ActionLog.objects.active())
 
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.post(reverse_lazy('tags:create'), data = {
-			'type': self.tag_name,
+		response = self.client.post(reverse_lazy('tags:create', kwargs = { 'tag_type': self.tag_name }), data = {
 			'name': 'test'
 		})
 
@@ -116,9 +114,7 @@ class _TagTest(TestCase):
 		"""
 		log_count = len(ActionLog.objects.active())
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.get(reverse_lazy('tags:list'), data = {
-			'type': self.tag_name,
-		}, follow = True)
+		response = self.client.get(reverse_lazy('tags:list', kwargs = { 'tag_type': self.tag_name }), follow = True)
 
 		# Check status code
 		self.assertEqual(response.status_code, 200)
@@ -134,8 +130,7 @@ class _TagTest(TestCase):
 
 		log_count = len(ActionLog.objects.active())
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.get(reverse_lazy('tags:list'), data = {
-			'type': self.tag_name,
+		response = self.client.get(reverse_lazy('tags:list', kwargs = { 'tag_type': self.tag_name }), data = {
 			'filter': 'tag'
 		}, follow = True)
 
@@ -151,7 +146,7 @@ class _TagTest(TestCase):
 
 		"""
 
-		log_count = len(ActionLog.objects.active())
+		log_count = ActionLog.objects.active().count()
 		tag = self.tag_class.objects.create(name = 'test')
 
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
@@ -163,7 +158,7 @@ class _TagTest(TestCase):
 		self.assertEqual(response.status_code, 200)
 
 		# Check tag changes
-		self.assertEqual(len(self.tag_class.objects.filter(name = 'test1')), 1)
+		self.assertEqual(self.tag_class.objects.filter(name = 'test1').count(), 1)
 
 		# Check action log
 		self._action_log_tests(log_count, 201)

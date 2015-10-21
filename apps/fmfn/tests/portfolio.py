@@ -21,13 +21,10 @@ class PortfolioTest(TestCase):
 
 	def setUp(self):
 
-		self.client = Client(
-			enforce_csrf_checks = False,
-			HTTP_X_REQUESTED_WITH = 'XMLHttpRequest'
-		)
+		self.client = Client(enforce_csrf_checks = False)
 
 		# Create our test users
-		User.objects.create_user(
+		self.user = User.objects.create_user(
 			email_address = 'test1@example.com',
 			password = 'asdfgh',
 			role = Role.objects.get(id = 2),
@@ -35,7 +32,7 @@ class PortfolioTest(TestCase):
 		)
 
 		# Create the material to add
-		self.content_id = Material.objects.create(
+		self.content = Material.objects.create(
 			title = 'Test',
 			description = 'Mary had a little lamb... blah, blah, blah',
 			link = 'http://localhost/',
@@ -45,30 +42,37 @@ class PortfolioTest(TestCase):
 				role = Role.objects.get(id = 4),
 				campus = Campus.objects.get(id = 1)
 			)
-		).id
+		)
 
 	def test_material_added(self):
 
 		log_size = ActionLog.objects.active().count()
 
-		self.client.login(email_address = 'test1@example.com')
-		response = self.client.put(reverse_lazy('portfolio:edit', kwargs = { 'content_id': self.content_id }), follow = True)
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.put(reverse_lazy('portfolio:edit',
+			kwargs = { 'content_id': self.content.id }),
+			follow = True,
+			HTTP_X_REQUESTED_WITH = 'XMLHttpRequest'
+		)
 
-	def test_repeated_material(self):
+		self.assertEqual(response.status_code, 201)
+		self.assertEqual(Portfolio.objects.user(self.user).materials.count(), 1)
+		self.assertJSONEqual(str(response.content), {
+			'version': '1.0.0',
+			'status': 201,
+			'material': {
+				'id': self.content.id,
+				'title': self.content.title,
+				'description': self.content.description,
+				'content': self.content.content,
+				'link': self.content.link
+			}
+		})
 
-		log_size = ActionLog.objects.active().count()
-
-		self.client.login(email_address = 'test1@example.com')
-		response = self.client.put(reverse_lazy('portfolio:edit', kwargs = { 'content_id': self.content_id }), follow = True)
-	def test_removed_material(self):
-
-		log_size = ActionLog.objects.active().count()
-
-		self.client.login(email_address = 'test1@example.com')
-		response = self.client.delete(reverse_lazy('portfolio:edit', kwargs = { 'content_id': self.content_id }), follow = True)
-	def test_removed_twice(self):
-
-		log_size = ActionLog.objects.active().count()
-
-		self.client.login(email_address = 'test1@example.com')
-		response = self.client.delete(reverse_lazy('portfolio:edit', kwargs = { 'content_id': self.content_id }), follow = True)
+		self.assertEqual(ActionLog.objects.active().count(), (log_size + 1))
+		log = ActionLog.objects.latest('action_date')
+		self.assertEqual(log.category, 2)
+		self.assertEqual(log.status, 201)
+	def test_repeated_material(self): pass
+	def test_removed_material(self): pass
+	def test_removed_twice(self): pass
