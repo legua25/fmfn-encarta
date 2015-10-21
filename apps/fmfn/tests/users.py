@@ -11,9 +11,9 @@ from apps.fmfn.models import (
 )
 
 __all__ = [
-	'ExternalEditTest',
-	'AdminEditTest',
-	'SelfEditTest'
+	'ExternalUserTest',
+	'AdminUserTest',
+	'SelfUserTest'
 ]
 User = get_user_model()
 
@@ -117,20 +117,47 @@ class _EditUserTest(TestCase):
 			self.assertEqual(log.category, 1)
 			self.assertIn(log.status, [401, 403])
 
-class AdminEditTest(_EditUserTest):
+	def test_view_profile(self):
+
+		response = self.client.get(reverse_lazy('users:view', kwargs = { 'user_id': self.user_id }), data = {
+		}, follow = True)
+
+		if self.should_pass:
+			# If the role has enough privileges, allow
+			self.assertEqual(response.status_code, 200)
+
+			url, status = response.redirect_chain[-1]
+			self.assertIn(status, [ 301, 302 ])
+
+			self.assertTrue(bool(ActionLog.objects.active()))
+
+			log = ActionLog.objects.latest('action_date')
+			self.assertEqual(log.category, 1)
+			self.assertEqual(log.status, 200)
+		else:
+			# Deny
+			self.assertIn(response.status_code, [ 401, 403 ])
+
+			self.assertTrue(bool(ActionLog.objects.active()))
+
+			log = ActionLog.objects.latest('action_date')
+			self.assertEqual(log.category, 1)
+			self.assertIn(log.status, [401, 403])
+
+class AdminUserTest(_EditUserTest):
 
 	email_address = 'test_admin@example.com'
 	password = 'ta_asdfg'
 	role = Role.objects.get(id = 3)
 	should_pass = True
 
-class ExternalEditTest(_EditUserTest):
+class ExternalUserTest(_EditUserTest):
 
 	email_address = 'test_external@example.com'
 	password = 'te_asdfg'
 	role = Role.objects.get(id = 2)
 
-class SelfEditTest(_EditUserTest):
+class SelfUserTest(_EditUserTest):
 
 	email_address = 'test@example.com'
 	password = 'asdfg'

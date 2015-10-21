@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from apps.fmfn.forms import UserCreationForm, BasicEditForm, AdminEditForm
+from apps.fmfn.forms import UserCreationForm, BasicEditForm, AdminEditForm, UserViewForm
 from django.shortcuts import render_to_response, redirect, RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
@@ -130,4 +130,30 @@ class EditUserView(View):
 			}, context = RequestContext(request, locals()))
 
 edit = EditUserView.as_view()
+
+class ViewUserView(View):
+
+	@method_decorator(login_required)
+	@method_decorator(role_required('teacher'))
+	def get(self, request, user_id = 0):
+
+		try: u = User.objects.get(id = user_id)
+		except User.DoesNotExist:
+
+			ActionLog.objects.log_account('Invalid user profile information request : (user_id: %s)' % user_id, user = request.user, status = 401)
+			return HttpResponseForbidden()
+		else:
+			if request.user.belongs_to('user manager'): form = UserViewForm(instance = u)
+			else:
+
+				if request.user.id == int(user_id): form = UserViewForm(instance = u)
+				else:
+
+					ActionLog.objects.log_account('Attempted to view user profile information without enough privileges : (user_id: %s)' % user_id, user = request.user, status = 401)
+					return HttpResponseForbidden()
+
+		return render_to_response('users/view.html', context = RequestContext(request, locals()))
+
+
+view = ViewUserView.as_view()
 

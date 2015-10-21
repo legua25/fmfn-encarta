@@ -70,7 +70,7 @@ urlpatterns = [
 		url(r'^create/$', views.users.create, name = 'create'),  # GET, POST
 	 	url(r'^(?P<user_id>[\d]+)/', include([
 
-	 		url(r'^$',  lambda request, user_id = 0: HttpResponse(''), name = 'view'),  # GET, POST
+	 		url(r'^$',  views.users.view, name = 'view'),  # GET, POST
 	 		url(r'^edit/$', views.users.edit, name = 'edit'),  # GET, POST, DELETE
 	# 		url(r'^portfolio/$', None, name = 'portfolio')  # GET, PUT, DELETE
 
