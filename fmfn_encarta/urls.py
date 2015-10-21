@@ -32,7 +32,7 @@ urlpatterns = [
 	 	url(r'create/$', views.materials.create, name = 'create'),  # GET, PUT
 	 	url(r'^(?P<content_id>[\d]+)/', include([
 
-	 		url(r'^$',views.materials.view, name = 'view'),  # GET
+	 		url(r'^$',views.materials.view, name = 'view'),  # GET, POST
 	 		url(r'^edit/$', views.materials.edit, name = 'edit')  # GET, POST, DELETE
 
 	 	]))
