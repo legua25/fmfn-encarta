@@ -4,7 +4,9 @@ from apps.fmfn.models import (
     ActionLog,
     Material,
     Comment,
-    Rating
+    Rating,
+    Role,
+    Campus
 )
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import get_user_model
@@ -14,16 +16,23 @@ __all__ = [
     'RatingsTest'
 ]
 User = get_user_model()
-fixtures = [ 'roles', 'grades', 'campus','materials']
 
 class RatingsTest(TestCase):
     """
     Tests for the Comment/Rate Material use cases.
     """
-    def setup(self):
+
+    fixtures = [ 'roles', 'grades', 'campus','materials']
+
+    def setUp(self):
         self.client = Client(enforce_csrf_checks = False)
         self.material = Material.objects.create(title = "Material 1", description = "test description", link = "http://www.google.com")
-
+        self.user = User.objects.create_user(
+            email_address = 'test1@example.com',
+            password = 'asdfgh',
+            role = Role.objects.get(id = 2),
+            campus = Campus.objects.get(id = 1)
+        )
     """
     When a comment and a rating is added to a material, this test verifies:
      - the response status code is 200 (OK)
@@ -40,11 +49,11 @@ class RatingsTest(TestCase):
         self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
         comment_count = len(Comment.objects.active())
         log_count = len(ActionLog.objects.active())
-        self.client.post(reverse_lazy('ratings:create'),kwargs={'content_id':1},data = {'rating_value':4,'user':self.user})
-        response = self.client.post(reverse_lazy('comments:create'), kwargs = { 'content_id': 1 }, data = {'user':self.user, 'content':'Test comment' })
-        comment = Comment.objects.get(id=1)
+        self.client.post(reverse_lazy('ratings:create'),data = {'rating_value':4,'user':self.user, 'material':1})
+        response = self.client.post(reverse_lazy('comments:create'), data = {'user':self.user,'content':'Test comment','material':1 })
         self.assertEqual(response.status_code,200)
         self.assertEqual(len(Comment.objects.active()), comment_count + 1)
+        comment = Comment.objects.get(id=1)
         self.assertEqual(comment.content,'Test comment')
         self.assertEqual(comment.user,self.user)
         self.assertTrue(bool(Rating.objects.get(material=1)))
@@ -66,7 +75,7 @@ class RatingsTest(TestCase):
         self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
         comment_count = len(Comment.objects.active())
         log_count = len(ActionLog.objects.active())
-        response = self.client.post(reverse_lazy('comments:create'), kwargs = { 'content_id': 1 }, data = {'user':self.user, 'content':'Test comment' })
+        response = self.client.post(reverse_lazy('comments:create'), data = {'user':self.user, 'content':'Test comment','material':1 })
         self.assertEqual(response.status_code,400)
         self.assertEqual(comment_count,0)
         self.assertTrue(bool(ActionLog.objects.active()))
