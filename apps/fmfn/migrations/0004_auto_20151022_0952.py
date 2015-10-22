@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('fmfn', '0002_auto_20151011_1833'),
+        ('fmfn', '0003_auto_20151022_0945'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='material',
-            name='description',
-            field=models.CharField(max_length=1024, null=True, verbose_name='description', blank=True),
+            model_name='item',
+            name='portfolio',
+            field=models.ForeignKey(related_name='items', verbose_name='portfolio items', to='fmfn.Portfolio'),
         ),
     ]

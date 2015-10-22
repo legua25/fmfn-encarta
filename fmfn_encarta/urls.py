@@ -80,7 +80,7 @@ urlpatterns = [
 	# Portfolio (favorites) management
 	url(r'^portfolio/', include([
 
-		url(r'^$', views.portfolio.manage, name = 'list'),  # GET
+		url(r'^$', views.portfolio.manage, name = 'view'),  # GET
 		url(r'^(?P<content_id>[\d]+)/$', views.portfolio.manage, name = 'edit')  # PUT, DELETE
 
 	], namespace = 'portfolio', app_name = 'fmfn')),
