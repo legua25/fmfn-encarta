@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from apps.fmfn.models import ActionLog, Material, Portfolio, Item
+from django.shortcuts import render_to_response, RequestContext
 from apps.fmfn.decorators import role_required, ajax_required
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
-from django.db.models.fields.files import FieldFile
 from django.http import HttpResponseForbidden
 from django.views.generic import View
 from django.http import JsonResponse
@@ -16,7 +16,12 @@ class PortfolioView(View):
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('teacher'))
-	def get(self, request, user_id = 0): pass
+	def get(self, request):
+
+		portfolio = Portfolio.objects.user(request.user)
+		items = portfolio.items.filter(active = True)
+
+		return render_to_response('materials/portfolio.html', context = RequestContext(request, locals()))
 	@method_decorator(ajax_required)
 	@method_decorator(login_required)
 	@method_decorator(csrf_protect)
