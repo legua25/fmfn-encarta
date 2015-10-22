@@ -56,7 +56,7 @@ class PortfolioTest(TestCase):
 
 		self.assertEqual(response.status_code, 201)
 		portfolio = Portfolio.objects.user(self.user)
-		self.assertEqual(portfolio.items.all().count(), 1)
+		self.assertEqual(portfolio.items.filter(active = True).count(), 1)
 		self.assertJSONEqual(str(response.content), {
 			'version': '1.0.0',
 			'status': 201,
@@ -83,11 +83,50 @@ class PortfolioTest(TestCase):
 
 		self.assertEqual(response.status_code, 403)
 		portfolio = Portfolio.objects.user(self.user)
-		self.assertEqual(portfolio.items.all().count(), 1)
+		self.assertEqual(portfolio.items.filter(active = True).count(), 1)
 
 		self.assertEqual(ActionLog.objects.active().count(), (log_size + 2))
 		log = ActionLog.objects.latest('action_date')
 		self.assertEqual(log.category, 2)
 		self.assertEqual(log.status, 403)
-	def test_removed_material(self): pass
-	def test_removed_twice(self): pass
+	def test_removed_material(self):
+
+		log_size = ActionLog.objects.active().count()
+
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		self.client.put(reverse_lazy('portfolio:edit', kwargs = { 'content_id': self.material.id }), follow = True)
+		response = self.client.delete(reverse_lazy('portfolio:edit', kwargs = { 'content_id': self.material.id }), follow = True)
+
+		self.assertEqual(response.status_code, 200)
+		portfolio = Portfolio.objects.user(self.user)
+		self.assertEqual(portfolio.items.filter(active = True).count(), 0)
+		self.assertJSONEqual(str(response.content), {
+			'version': '1.0.0',
+			'status': 200,
+			'material': {
+				'id': self.material.id,
+				'title': self.material.title
+			}
+		})
+
+		self.assertEqual(ActionLog.objects.active().count(), (log_size + 2))
+		log = ActionLog.objects.latest('action_date')
+		self.assertEqual(log.category, 2)
+		self.assertEqual(log.status, 200)
+	def test_removed_twice(self):
+
+		log_size = ActionLog.objects.active().count()
+
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		self.client.put(reverse_lazy('portfolio:edit', kwargs = { 'content_id': self.material.id }), follow = True)
+		self.client.delete(reverse_lazy('portfolio:edit', kwargs = { 'content_id': self.material.id }), follow = True)
+		response = self.client.delete(reverse_lazy('portfolio:edit', kwargs = { 'content_id': self.material.id }), follow = True)
+
+		self.assertEqual(response.status_code, 403)
+		portfolio = Portfolio.objects.user(self.user)
+		self.assertEqual(portfolio.items.filter(active = True).count(), 0)
+
+		self.assertEqual(ActionLog.objects.active().count(), (log_size + 3))
+		log = ActionLog.objects.latest('action_date')
+		self.assertEqual(log.category, 2)
+		self.assertEqual(log.status, 403)
