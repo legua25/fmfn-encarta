@@ -153,27 +153,26 @@ class MaterialTest(TestCase):
         - the http responses are unsuccessful
         - the ActionLog contains the latest operation registry
         - the latest entry in the log contains a 401 response code
-        - the object wasn't modified
+        - the object wasn't created
     """
     def test_too_much_content(self):
         self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
 
-        with open('test_data/oli.txt','r') as file :
+        with open('test.txt','w+') as file :
             test_data = {
-                'title': 'Material editado',
+                'title': 'Material no creado',
                 'description': 'Descripción editada',
                 'link': 'http://www.hola.com',
                 'content': file
             }
             response = self.client.post(reverse_lazy('content:create'),data=test_data)
-        # Check the response status sequence
-        self.assertEqual(response.status_code, 401)
-        # Check the action log
-        self.assertTrue(bool(ActionLog.objects.active()))
-        self.assertEqual(len(ActionLog.objects.active()), 1)
-        self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
-        self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
-        self.assertFalse(bool(Material.objects.get(title='Material editado')))
+            # Check the response status sequence
+            self.assertEqual(response.status_code, 401)
+            # Check the action log
+            self.assertTrue(bool(ActionLog.objects.active()))
+            self.assertEqual(len(ActionLog.objects.active()), 1)
+            self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+            self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
 
     """ After executing the create function with an invalid set of data (neither a file nor a link are sent to the function) , verifies that:
         - the http responses are unsuccessful
@@ -227,15 +226,16 @@ class MaterialTest(TestCase):
     """
     def test_file_uploaded(self):
         self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-        with open('oli.txt', 'w') as file:
+        with open('test.txt','w+') as file:
+            file.write('testing')
             response = self.client.post(reverse_lazy('content:create'), data = {
                 'title': 'file test',
                 'description': 'This material works best for testing purposes',
                 'content':file
             }, follow = True)
+            saved_file = list(Material.objects.active())[-1].content
+            self.assertTrue(cmp(saved_file,file))
         #check that the file exists in destination path
-        saved_file = list(Material.objects.active())[-1].content
         self.assertEqual(response.status_code,200)
-        self.assertTrue(cmp(saved_file,file))
 
 
