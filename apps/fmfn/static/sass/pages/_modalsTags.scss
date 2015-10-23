@@ -1,0 +1,66 @@
+.tag-edit-delete {
+  width: 31%;
+  margin: 5px 5px 5px 5px;
+  display: inline-block;
+  padding: 10px 0px 10px 0px;
+  border: solid #e2e2e2 1px;
+  @include border-top-radius(3px);
+  @include border-right-radius(3px);
+  @include border-bottom-radius(3px);
+  @include border-left-radius(3px);
+  background-color: $wet-cement;
+  color: darken($wet-cement, 40%);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  a {
+    background-color: $sky-blue;
+    padding: 7px 10px 7px 10px;
+    margin: 3px 3px 3px 3px;
+    color: $white;
+    @include border-top-radius(3px);
+    @include border-right-radius(3px);
+    @include border-bottom-radius(3px);
+    @include border-left-radius(3px);
+  }
+
+  a.delete-tag {
+    background-color: $sad-red;
+  }
+
+  a:last-child {
+    margin-right: 20px;
+  }
+}
+
+.reveal-modal {
+  overflow-y: auto;
+}
+
+.close-reveal-modal {
+  position: fixed;
+}
+
+.edition-modal {
+  width: 50%;
+
+  button{
+    color: white;
+    width: 100%;
+  }
+}
+
+.form-modal {
+  input[type=text] {
+    width: 75%;
+    margin-right: 5px;
+    display: inline-block;
+    padding: 10px 2rem 10px 2rem;
+  }
+  button {
+    padding: 6.5px 2rem 6.5px 2rem;
+    width: 20%;
+    display: inline-block;
+    color: $white;
+  }
+}

@@ -14,7 +14,6 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'/>
     <link href="" rel="stylesheet" type="text/css"/>
     <link href="{% static 'css/main.css' %}" rel="stylesheet"/>
-    <link href="{% static 'fonts/font-awesome/font-awesome.min.css' %}" rel="stylesheet"/>
     {% block css %}{% endblock %}
 
     <!-- JS -->
@@ -35,10 +34,23 @@
 <script type="text/javascript" src="{% static 'js/foundation/foundation.js' %}"></script>
 <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
 <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
-{% block js_footer %}{% endblock %}
 <script>
-    $(document).foundation();
+    $(document).foundation({
+        reveal: {
+            multiple_opened: true,
+            close_on_background_click: false,
+            close_on_esc: false
+        }
+    });
+    $(document).ready(function () {
+        $('.reveal-modal').css('max-height', $('html').height() - 110 + 'px'); // 100 +10px to keep modal effect visible
+    });
+    // Reset max-height after window resize
+    $(window).resize(function () {
+        $('.reveal-modal').css('max-height', $('html').height() - 110 + 'px');
+    });
     $('select').select2();
 </script>
+{% block js_footer %}{% endblock %}
 </body>
 </html>

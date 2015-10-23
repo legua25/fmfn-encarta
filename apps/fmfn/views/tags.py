@@ -128,6 +128,7 @@ class TagsView(View):
 
 			# Retrieve tag name
 			name = request.POST['name']
+			print("Helooooooooooooo: %s"%(name))
 
 			if tag_type == 'theme':
 

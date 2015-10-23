@@ -39,8 +39,8 @@ class MaterialForm(Form):
 			'content': ClearableFileInput(attrs = { 'placeholder': _('Documentation') }),
 			'link': URLInput(attrs = { 'placeholder': _('Link to reference') }),
 			'suggested_ages': CheckboxSelectMultiple(),
-			'types': CheckboxSelectMultiple(),  # TODO: This will be replaced for Select2's implementation later
-			'themes': Select2MultipleWidget,  # TODO: This will be replaced for Select2's implementation later
-			'languages': CheckboxSelectMultiple(),  # TODO: This will be replaced for Select2's implementation later
+			'types': CheckboxSelectMultiple(),
+			'themes': Select2MultipleWidget,
+			'languages': CheckboxSelectMultiple(),
 			'user': HiddenInput()
 		}
