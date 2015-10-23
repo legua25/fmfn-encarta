@@ -104,6 +104,18 @@ html, body {
   @extend h3;
 }
 
+.description{
+  @extend h5;
+  color: lighten($main-black,10%);
+  font-weight: $light;
+}
+
+.emphasis{
+  font-weight: $bold;
+  padding-top: 15px;
+  padding-bottom: 5px;
+}
+
 .sub-heading {
   font-size: 20px;
   font-weight: $light;
@@ -128,9 +140,39 @@ html, body {
     margin-bottom: 10px;
   }
 
+  .two-elements {
+    @include grid-column(5);
+  }
+
+  .two-elements-exact{
+    @include grid-column(6);
+  }
+
+  .middle-element{
+    @include grid-column(2);
+    text-align: center;
+  }
+
   button{
+    margin-top: 20px;
     width: 100%;
     color: white;
+  }
+
+  .two-buttons{
+    width: 100%;
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    button{
+      display: inline-block;
+      width: 47%;
+      margin-right: 2%;
+      color: white;
+      &.delete{
+        background-color: darken(red,15%);
+      }
+    }
   }
 }
 

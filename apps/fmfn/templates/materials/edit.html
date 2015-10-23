@@ -1,113 +1,167 @@
 {% extends 'base/base-2cols.html' %}
 {% load i18n widget_tweaks %}
 
-	{% block title %}{% trans 'Edit Material' %}{% endblock title %}
-	{% block canvas %}
-		<nav class="navbar navbar-static-top navbar-inverse"></nav>
-		<main id="content" class="row-fluid">
-			<div class="container-fluid">
-				<section class="col-md-8 col-md-offset-2">
-                    <div class="panel panel-default">
-						<div class="panel-heading">
-							<div class="container-fluid">
-								<h3>{% trans 'Edit Material' %}</h3>
-								<p class="col-xs-10">
-									{% blocktrans with material.title as title %}Use this form to edit the contents of
-									material titled "{{ title }}" or delete it.{% endblocktrans %}
-								</p>
-							</div>
-						</div>
-	                    <div class="panel-body">
-							{% for field in form %}
-                                {% if field.errors%}<div class="alert alert-danger">{{ field.errors }}</div>{% endif %}
+{% block title %}{% trans 'Edit Material' %}{% endblock title %}
+{% block canvas %}
+    <div class="ninenty">
+        <div class="heading">
+            {% trans 'Edit Material' %}
+        </div>
+
+        <p class="description">
+            {% blocktrans with material.title as title %}Use this form to edit the contents of
+                material titled "{{ title }}" or delete it.{% endblocktrans %}
+        </p>
+
+        {% comment %}
+        {% for field in form %}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <div class="alert-box alert">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+        {% endcomment %}
+
+        <form action="{% url 'content:edit' content_id %}" method="post" enctype="multipart/form-data" class="form">
+
+            {% csrf_token %}
+
+            <div id="general">
+
+                <!-- Title section -->
+                <div class="sub-heading">{% trans 'Title' %}</div>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    {% for error in form.title.errors %}
+                        <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                    {% endfor %}
+                {% endif %}
+                <!-- Title section -->
+
+                <!--Description section-->
+                <div class="sub-heading">{% trans 'Description' %}</div>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    {% for error in form.description.errors %}
+                        <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                    {% endfor %}
+                {% endif %}
+                <!--Description section-->
+
+                <!--Attach section-->
+                <div class="form-group">
+                    <div class="sub-heading">{% trans 'File or link attached' %}</div>
+                    <div class="two-elements">{{ form.content }}
+                        {% if form.content.errors %}
+                            {% for error in form.content.errors %}
+                                <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
                             {% endfor %}
-							<form action="{% url 'content:edit' content_id %}" method="post"  enctype="multipart/form-data">
-								{% csrf_token %}
-								<div id="general" class="container-fluid">
-									<h4>{% trans 'General information' %}</h4>
-									<div class="form-group{% if form.title.errors %} has-error{% endif %}">{{ form.title | add_class:'form-control' }}</div>
-									<div class="form-group{% if form.description.errors %} has-error{% endif %}">{{ form.description | add_class:'form-control' }}</div>
-									<div class="form-group">
-										<div class="col-xs-5{% if form.content.errors %} has-error{% endif %}">{{ form.content | add_class:'form-control' }}</div>
-										<p class="col-xs-2 text-center"><strong>{% trans 'or' %}</strong></p>
-										<div class="col-xs-5{% if form.link.errors %} has-error{% endif %}">{{ form.link | add_class:'form-control' }}</div>
-									</div>
-								</div>
-								<hr />
-								<div id="tags" class="container-fluid">
-									<h4>{% trans 'Tagging' %}</h4>
-									<div id="tags-ages" class="col-xs-12 navbar navbar-default form-group">
-										<ul id="id_suggested_ages" class="nav nav-pills nav-justified">{% for age in form.fields.suggested_ages.choices %}
-											<li>
-												<a href="#">
-													<label for="id_suggested_ages_{{ forloop.counter }}" class="checkbox">
-														<input type="checkbox" id="id_suggested_ages_{{ forloop.counter }}" name="suggested_ages" value="{{ age.0 }}"{% if age.0 in form.suggested_ages.value %} checked{% endif %} />
-														{% blocktrans with age.1|title as name %}{{ name }}{% endblocktrans %}
-													</label>
-												</a>
-											</li>{% endfor %}
-										</ul>
-									</div>
-									<div class="form-group">
-										<div class="col-xs-4">
-											<p class="col-xs-12 text-center"><strong>{% trans 'Content type' %}</strong></p>{% if form.types.errors %}{% for error in form.types.errors %}
-											<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
-											<div id="tags-types" class="col-xs-12 navbar navbar-default form-group">
-												<ul id="id_types" class="nav nav-pills nav-stacked">{% for type in form.fields.types.choices %}
-													<li>
-														<a href="#">
-															<label for="id_types_{{ forloop.counter }}" class="checkbox">
-																<input type="checkbox" id="id_types_{{ forloop.counter }}" name="types" value="{{ type.0 }}" {% if type.0 in form.types.value %} checked{% endif %}/>
-																{% blocktrans with type.1|title as name %}{{ name }}{% endblocktrans %}
-															</label>
-														</a>
-													</li>{% endfor %}
-												</ul>
-											</div>
-										</div>
-										<div class="col-xs-4">
-											<p class="col-xs-12 text-center"><strong>{% trans 'Themes & Topics' %}</strong></p>{% if form.themes.errors %}{% for error in form.themes.errors %}
-											<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
-											<div id="tags-themes" class="col-xs-12 navbar navbar-default form-group">
-												<ul id="id_themes" class="nav nav-pills nav-stacked">{% for theme in form.fields.themes.choices %}
-													<li>
-														<a href="#">
-															<label for="id_themes_{{ forloop.counter }}" class="checkbox">
-																<input type="checkbox" id="id_themes_{{ forloop.counter }}" name="themes" value="{{ theme.0 }}"  {% if theme.0 in form.themes.value %} checked{% endif %}/>
-																{% blocktrans with theme.1|title as name %}{{ name }}{% endblocktrans %}
-															</label>
-														</a>
-													</li>{% endfor %}
-												</ul>
-											</div>
-										</div>
-										<div class="col-xs-4">
-											<p class="col-xs-12 text-center"><strong>{% trans 'Languages' %}</strong></p>{% if form.languages.errors %}{% for error in form.languages.errors %}
-											<div class="alert alert-danger">{{ error }}</div>{% endfor %}{% endif %}
-											<div id="tags-languages" class="col-xs-12 navbar navbar-default form-group">
-												<ul id="id_languages" class="nav nav-pills nav-stacked">{% for lang in form.fields.languages.choices %}
-													<li>
-														<a href="#">
-															<label for="id_languages_{{ forloop.counter }}" class="checkbox">
-																<input type="checkbox" id="id_languages_{{ forloop.counter }}" name="languages" value="{{ lang.0 }}"  {% if lang.0 in form.languages.value %} checked{% endif %} />
-																{% blocktrans with lang.1|title as name %}{{ name }}{% endblocktrans %}
-															</label>
-														</a>
-													</li>{% endfor %}
-												</ul>
-											</div>
-										</div>
-									</div>
-								</div>
-								<hr />
-								<div class="text-center">
-									<button class="btn btn-primary" type="submit">{% trans 'Submit' %}</button>
-									<button class="btn btn-danger input-sm col-xs-offset-1" type="button">{% trans 'Delete' %}</button>
-								</div>
-							</form>
-						</div>
+                        {% endif %}
                     </div>
-				</section>
-			</div>
-		</main>
-	{% endblock canvas %}
+
+                    <p class="middle-element"><strong>{% trans 'or' %}</strong></p>
+
+                    <div class="two-elements">
+                        {{ form.link }}
+                        {% if form.link.errors %}
+                            {% for error in form.link.errors %}
+                                <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <!--Attach section-->
+            </div>
+
+            <div id="tags" class="container-fluid">
+
+                <!-- Age tags section-->
+                <div id="tags-ages">
+                    <div class="sub-heading">{% trans 'Suggested ages' %}</div>
+                    {% for age in form.fields.suggested_ages.choices %}
+                        <input type="checkbox" id="id_suggested_ages_{{ forloop.counter }}"
+                               name="suggested_ages" value="{{ age.0 }}"
+                                {% if age.0 in form.suggested_ages.value %} checked{% endif %}
+                               style="visibility: hidden;"/>
+                        <label for="id_suggested_ages_{{ forloop.counter }}" class="checkbox">
+                            {% blocktrans with age.1|title as name %}{{ name }}{% endblocktrans %}
+                        </label>
+                    {% endfor %}
+
+                    {% if form.suggested_ages.errors %}
+                        {% for error in form.suggested_ages.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <!-- Age tags section-->
+
+                <!-- Type tags section -->
+                <div class="form-group">
+                    <div id="tags-types">
+                        <div class="sub-heading">{% trans 'Type of the material' %}</div>
+                        {% for type in form.fields.types.choices %}
+                            <input type="checkbox" id="id_types_{{ forloop.counter }}" name="types"
+                                   value="{{ type.0 }}" {% if type.0 in form.types.value %}
+                                   checked{% endif %}
+                                   style="visibility: hidden;"/>
+                            <label for="id_types_{{ forloop.counter }}" class="checkbox">
+                                {% blocktrans with type.1|title as name %}{{ name }}{% endblocktrans %}
+                            </label>
+                        {% endfor %}
+
+                        {% if form.types.errors %}
+                            {% for error in form.types.errors %}
+                                <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Type tags section -->
+
+                <!-- Languages tags section -->
+                <div id="tags-languages">
+                    <div class="sub-heading">{% trans 'Languages of the material' %}</div>
+                    {% for lang in form.fields.languages.choices %}
+                        <input type="checkbox" id="id_languages_{{ forloop.counter }}"
+                               name="languages" value="{{ lang.0 }}"
+                                {% if lang.0 in form.languages.value %} checked{% endif %}
+                               style="visibility: hidden;"/>
+                        <label for="id_languages_{{ forloop.counter }}" class="checkbox">
+                            {% blocktrans with lang.1|title as name %}{{ name }}{% endblocktrans %}
+                        </label>
+                    {% endfor %}
+
+                    {% if form.languages.errors %}
+                        {% for error in form.languages.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+                <!-- Languages tags section -->
+
+                <!-- Themes tags section -->
+                <div id="tags-themes" class="col-xs-12 navbar navbar-default form-group">
+
+                    <div class="sub-heading">{% trans 'Themes & Topics' %}</div>
+                    {{ form.themes }}
+
+                    {% if form.themes.errors %}
+                        {% for error in form.themes.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <!-- Themes tags section -->
+
+            </div>
+            <div class="two-buttons">
+                <button type="submit">{% trans 'Submit' %}</button>
+                <button class="delete" type="button">{% trans 'Delete' %}</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock canvas %}
