@@ -7,7 +7,7 @@ from django.contrib.auth import login as login_to_site
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
-from apps.fmfn.models import Material, ActionLog, Comment,Rating
+from apps.fmfn.models import Material, ActionLog, Comment
 from apps.fmfn.forms import MaterialForm
 from apps.fmfn.decorators import role_required
 from django.views.generic import View

@@ -68,8 +68,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('content', models.CharField(max_length=64, verbose_name='comment content')),
+                ('content', models.CharField(max_length=500, verbose_name='comment content')),
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='date created')),
+                ('rating_value', models.PositiveSmallIntegerField(verbose_name='rating values', choices=[(1, 'bad'), (2, 'regular'), (3, 'good'), (4, 'very good'), (5, 'excellent')])),
             ],
             options={
                 'verbose_name': 'material comment',
@@ -135,26 +136,11 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('items', models.ForeignKey(related_name='portfolio', verbose_name='portfolio items', to='fmfn.Item')),
                 ('user', models.ForeignKey(related_name='portfolio', verbose_name='user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'portfolio',
                 'verbose_name_plural': 'portfolios',
-            },
-        ),
-        migrations.CreateModel(
-            name='Rating',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('rating_value', models.PositiveSmallIntegerField(verbose_name='rating values', choices=[(1, 'bad'), (2, 'regular'), (3, 'good'), (4, 'very good'), (5, 'excellent')])),
-                ('material', models.ForeignKey(related_name='ratings', verbose_name='material', to='fmfn.Material')),
-                ('user', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'verbose_name': 'rating',
-                'verbose_name_plural': 'ratings',
             },
         ),
         migrations.CreateModel(
@@ -250,6 +236,11 @@ class Migration(migrations.Migration):
             model_name='item',
             name='material',
             field=models.ForeignKey(related_name='+', verbose_name='material', to='fmfn.Material'),
+        ),
+        migrations.AddField(
+            model_name='item',
+            name='portfolio',
+            field=models.ForeignKey(related_name='items', verbose_name='portfolio items', to='fmfn.Portfolio'),
         ),
         migrations.AddField(
             model_name='comment',

@@ -34,7 +34,7 @@ class TagsView(View):
 		{
 			"$schema": "http://json-schema.org/draft-04/schema#",
 
-			"id": "http://jsonschema.net/tag-list",
+			"id": "http://jsonschema.net/tag-listlist",
 			"type": "object",
 			"properties": {
 

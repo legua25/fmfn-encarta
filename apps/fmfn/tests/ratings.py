@@ -4,7 +4,6 @@ from apps.fmfn.models import (
     ActionLog,
     Material,
     Comment,
-    Rating,
     Role,
     Campus
 )
@@ -49,18 +48,18 @@ class RatingsTest(TestCase):
         self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
         comment_count = len(Comment.objects.active())
         log_count = len(ActionLog.objects.active())
-        self.client.post(reverse_lazy('ratings:create'),data = {'rating_value':4,'user':self.user, 'material':1})
-        response = self.client.post(reverse_lazy('comments:create'), data = {'user':self.user,'content':'Test comment','material':1 })
+        response = self.client.post(reverse_lazy('content:view',kwargs={'content_id':self.material.id}),
+                                    data = {'user':self.user,'content':'Test comment','rating_value':4 })
+
         self.assertEqual(response.status_code,200)
         self.assertEqual(len(Comment.objects.active()), comment_count + 1)
         comment = Comment.objects.get(id=1)
         self.assertEqual(comment.content,'Test comment')
         self.assertEqual(comment.user,self.user)
-        self.assertTrue(bool(Rating.objects.get(material=1)))
         self.assertLessEqual(len(comment.content),500)
         self.assertTrue(bool(comment.content))
         self.assertTrue(bool(ActionLog.objects.active()))
-        self.assertEqual(len(ActionLog.objects.active()), (log_count + 2))
+        self.assertEqual(len(ActionLog.objects.active()), (log_count + 1))
         self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
         self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
 
@@ -69,19 +68,19 @@ class RatingsTest(TestCase):
      - the response status code is 400 (Bad Request)
      - the comment count did not increase
      - the ActionLog contains the latest operation registry
-     - the latest entry in the log contains a 400 response code
+     - the latest entry in the log contains a 403 response code
     """
     def test_comment_no_rating(self):
         self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
         comment_count = len(Comment.objects.active())
         log_count = len(ActionLog.objects.active())
-        response = self.client.post(reverse_lazy('comments:create'), data = {'user':self.user, 'content':'Test comment','material':1 })
+        response = self.client.post(reverse_lazy('content:view',kwargs={'content_id':self.material.id}),data = {'user':self.user, 'content':'Test comment'})
         self.assertEqual(response.status_code,400)
         self.assertEqual(comment_count,0)
         self.assertTrue(bool(ActionLog.objects.active()))
         self.assertEqual(len(ActionLog.objects.active()), (log_count))
         self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
-        self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+        self.assertEqual(ActionLog.objects.latest('action_date').status, 400)
 
 
 

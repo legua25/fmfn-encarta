@@ -8,4 +8,3 @@ from downloads import Download
 from material import Material
 from users import User, Role
 from comments import Comment
-from ratings import Rating

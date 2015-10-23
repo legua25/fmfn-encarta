@@ -32,7 +32,18 @@ class Comment(Model):
         related_name = 'comments',
         verbose_name = _('commented material')
     )
-
+    rating_value = PositiveSmallIntegerField(
+		choices = [
+			(1, _('bad')),
+			(2, _('regular')),
+			(3, _('good')),
+			(4, _('very good')),
+			(5, _('excellent'))
+		],
+		verbose_name = _('rating values'),
+        blank = False,
+        null = False
+	)
     class Meta(object):
 
         verbose_name = _('material comment')
