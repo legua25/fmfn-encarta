@@ -5,4 +5,4 @@ from accounts import *
 from tags import *
 from materials import *
 from users import *
-
+from ratings import *
