@@ -18,7 +18,7 @@ $(document).ready(function () {
                         'edit-themes-modal',
                         'delete-tag-modal',
                         'edit-theme-tag',
-                        'delete-tag');
+                        'delete-tag delete-theme');
                 }
             }
         );
@@ -38,7 +38,7 @@ $(document).ready(function () {
                         'edit-types-modal',
                         'delete-tag-modal',
                         'edit-type-tag',
-                        'delete-tag');
+                        'delete-tag delete-type');
                 }
             }
         );
@@ -58,7 +58,7 @@ $(document).ready(function () {
                         'edit-languages-modal',
                         'delete-tag-modal',
                         'edit-language-tag',
-                        'delete-tag');
+                        'delete-tag delete-language');
                 }
             }
         );
@@ -90,23 +90,13 @@ $(document).ready(function () {
                     var newTag = response.data;
 
                     //add to modal
-                    var container = document.getElementById('themes-modal-content');
-                    var divElem = document.createElement('div');
-                    divElem.id = "theme_id_" + newTag.id;
-                    divElem.className = "tag-edit-delete";
-                    divElem.appendChild(document.createTextNode(newTag.name));
-
-                    var anchorEdit = '<a href="#" data-reveal-id="edit-themes-modal" class="edit-theme-tag">';
-                    anchorEdit += '<i class="fa fa-pencil"></i>';
-                    anchorEdit += '</a>';
-
-                    var anchorDelete = '<a href="#" data-reveal-id="delete-themes-modal" class="delete-tag">';
-                    anchorDelete += '<i class="fa fa-trash-o"></i>';
-                    anchorDelete += '</a>';
-
-                    container.appendChild(divElem);
-                    $('#theme_id_' + newTag.id).prepend(anchorDelete);
-                    $('#theme_id_' + newTag.id).prepend(anchorEdit);
+                    createTagModal('themes-modal-content',
+                        'theme_id_',
+                        newTag,
+                        'edit-themes-modal',
+                        'delete-tag-modal',
+                        'edit-theme-tag',
+                        'delete-tag delete-theme');
 
                     //add to select2
                     var select = document.getElementById('id_themes');
@@ -117,6 +107,11 @@ $(document).ready(function () {
 
                     //clear input
                     $('#new-theme').val('');
+
+                    //display notification
+                    displaySucessNotification(
+                        'The tag ' + newTag.name + ' has been added successfully',
+                        'themes-notifications');
                 },
                 error: function (xhr, textStatus, thrownError) {
                     if (xhr.statusText == 'FOUND') {
@@ -150,8 +145,14 @@ $(document).ready(function () {
                     console.log(response);
                     var newTag = response.data;
                     //add to modal
-                    var modal = "<input type=\"text\" value=\"" + newTag.name + "\" name = \"" + newTag.id + "\" disabled=\"disabled\">";
-                    $('#types-modal-content').append(modal);
+                    createTagModal('types-modal-content',
+                        'type_id_',
+                        newTag,
+                        'edit-types-modal',
+                        'delete-tag-modal',
+                        'edit-type-tag',
+                        'delete-tag delete-type');
+
                     //add to options
                     var container = document.getElementById('tags-types');
                     var checkbox = document.createElement('input');
@@ -167,6 +168,15 @@ $(document).ready(function () {
 
                     container.appendChild(checkbox);
                     container.appendChild(label);
+
+                    //Clear input
+                    $('#new-type').val('');
+
+                    //Display notification
+                    displaySucessNotification(
+                        'The tag ' + newTag.name + ' has been successfully added',
+                        'types-notifications'
+                    );
                 },
                 error: function (xhr, textStatus, thrownError) {
                     if (xhr.statusText == 'FOUND') {
@@ -200,8 +210,14 @@ $(document).ready(function () {
                     console.log(response);
                     var newTag = response.data;
                     //add to modal
-                    var modal = "<input type=\"text\" value=\"" + newTag.name + "\" name = \"" + newTag.id + "\" disabled=\"disabled\">";
-                    $('#languages-modal-content').append(modal);
+                    createTagModal('languages-modal-content',
+                        'language_id_',
+                        newTag,
+                        'edit-languages-modal',
+                        'delete-tag-modal',
+                        'edit-language-tag',
+                        'delete-tag delete-language');
+
                     //add to options
                     var container = document.getElementById('tags-languages');
                     var checkbox = document.createElement('input');
@@ -217,6 +233,15 @@ $(document).ready(function () {
 
                     container.appendChild(checkbox);
                     container.appendChild(label);
+
+                    //Clear input
+                    $('#new-language').val('');
+
+                    //Display notification
+                    displaySucessNotification(
+                        'The tag ' + newTag.name + ' has been successfully added',
+                        'languages-notifications'
+                    );
                 },
                 error: function (xhr, textStatus, thrownError) {
                     if (xhr.statusText == 'FOUND') {
@@ -231,7 +256,6 @@ $(document).ready(function () {
     // POST EDIT operations for modals -- START
 
     //EDIT Theme tags
-
     $('#send-theme-edition').click(function () {
         var theme = $('#edit-theme').val();
         var themeTest = theme.replace(/\s+/g, '');
@@ -266,19 +290,35 @@ $(document).ready(function () {
                         'edit-themes-modal',
                         'delete-themes-modal',
                         'edit-theme-tag',
-                        'delete-tag');
+                        'delete-tag delete-theme');
 
                     //add to select2
                     var select = document.getElementById('id_themes');
                     var opt = document.createElement('option');
                     opt.value = newTag.id;
                     opt.innerHTML = newTag.name;
+                    var optDelete = $("#id_themes option[value='" + newTag.id + "']")[0];
+                    isSelected = optDelete.selected;
+                    opt.selected = isSelected;
+                    var selectedOptions = $(".select2-selection__choice");
+                    for (var i = 0; i < selectedOptions.length; i++) {
+                        if (selectedOptions[i].title == optDelete.textContent) {
+                            selectedOptions[i].remove();
+                            var select2opt = '<li title="' + newTag.name + '" class="select2-selection__choice">';
+                            select2opt += '<span class="select2-selection__choice__remove" role="presentation">×</span>' + newTag.name;
+                            select2opt += '</li>';
+                            $(".select2-selection__rendered").append(select2opt);
+                        }
+                    }
                     $("#id_themes option[value='" + newTag.id + "']").remove();
                     select.appendChild(opt);
 
-                    //display Notification
+                    //<li title="Calculus" class="select2-selection__choice"></li>
+                    //close edition modal
                     $('#edit-themes-modal').foundation('reveal', 'close');
-                    displaySucessNotification('The tag ' + theme + ' has been edited', '#themes-notifications');
+
+                    //display Notification
+                    displaySucessNotification('The tag ' + theme + ' has been edited', 'themes-notifications');
                 },
                 error: function (xhr, textStatus, thrownError) {
                     console.log(xhr.statusText);
@@ -290,8 +330,230 @@ $(document).ready(function () {
         }
     });
 
+    //EDIT Type tags
+    $('#send-type-edition').click(function () {
+        var type = $('#edit-type').val();
+        var typeTest = type.replace(/\s+/g, '');
+        var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
+        var divToChange = $('input[name="div-type-change"]');
+        var divId = divToChange.val().toString();
+        var id = divToChange.val().toString().replace('type_id_', '');
+        var url = '/tags/type/' + id + '/edit/';
+        if (type.length <= 0 || typeTest == 0) {
+            $('#type-edit-error').show();
+        } else {
+            $('#type-edit-error').hide();
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: csfrToken,
+                    name: type
+                },
+                success: function (response) {
+                    console.log(type);
+                    console.log(response);
+                    var newTag = response.data;
+                    document.getElementById(divId).remove();
+
+                    //add to modal
+                    createTagModal('types-modal-content',
+                        'type_id_',
+                        newTag,
+                        'edit-types-modal',
+                        'delete-tag-modal',
+                        'edit-type-tag',
+                        'delete-tag delete-type');
+
+                    //delete old from options
+                    var toDelete = $("#tags-types input[value='" + newTag.id + "']")[0];
+                    var labelDelete = $("#tags-types label[for='" + toDelete.id + "']");
+                    labelDelete.remove();
+                    toDelete.remove();
+                    var isChecked = toDelete.checked;
+
+                    //add to options
+                    var container = document.getElementById('tags-types');
+                    var checkbox = document.createElement('input');
+                    checkbox.type = "checkbox";
+                    checkbox.name = "types";
+                    checkbox.value = newTag.id;
+                    checkbox.id = "id_types_" + newTag.id;
+                    checkbox.style.visibility = "hidden";
+                    checkbox.checked = isChecked;
+
+                    var label = document.createElement('label');
+                    label.htmlFor = "id_types_" + newTag.id;
+                    label.appendChild(document.createTextNode(newTag.name));
+
+                    container.appendChild(checkbox);
+                    container.appendChild(label);
+
+                    //Clear input
+                    $('#new-type').val('');
+
+                    //Close edition modal
+                    $('#edit-types-modal').foundation('reveal', 'close');
+
+                    //Display notification
+                    displaySucessNotification(
+                        'The tag ' + newTag.name + ' has been successfully edited',
+                        'types-notifications'
+                    );
+
+                },
+                error: function (xhr, textStatus, thrownError) {
+                    console.log(xhr.statusText);
+                    if (xhr.statusText == 'FOUND') {
+                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                    }
+                }
+            });
+        }
+    });
+
+    //EDIT Language tags
+    $('#send-language-edition').click(function () {
+        var language = $('#edit-language').val();
+        var languageTest = language.replace(/\s+/g, '');
+        var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
+        var divToChange = $('input[name="div-language-change"]');
+        var divId = divToChange.val().toString();
+        var id = divToChange.val().toString().replace('language_id_', '');
+        var url = '/tags/language/' + id + '/edit/';
+        if (language.length <= 0 || languageTest == 0) {
+            $('#language-edit-error').show();
+        } else {
+            $('#language-edit-error').hide();
+            console.log(url);
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: csfrToken,
+                    name: language
+                },
+                success: function (response) {
+                    console.log(language);
+                    console.log(response);
+                    var newTag = response.data;
+                    document.getElementById(divId).remove();
+
+                    //add to modal
+                    createTagModal('languages-modal-content',
+                        'language_id_',
+                        newTag,
+                        'edit-languages-modal',
+                        'delete-tag-modal',
+                        'edit-language-tag',
+                        'delete-tag delete-language');
+
+                    //delete old from options
+                    var toDelete = $("#tags-languages input[value='" + newTag.id + "']")[0];
+                    var labelDelete = $("#tags-languages label[for='" + toDelete.id + "']");
+                    labelDelete.remove();
+                    toDelete.remove();
+                    var isChecked = toDelete.checked;
+
+                    //add to options
+                    var container = document.getElementById('tags-languages');
+                    var checkbox = document.createElement('input');
+                    checkbox.type = "checkbox";
+                    checkbox.name = "languages";
+                    checkbox.value = newTag.id;
+                    checkbox.id = "id_languages_" + newTag.id;
+                    checkbox.style.visibility = "hidden";
+                    checkbox.checked = isChecked;
+
+                    var label = document.createElement('label');
+                    label.htmlFor = "id_languages_" + newTag.id;
+                    label.appendChild(document.createTextNode(newTag.name));
+
+                    container.appendChild(checkbox);
+                    container.appendChild(label);
+
+                    //Clear input
+                    $('#new-language').val('');
+
+                    //Close edition modal
+                    $('#edit-languages-modal').foundation('reveal', 'close');
+
+                    //Display notification
+                    displaySucessNotification(
+                        'The tag ' + newTag.name + ' has been successfully edited',
+                        'languages-notifications'
+                    );
+
+                },
+                error: function (xhr, textStatus, thrownError) {
+                    console.log(xhr.statusText);
+                    if (xhr.statusText == 'FOUND') {
+                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                    }
+                }
+            });
+        }
+    });
     // POST EDIT operations for modals -- END
 
+    //DELETE Operations
+    $('#send-delete-tag').click(function () {
+        var classList = $('input[name="type-of-tag"]').val().split(/\s+/);
+        var divToDelete = $('input[name="div-to-erase"]');
+        var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
+        var url, id;
+        if ($.inArray('delete-theme', classList) >= 0) {
+            var divId = divToDelete.val().toString();
+            id = divToDelete.val().toString().replace('theme_id_', '');
+            url = '/tags/theme/' + id + '/edit/';
+            console.log(url);
+            $.ajax({
+                url: url,
+                type: "DELETE",
+                data: {
+                    csrfmiddlewaretoken: csfrToken
+                },
+                success: function (response) {
+                    console.log(response);
+                    document.getElementById(divId).remove();
+
+
+                    //Delete from select2
+                    var optDelete = $("#id_themes option[value='" + newTag.id + "']")[0];
+                    isSelected = optDelete.selected;
+                    var selectedOptions = $(".select2-selection__choice");
+                    if (isSelected) {
+                        for (var i = 0; i < selectedOptions.length; i++) {
+                            if (selectedOptions[i].title == optDelete.textContent) {
+                                selectedOptions[i].remove();
+                            }
+                        }
+                    }
+                    $("#id_themes option[value='" + newTag.id + "']").remove();
+
+                    //close edition modal
+                    $('#edit-themes-modal').foundation('reveal', 'close');
+
+                    //display Notification
+                    displaySucessNotification('The tag ' + $('#tag-to-delete').textContent + ' has been deleted', 'themes-notifications');
+                },
+                error: function (xhr, textStatus, thrownError) {
+                    console.log(xhr.statusText);
+                    if (xhr.statusText == 'FOUND') {
+                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                    }
+                }
+            });
+        } else if ($.inArray('delete-type', classList) >= 0) {
+            id = divToDelete.val().toString().replace('type_id_', '');
+            url = '/tags/type/' + id + '/edit/';
+            console.log(url);
+        } else if ($.inArray('delete-language', classList) >= 0) {
+            id = divToDelete.val().toString().replace('language_id_', '');
+            url = '/tags/type/' + id + '/edit/';
+            console.log(url);
+        }
+    });
 });
 
 //Helper for edit theme tag
@@ -325,14 +587,25 @@ $(document).on('click', '.close', function () {
     notification.remove();
 });
 
+$(document).on('click', '.delete-tag', function () {
+    var tagText = document.getElementById(this.parentNode.id).textContent;
+    $('#tag-to-delete').html(tagText);
+    $('input[name="type-of-tag"]').val(this.className);
+    $('input[name="div-to-erase"]').val(document.getElementById(this.parentNode.id).id.toString());
+});
+
+$(document).on('click', '.abort-delete-tag', function () {
+    $('#delete-tag-modal').foundation('reveal', 'close');
+});
+
 function displaySucessNotification(message, id) {
     var html = '<div data-alert class="alert-box success radius">';
     html += message;
     html += '<a href="#" class="close">&times;</a></div>';
-    $(id).prepend(html);
+    $('#' + id).prepend(html);
 }
 
-function createTagModal(containerId, idSufix, newTag, editModalId, deleteModalId, editClass, deleteClass) {
+function createTagModal(containerId, idSufix, newTag, editModalId, deleteModalId, editClass, deleteClasses) {
 
     var container = document.getElementById(containerId);
     var divElem = document.createElement('div');
@@ -344,7 +617,7 @@ function createTagModal(containerId, idSufix, newTag, editModalId, deleteModalId
     anchorEdit += '<i class="fa fa-pencil"></i>';
     anchorEdit += '</a>';
 
-    var anchorDelete = '<a href="#" data-reveal-id="' + deleteModalId + '" class="' + deleteClass + '">';
+    var anchorDelete = '<a href="#" data-reveal-id="' + deleteModalId + '" class="' + deleteClasses + '">';
     anchorDelete += '<i class="fa fa-trash-o"></i>';
     anchorDelete += '</a>';
 

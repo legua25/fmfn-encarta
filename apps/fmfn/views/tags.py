@@ -128,7 +128,6 @@ class TagsView(View):
 
 			# Retrieve tag name
 			name = request.POST['name']
-			print("Helooooooooooooo: %s"%(name))
 
 			if tag_type == 'theme':
 
@@ -158,7 +157,7 @@ class TagsView(View):
 	@method_decorator(ajax_required)
 	@method_decorator(role_required('content manager'))
 	def delete(self, request, tag_type = '', tag_id = 0, **kwargs):
-
+		print('erasing')
 		# Determine tag type and delete specified tag, if valid
 		if tag_type == 'theme': Theme.objects.get(id = tag_id).delete()
 		elif tag_type == 'type': Type.objects.get(id = tag_id).delete()
