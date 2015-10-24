@@ -12163,37 +12163,47 @@ html, body {
   padding-top: 30px;
 }
 
-/* line 130, ../sass/helpers/_base.scss */
+/* line 128, ../sass/helpers/_base.scss */
+.display-in-line {
+  display: inline-block;
+}
+
+/* line 132, ../sass/helpers/_base.scss */
+.sub-heading-helper {
+  width: 50%;
+}
+
+/* line 138, ../sass/helpers/_base.scss */
 .form {
   width: 100%;
 }
-/* line 132, ../sass/helpers/_base.scss */
+/* line 140, ../sass/helpers/_base.scss */
 .form .three-elements {
   width: 33%;
   display: inline-block;
   padding-right: 5px;
 }
-/* line 137, ../sass/helpers/_base.scss */
+/* line 145, ../sass/helpers/_base.scss */
 .form .element-in-block {
   width: 33%;
   display: block;
   margin-bottom: 10px;
 }
-/* line 143, ../sass/helpers/_base.scss */
+/* line 151, ../sass/helpers/_base.scss */
 .form .two-elements {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
   width: 41.66667%;
   float: left;
 }
-/* line 147, ../sass/helpers/_base.scss */
+/* line 155, ../sass/helpers/_base.scss */
 .form .two-elements-exact {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
   width: 50%;
   float: left;
 }
-/* line 151, ../sass/helpers/_base.scss */
+/* line 159, ../sass/helpers/_base.scss */
 .form .middle-element {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
@@ -12201,32 +12211,32 @@ html, body {
   float: left;
   text-align: center;
 }
-/* line 156, ../sass/helpers/_base.scss */
+/* line 164, ../sass/helpers/_base.scss */
 .form button {
   margin-top: 20px;
   width: 100%;
   color: white;
 }
-/* line 162, ../sass/helpers/_base.scss */
+/* line 170, ../sass/helpers/_base.scss */
 .form .two-buttons {
   width: 100%;
   display: block;
   text-align: center;
   margin-top: 20px;
 }
-/* line 167, ../sass/helpers/_base.scss */
+/* line 175, ../sass/helpers/_base.scss */
 .form .two-buttons button {
   display: inline-block;
   width: 47%;
   margin-right: 2%;
   color: white;
 }
-/* line 172, ../sass/helpers/_base.scss */
+/* line 180, ../sass/helpers/_base.scss */
 .form .two-buttons button.delete {
   background-color: #b30000;
 }
 
-/* line 179, ../sass/helpers/_base.scss */
+/* line 187, ../sass/helpers/_base.scss */
 .error {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
@@ -12515,4 +12525,84 @@ button {
 /* line 36, ../sass/pages/_createMaterial.scss */
 #tags-themes .select2-selection__clear {
   display: none;
+}
+
+/* line 1, ../sass/pages/_modalsTags.scss */
+.tag-edit-delete {
+  width: 31%;
+  margin: 5px 5px 5px 5px;
+  display: inline-block;
+  padding: 10px 0px 10px 0px;
+  border: solid #e2e2e2 1px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  background-color: #EBEBEB;
+  color: #858585;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+/* line 16, ../sass/pages/_modalsTags.scss */
+.tag-edit-delete a {
+  background-color: #2980B9;
+  padding: 7px 10px 7px 10px;
+  margin: 3px 3px 3px 3px;
+  color: #FFFFFF;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+}
+/* line 27, ../sass/pages/_modalsTags.scss */
+.tag-edit-delete a.delete-tag {
+  background-color: #C0392B;
+}
+/* line 31, ../sass/pages/_modalsTags.scss */
+.tag-edit-delete a:last-child {
+  margin-right: 20px;
+}
+
+/* line 36, ../sass/pages/_modalsTags.scss */
+.reveal-modal {
+  overflow-y: auto;
+}
+
+/* line 40, ../sass/pages/_modalsTags.scss */
+.close-reveal-modal {
+  position: fixed;
+}
+
+/* line 44, ../sass/pages/_modalsTags.scss */
+.edition-modal {
+  width: 50%;
+}
+/* line 47, ../sass/pages/_modalsTags.scss */
+.edition-modal button {
+  color: white;
+  width: 100%;
+}
+
+/* line 54, ../sass/pages/_modalsTags.scss */
+.form-modal input[type=text] {
+  width: 75%;
+  margin-right: 5px;
+  display: inline-block;
+  padding: 10px 2rem 10px 2rem;
+}
+/* line 60, ../sass/pages/_modalsTags.scss */
+.form-modal button {
+  padding: 6.5px 2rem 6.5px 2rem;
+  width: 20%;
+  display: inline-block;
+  color: #FFFFFF;
 }
