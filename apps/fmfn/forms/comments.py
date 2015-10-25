@@ -14,11 +14,9 @@ class CommentForm(Form):
 		model = Comment
 		fields = [
             'content',
-            'rating_value',
-			'user'
+            'rating_value'
 		]
 		widgets = {
 			'content': Textarea(attrs = { 'placeholder': _('Write a comment here'), 'rows': 6, 'style': 'resize: none;' }),
-			'rating_value': RadioSelect(),
-			'user': HiddenInput()
+			'rating_value': RadioSelect()
 		}

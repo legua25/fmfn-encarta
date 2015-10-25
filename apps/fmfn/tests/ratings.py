@@ -24,14 +24,25 @@ class RatingsTest(TestCase):
     fixtures = [ 'roles', 'grades', 'campus','materials']
 
     def setUp(self):
-        self.client = Client(enforce_csrf_checks = False)
-        self.material = Material.objects.create(title = "Material 1", description = "test description", link = "http://www.google.com")
+        self.client = Client(enforce_csrf_checks = False,HTTP_X_REQUESTED_WITH = 'XMLHttpRequest')
         self.user = User.objects.create_user(
             email_address = 'test1@example.com',
             password = 'asdfgh',
             role = Role.objects.get(id = 2),
             campus = Campus.objects.get(id = 1)
         )
+        self.material = Material.objects.create(
+			title = 'Test',
+			description = 'test description',
+			link = 'http://localhost/',
+			user = User.objects.create_user(
+				email_address = 'test2@example.com',
+				password = 'asdfgh',
+				role = Role.objects.get(id = 4),
+				campus = Campus.objects.get(id = 1)
+			)
+		)
+
     """
     When a comment and a rating is added to a material, this test verifies:
      - the response status code is 200 (OK)
@@ -48,7 +59,7 @@ class RatingsTest(TestCase):
         self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
         comment_count = len(Comment.objects.active())
         log_count = len(ActionLog.objects.active())
-        response = self.client.post(reverse_lazy('content:view',kwargs={'content_id':self.material.id}),data = {'user':self.user,'content':'Test comment','rating_value':4 })
+        response = self.client.post(reverse_lazy('content:view',kwargs={'content_id':self.material.id}),data = {'content':'Test comment','rating_value':4 })
         self.assertEqual(response.status_code,200)
         self.assertEqual(len(Comment.objects.active()), comment_count + 1)
         comment = Comment.objects.get(id=1)
@@ -58,6 +69,12 @@ class RatingsTest(TestCase):
         self.assertTrue(bool(comment.content))
         self.assertTrue(bool(ActionLog.objects.active()))
         self.assertEqual(len(ActionLog.objects.active()), (log_count + 1))
+        self.assertJSONEqual(str(response.content),{
+                                                    'version': '1.0.0',
+                                                    'status': 200,
+                                                    'data':{'content':'Test comment'}
+                                                    }
+		                    )
         self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
         self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
 
@@ -76,9 +93,27 @@ class RatingsTest(TestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(comment_count,0)
         self.assertTrue(bool(ActionLog.objects.active()))
-        self.assertEqual(len(ActionLog.objects.active()), (log_count))
+        self.assertEqual(len(ActionLog.objects.active()), (log_count + 1))
         self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
         self.assertEqual(ActionLog.objects.latest('action_date').status, 400)
 
-
+    """
+    When a user attempts to add a comment and a rating to a material he/she has previously reviewed, this test verifies:
+     - the response status code is 400 (Bad Request)
+     - the comment count did not increase
+     - the ActionLog contains the latest operation registry
+     - the latest entry in the log contains a 403 response code
+    """
+    def test_comment_twice(self):
+        self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+        comment_count = len(Comment.objects.active())
+        log_count = len(ActionLog.objects.active())
+        Comment.objects.create(content='This comment will not be posted',rating_value=3,material=self.material,user=self.user)
+        response = self.client.post(reverse_lazy('content:view',kwargs={'content_id':self.material.id}),data = {'content':'Test comment','rating_value':4 })
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(comment_count,0)
+        self.assertTrue(bool(ActionLog.objects.active()))
+        self.assertEqual(len(ActionLog.objects.active()), (log_count + 1))
+        self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+        self.assertEqual(ActionLog.objects.latest('action_date').status, 400)
 

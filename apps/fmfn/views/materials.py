@@ -106,31 +106,48 @@ class MaterialDetailView(View):
 
     @method_decorator(login_required)
     def get(self, request, content_id = 0):
-        material = Material.objects.get(id=content_id)
-        form = CommentForm()
-        #TODO: redirect to error page if material is null
-        ActionLog.objects.log_content('Viewed material (id: %s)' % material.id, status = 200, user = request.user)
-        return render_to_response('materials/detail.html', context = RequestContext(request, locals()))
+
+        #TODO: Redirect user to 404 page if Material doesn't exist
+        if Material.objects.filter(id=content_id).exists():
+            material = Material.objects.get(id=content_id)
+            comments = Comment.objects.filter(material = material).order_by('-date_created')
+            form = CommentForm(initial = { 'user': request.user,'material': material })
+            ActionLog.objects.log_content('Viewed material (id: %s)' % material.id, status = 200, user = request.user)
+            return render_to_response('materials/detail.html', context = RequestContext(request, locals()))
+
 
 
     @method_decorator(login_required)
     @method_decorator(ajax_required)
     @method_decorator(role_required('teacher'))
     def post(self,request, content_id = 0):
-        user_id = request.user
-        form = MaterialForm(request.POST, initial = { 'user': user_id })
-        if form.is_valid:
-            ActionLog.objects.log_content('Registered new comment on material %s: %s' % (content_id, form['content']),
+        mat = Material.objects.get(id = content_id)
+
+        if Comment.objects.filter(material = mat, user = request.user).exists():
+            ActionLog.objects.log_content('Attempted to duplicate review on material %s' % content_id, user = request.user, status = 400)
+            return HttpResponseBadRequest()
+
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            ActionLog.objects.log_content('Registered new review on material %s' % content_id,
                                           user = request.user, status = 200)
-            #comm = Comment.objects.create(material=content_id,user = user_id, content = form['content'],rating_value = form['rating_value'])
-            form.save()
+            Comment.objects.create(
+                user = request.user,
+                material = mat,
+                content = form.cleaned_data['content'],
+                rating_value = form.cleaned_data['rating_value']
+
+
+            )
             return JsonResponse({
                     'version': '1.0.0',
                     'status': 200,
-                    'data':{'content':form.content,'time':form.date_created}
+                    'data':{'content':form.cleaned_data['content']}
                 }, status = 200)
 
-        ActionLog.objects.log_content('Failed to register comment on material %s' % content_id, user = user_id, status = 400)
+        ActionLog.objects.log_content('Failed to register review on material %s' % content_id, user = request.user, status = 400)
         return HttpResponseBadRequest()
+
+
 
 view = MaterialDetailView.as_view()
