@@ -501,15 +501,16 @@ $(document).ready(function () {
         var classList = $('input[name="type-of-tag"]').val().split(/\s+/);
         var divToDelete = $('input[name="div-to-erase"]');
         var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
-        var url, id;
+        var url, id, divId;
+
         if ($.inArray('delete-theme', classList) >= 0) {
-            var divId = divToDelete.val().toString();
+            divId = divToDelete.val().toString();
             id = divToDelete.val().toString().replace('theme_id_', '');
-            url = '/tags/theme/' + id + '/edit/';
+            url = '/tags/theme/' + id + '/delete/';
             console.log(url);
             $.ajax({
                 url: url,
-                type: "DELETE",
+                type: "POST",
                 data: {
                     csrfmiddlewaretoken: csfrToken
                 },
@@ -517,9 +518,9 @@ $(document).ready(function () {
                     console.log(response);
                     document.getElementById(divId).remove();
 
-
                     //Delete from select2
-                    var optDelete = $("#id_themes option[value='" + newTag.id + "']")[0];
+                    var optDelete = $("#id_themes option[value='" + id + "']")[0];
+                    var deletedText = $('#tag-to-delete').textContent;
                     isSelected = optDelete.selected;
                     var selectedOptions = $(".select2-selection__choice");
                     if (isSelected) {
@@ -529,13 +530,13 @@ $(document).ready(function () {
                             }
                         }
                     }
-                    $("#id_themes option[value='" + newTag.id + "']").remove();
+                    $("#id_themes option[value='" + id + "']").remove();
 
                     //close edition modal
-                    $('#edit-themes-modal').foundation('reveal', 'close');
+                    $('#delete-tag-modal').foundation('reveal', 'close');
 
                     //display Notification
-                    displaySucessNotification('The tag ' + $('#tag-to-delete').textContent + ' has been deleted', 'themes-notifications');
+                    displaySucessNotification('The tag has been deleted', 'themes-notifications');
                 },
                 error: function (xhr, textStatus, thrownError) {
                     console.log(xhr.statusText);
@@ -545,13 +546,87 @@ $(document).ready(function () {
                 }
             });
         } else if ($.inArray('delete-type', classList) >= 0) {
+            divId = divToDelete.val().toString();
             id = divToDelete.val().toString().replace('type_id_', '');
-            url = '/tags/type/' + id + '/edit/';
+            url = '/tags/type/' + id + '/delete/';
             console.log(url);
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: csfrToken
+                },
+                success: function (response) {
+                    console.log(response);
+                    document.getElementById(divId).remove();
+
+                    //delete old from options
+                    var toDelete = $("#tags-types input[value='" + id + "']")[0];
+                    var labelDelete = $("#tags-types label[for='" + toDelete.id + "']");
+                    labelDelete.remove();
+                    toDelete.remove();
+                    var isChecked = toDelete.checked;
+
+                    //Close edition modal
+                    $('#delete-tag-modal').foundation('reveal', 'close');
+
+                    //Display notification
+                    displaySucessNotification(
+                        'The tag has been successfully deleted',
+                        'types-notifications'
+                    );
+
+                },
+                error: function (xhr, textStatus, thrownError) {
+                    console.log(xhr.statusText);
+                    if (xhr.statusText == 'FOUND') {
+                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                    }
+                }
+            });
+
         } else if ($.inArray('delete-language', classList) >= 0) {
+            //TODO check why deleted tags keep appearing
+            divId = divToDelete.val().toString();
             id = divToDelete.val().toString().replace('language_id_', '');
-            url = '/tags/type/' + id + '/edit/';
+            url = '/tags/language/' + id + '/delete/';
             console.log(url);
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: csfrToken
+                },
+                success: function (response) {
+                    console.log(response);
+                    var newTag = response.data;
+                    document.getElementById(divId).remove();
+
+                    //delete old from options
+                    var toDelete = $("#tags-languages input[value='" + id + "']")[0];
+                    var labelDelete = $("#tags-languages label[for='" + toDelete.id + "']");
+                    labelDelete.remove();
+                    toDelete.remove();
+                    var isChecked = toDelete.checked;
+
+                    //Close edition modal
+                     $('#delete-tag-modal').foundation('reveal', 'close');
+
+                    //Display notification
+                    displaySucessNotification(
+                        'The tag has been successfully deleted',
+                        'languages-notifications'
+                    );
+
+                },
+                error: function (xhr, textStatus, thrownError) {
+                    console.log(xhr.statusText);
+                    if (xhr.statusText == 'FOUND') {
+                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                    }
+                }
+            });
         }
     });
 });
