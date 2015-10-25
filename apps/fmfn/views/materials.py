@@ -15,9 +15,10 @@ from django.http import HttpResponseBadRequest
 
 __all__ = [ 'create', 'edit','view' ]
 
+""" The following view handle list, create, read, update and delete operations on Materials.
+"""
 class CreateMaterialView(View):
-    """ This view handles list, create, read, update and delete operations on Materials
-    """
+
 
     """
         GET Request only renders the Material registry form
@@ -28,7 +29,10 @@ class CreateMaterialView(View):
 
         form = MaterialForm(initial = { 'user': request.user })
         return render_to_response('materials/create.html', context = RequestContext(request, locals()))
-
+    """
+        Executes material form validation. Saves material to the database if validation is successful
+        and renders a prepopulated form if it fails. Both operations get logged.
+    """
     @method_decorator(login_required)
     @method_decorator(role_required('content manager'))
     @method_decorator(csrf_protect)
@@ -53,7 +57,9 @@ class CreateMaterialView(View):
 create = CreateMaterialView.as_view()
 
 class EditMaterialView(View):
-
+    """
+        Renders edit form prepopulated with Material's data
+    """
     @method_decorator(login_required)
     @method_decorator(role_required('content manager'))
     def get(self, request, content_id = 0):
@@ -61,7 +67,11 @@ class EditMaterialView(View):
         form = MaterialForm(instance = material, initial = {'user': request.user })
 
         return render_to_response('materials/edit.html', context = RequestContext(request, locals()))
-
+    """
+        Validates input data and updates the material registry if validation passes.
+        If not, the form is rendered again.
+        Both operations are logged.
+    """
     @method_decorator(login_required)
     @method_decorator(role_required('content manager'))
     @method_decorator(csrf_protect)
@@ -83,7 +93,9 @@ class EditMaterialView(View):
 
         ActionLog.objects.log_content('Attempted to edit material entry (id: %s)' % content_id, user = request.user, status = 401)
         return render_to_response('materials/edit.html', context = RequestContext(request, locals()))
-
+    """
+        Performs a soft-delete to a given Material and adds record to the action log
+    """
     @method_decorator(login_required)
     @method_decorator(role_required('content manager'))
     @method_decorator(csrf_protect)
@@ -103,7 +115,10 @@ class EditMaterialView(View):
 edit = EditMaterialView.as_view()
 
 class MaterialDetailView(View):
-
+    """
+        Displays Material detail info: title, description, tags, content, reviews (comment + rating), etc. along with
+        a review form.
+    """
     @method_decorator(login_required)
     def get(self, request, content_id = 0):
 
@@ -116,7 +131,12 @@ class MaterialDetailView(View):
             return render_to_response('materials/detail.html', context = RequestContext(request, locals()))
 
 
-
+    """
+        This function is in charge for adding a review to the material.
+        It validates the comment form, checks there's only one review
+        on the material per user and returns a JSON response for the ajax request.
+        Success or failure on the operation are saved to the action log.
+    """
     @method_decorator(login_required)
     @method_decorator(ajax_required)
     @method_decorator(role_required('teacher'))
