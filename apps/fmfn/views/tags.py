@@ -153,25 +153,23 @@ class TagsView(View):
 				'status': 200,
 				'data': { 'type': tag_type, 'id': tag_id, 'name': name }
 			})
-	@method_decorator(login_required)
-	@method_decorator(ajax_required)
-	@method_decorator(role_required('content manager'))
-	def delete(self, request, tag_type = '', tag_id = 0, **kwargs):
-		print('erasing')
-		# Determine tag type and delete specified tag, if valid
-		if tag_type == 'theme': Theme.objects.get(id = tag_id).delete()
-		elif tag_type == 'type': Type.objects.get(id = tag_id).delete()
-		elif tag_type == 'language': Language.objects.get(id = tag_id).delete()
-		else:
-			# If not valid, return an error
-			ActionLog.objects.log_content('Failed to delete tag entry (id: %s)' % tag_id, user = request.user, status = 401)
-			return HttpResponseForbidden()
 
-		# Return response JSON
-		ActionLog.objects.log_content('Deleted tag (id: %s)' % tag_id, user = request.user)
-		return JsonResponse({
-			'version': '1.0.0',
-			'status': 200
-		})
+		#Tag deletion request
+		elif action == 'delete':
+
+			if tag_type == 'theme': Theme.objects.get(id = tag_id).delete()
+			elif tag_type == 'type': Type.objects.get(id = tag_id).delete()
+			elif tag_type == 'language': Language.objects.get(id = tag_id).delete()
+			else:
+				# If not valid, return an error
+				ActionLog.objects.log_content('Failed to delete tag entry (id: %s)' % tag_id, user = request.user, status = 401)
+				return HttpResponseForbidden()
+
+			# Return response JSON
+			ActionLog.objects.log_content('Deleted tag (id: %s)' % tag_id, user = request.user)
+			return JsonResponse({
+				'version': '1.0.0',
+				'status': 200
+			})
 
 tags = TagsView.as_view()
