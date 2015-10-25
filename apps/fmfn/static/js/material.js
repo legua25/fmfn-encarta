@@ -86,7 +86,7 @@ $(document).ready(function () {
                     name: theme
                 },
                 success: function (response) {
-                    console.log(response);
+                    //console.log(response);
                     var newTag = response.data;
 
                     //add to modal
@@ -142,7 +142,7 @@ $(document).ready(function () {
                     name: type
                 },
                 success: function (response) {
-                    console.log(response);
+                    //console.log(response);
                     var newTag = response.data;
                     //add to modal
                     createTagModal('types-modal-content',
@@ -207,7 +207,7 @@ $(document).ready(function () {
                     name: language
                 },
                 success: function (response) {
-                    console.log(response);
+                    //console.log(response);
                     var newTag = response.data;
                     //add to modal
                     createTagModal('languages-modal-content',
@@ -264,8 +264,8 @@ $(document).ready(function () {
         var divId = divToChange.val().toString();
         var id = divToChange.val().toString().replace('theme_id_', '');
         var url = '/tags/theme/' + id + '/edit/';
-        console.log(url);
-        console.log(csfrToken);
+        //console.log(url);
+        //console.log(csfrToken);
         if (theme.length <= 0 || themeTest == 0) {
             $('#theme-edit-error').show();
         } else {
@@ -278,8 +278,8 @@ $(document).ready(function () {
                     name: theme
                 },
                 success: function (response) {
-                    console.log(theme);
-                    console.log(response);
+                    //console.log(theme);
+                    //console.log(response);
                     var newTag = response.data;
                     document.getElementById(divId).remove();
 
@@ -321,7 +321,7 @@ $(document).ready(function () {
                     displaySucessNotification('The tag ' + theme + ' has been edited', 'themes-notifications');
                 },
                 error: function (xhr, textStatus, thrownError) {
-                    console.log(xhr.statusText);
+                    //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
                         alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
                     }
@@ -351,8 +351,8 @@ $(document).ready(function () {
                     name: type
                 },
                 success: function (response) {
-                    console.log(type);
-                    console.log(response);
+                    //console.log(type);
+                    //console.log(response);
                     var newTag = response.data;
                     document.getElementById(divId).remove();
 
@@ -403,7 +403,7 @@ $(document).ready(function () {
 
                 },
                 error: function (xhr, textStatus, thrownError) {
-                    console.log(xhr.statusText);
+                    //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
                         alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
                     }
@@ -425,7 +425,7 @@ $(document).ready(function () {
             $('#language-edit-error').show();
         } else {
             $('#language-edit-error').hide();
-            console.log(url);
+            //console.log(url);
             $.ajax({
                 url: url,
                 type: "POST",
@@ -434,8 +434,8 @@ $(document).ready(function () {
                     name: language
                 },
                 success: function (response) {
-                    console.log(language);
-                    console.log(response);
+                    //console.log(language);
+                    //console.log(response);
                     var newTag = response.data;
                     document.getElementById(divId).remove();
 
@@ -486,7 +486,7 @@ $(document).ready(function () {
 
                 },
                 error: function (xhr, textStatus, thrownError) {
-                    console.log(xhr.statusText);
+                    //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
                         alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
                     }
@@ -507,7 +507,7 @@ $(document).ready(function () {
             divId = divToDelete.val().toString();
             id = divToDelete.val().toString().replace('theme_id_', '');
             url = '/tags/theme/' + id + '/delete/';
-            console.log(url);
+            //console.log(url);
             $.ajax({
                 url: url,
                 type: "POST",
@@ -515,7 +515,7 @@ $(document).ready(function () {
                     csrfmiddlewaretoken: csfrToken
                 },
                 success: function (response) {
-                    console.log(response);
+                    //console.log(response);
                     document.getElementById(divId).remove();
 
                     //Delete from select2
@@ -539,7 +539,7 @@ $(document).ready(function () {
                     displaySucessNotification('The tag has been deleted', 'themes-notifications');
                 },
                 error: function (xhr, textStatus, thrownError) {
-                    console.log(xhr.statusText);
+                    //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
                         alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
                     }
@@ -549,7 +549,7 @@ $(document).ready(function () {
             divId = divToDelete.val().toString();
             id = divToDelete.val().toString().replace('type_id_', '');
             url = '/tags/type/' + id + '/delete/';
-            console.log(url);
+            //console.log(url);
 
             $.ajax({
                 url: url,
@@ -558,7 +558,7 @@ $(document).ready(function () {
                     csrfmiddlewaretoken: csfrToken
                 },
                 success: function (response) {
-                    console.log(response);
+                    //console.log(response);
                     document.getElementById(divId).remove();
 
                     //delete old from options
@@ -579,7 +579,7 @@ $(document).ready(function () {
 
                 },
                 error: function (xhr, textStatus, thrownError) {
-                    console.log(xhr.statusText);
+                    //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
                         alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
                     }
@@ -591,7 +591,7 @@ $(document).ready(function () {
             divId = divToDelete.val().toString();
             id = divToDelete.val().toString().replace('language_id_', '');
             url = '/tags/language/' + id + '/delete/';
-            console.log(url);
+            //console.log(url);
             $.ajax({
                 url: url,
                 type: "POST",
@@ -599,7 +599,7 @@ $(document).ready(function () {
                     csrfmiddlewaretoken: csfrToken
                 },
                 success: function (response) {
-                    console.log(response);
+                    //console.log(response);
                     var newTag = response.data;
                     document.getElementById(divId).remove();
 
@@ -621,7 +621,7 @@ $(document).ready(function () {
 
                 },
                 error: function (xhr, textStatus, thrownError) {
-                    console.log(xhr.statusText);
+                    //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
                         alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
                     }
