@@ -19,9 +19,6 @@ class CreateMaterialView(View):
     """ This view handles list, create, read, update and delete operations on Materials
     """
 
-    """
-        GET Request only renders the Material registry form
-    """
     @method_decorator(login_required)
     @method_decorator(role_required('content manager'))
     def get(self, request):
@@ -129,21 +126,18 @@ class MaterialDetailView(View):
 
         form = CommentForm(request.POST)
         if form.is_valid():
-            ActionLog.objects.log_content('Registered new review on material %s' % content_id,
-                                          user = request.user, status = 200)
+            ActionLog.objects.log_content('Registered new review on material %s' % content_id, user = request.user)
             Comment.objects.create(
                 user = request.user,
                 material = mat,
                 content = form.cleaned_data['content'],
                 rating_value = form.cleaned_data['rating_value']
-
-
             )
             return JsonResponse({
-                    'version': '1.0.0',
-                    'status': 200,
-                    'data':{'content':form.cleaned_data['content']}
-                }, status = 200)
+                'version': '1.0.0',
+                'status': 200,
+                'data':{'content':form.cleaned_data['content']}
+            })
 
         ActionLog.objects.log_content('Failed to register review on material %s' % content_id, user = request.user, status = 400)
         return HttpResponseBadRequest()
