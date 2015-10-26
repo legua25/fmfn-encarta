@@ -18,43 +18,43 @@ __all__ = [ 'tags' ]
 
 class TagsView(View):
 	"""
-	Inputs: request.GET['query'] (optional): The filter criteria to use in order to select tags. Defaults to None.
-	Outputs:
-
-		A JSON document complying with the following schema:
-
-		{
-			"$schema": "http://json-schema.org/draft-04/schema#",
-
-			"id": "http://jsonschema.net/tag-listlist",
-			"type": "object",
-			"properties": {
-
-				"type": { "id": "http://jsonschema.net/tag-list/type", "type": "string" },
-				"data": {
-					"id": "http://jsonschema.net/tag-list/data",
-					"type": "array",
-					"items": [
-						{
-							"id": "http://jsonschema.net/tag-list/data/tag",
-							"type": "object",
-							"properties": {
-								"id": { "id": "http://jsonschema.net/tag-list/data/tag/id", "type": "integer" },
-								"name": { "id": "http://jsonschema.net/tag-list/data/tag/name", "type": "string" }
+		Inputs: request.GET['query'] (optional): The filter criteria to use in order to select tags. Defaults to None.
+		Outputs:
+​
+			A JSON document complying with the following schema:
+​
+			{
+				"$schema": "http://json-schema.org/draft-04/schema#",
+​
+				"id": "http://jsonschema.net/tag-list",
+				"type": "object",
+				"properties": {
+​
+					"type": { "id": "http://jsonschema.net/tag-list/type", "type": "string" },
+					"data": {
+						"id": "http://jsonschema.net/tag-list/data",
+						"type": "array",
+						"items": [
+							{
+								"id": "http://jsonschema.net/tag-list/data/tag",
+								"type": "object",
+								"properties": {
+									"id": { "id": "http://jsonschema.net/tag-list/data/tag/id", "type": "integer" },
+									"name": { "id": "http://jsonschema.net/tag-list/data/tag/name", "type": "string" }
+								}
 							}
-						}
-					]
-				}
-
-			},
-			"required": [ "type", "data" ]
-		}
-
-		Possible values include:
-
-		{ "type": "theme", "data": [] }
-		{ "type": "language", "data": [ { "id": 1, "name": "inglés" } ] }
-	"""
+						]
+					}
+​
+				},
+				"required": [ "type", "data" ]
+			}
+​
+			Possible values include:
+​
+			{ "type": "theme", "data": [] }
+			{ "type": "language", "data": [ { "id": 1, "name": "inglés" } ] }
+		"""
 
 	@method_decorator(login_required)
 	@method_decorator(ajax_required)
@@ -75,7 +75,7 @@ class TagsView(View):
 			return HttpResponseForbidden()
 
 		# Return tags list JSON
-		ActionLog.objects.log_tags('Displayed %s tags' % tag_type, user = request.user, status = 200)
+		ActionLog.objects.log_tags('Located tag cluster', user = request.user)
 		return JsonResponse({
 			'version': '1.0.0',
 			'status': 200,
@@ -99,18 +99,30 @@ class TagsView(View):
 			elif tag_type == 'theme': tag_cls = Theme
 			elif tag_type == 'language': tag_cls = Language
 			else:
+
 				# If not valid, return error
 				ActionLog.objects.log_tags('Failed to create tag entry (id: %s)' % tag_id, user = request.user, status = 401)
 				return HttpResponseForbidden()
 
 			# Ensure that a tag with the same name does not exist
-			if bool(tag_cls.objects.filter(name__iexact = name)) is False:
+			if not tag_cls.objects.active().filter(name__iexact = name).exists():
 
 				# Create tag
 				tag = tag_cls.objects.create(name = name)
 
 				# Return response JSON
 				ActionLog.objects.log_tags('Created tag entry (id: %s)' % tag_id, user = request.user, status = 201)
+				return JsonResponse({
+					'version': '1.0.0',
+					'status': 201,
+					'data': { 'type': tag_type, 'id': tag.id, 'name': tag.name }
+				}, status = 201)
+			elif bool(tag_cls.objects.inactive().filter(name__iexact = name)) is True:
+
+				tag = tag_cls.objects.inactive().get(name__iexact = name)
+				tag.active = True
+				tag.save()
+
 				return JsonResponse({
 					'version': '1.0.0',
 					'status': 201,
@@ -130,16 +142,23 @@ class TagsView(View):
 			# Retrieve tag name
 			name = request.POST['name']
 
-			# Determine tag type and update tag name
-			if tag_type == 'theme': tag_cls = Theme
-			elif tag_type == 'type': tag_cls = Type
-			elif tag_type == 'language': tag_cls = Language
-			else: return HttpResponseForbidden()
+			if tag_type == 'theme':
 
-			tag_cls.objects.filter(id = tag_id).update(name = name)
-			ActionLog.objects.log_tags('Edited tag entry (id: %s)' % tag_id, user = request.user, status = 201)
+				tag = Theme.objects.get(id = tag_id)
+				tag.name = name
+				tag.save()
+			elif tag_type == 'type':
 
-			ActionLog.objects.log_content('Edited tag (category: %s, id: %s)' % (tag_type, tag_id), user = request.user, status = 201)
+				tag = Type.objects.get(id = tag_id)
+				tag.name = name
+				tag.save()
+			elif tag_type == 'language':
+
+				tag = Language.objects.get(id = tag_id)
+				tag.name = name
+				tag.save()
+
+			ActionLog.objects.log_tags('Edited tag (category: %s, id: %s)' % (tag_type, tag_id), user = request.user, status = 201)
 
 			# Return response JSON
 			return JsonResponse({
@@ -147,6 +166,7 @@ class TagsView(View):
 				'status': 200,
 				'data': { 'type': tag_type, 'id': tag_id, 'name': name }
 			})
+
 		#Tag deletion request
 		elif action == 'delete':
 
@@ -155,11 +175,11 @@ class TagsView(View):
 			elif tag_type == 'language': Language.objects.get(id = tag_id).delete()
 			else:
 				# If not valid, return an error
-				ActionLog.objects.log_content('Failed to delete tag entry (id: %s)' % tag_id, user = request.user, status = 401)
+				ActionLog.objects.log_tags('Failed to delete tag entry (id: %s)' % tag_id, user = request.user, status = 401)
 				return HttpResponseForbidden()
 
 			# Return response JSON
-			ActionLog.objects.log_content('Deleted tag (id: %s)' % tag_id, user = request.user)
+			ActionLog.objects.log_tags('Deleted tag (id: %s)' % tag_id, user = request.user)
 			return JsonResponse({
 				'version': '1.0.0',
 				'status': 200

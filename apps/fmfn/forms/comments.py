@@ -9,14 +9,14 @@ from django.forms import ModelForm as Form
 __all__ = [ 'CommentForm' ]
 
 class CommentForm(Form):
-    	class Meta(object):
+
+	class Meta(object):
 
 		model = Comment
-		fields = [
-            'content',
-            'rating_value'
-		]
+		fields = [ 'content', 'rating_value', 'user', 'material' ]
 		widgets = {
+			'user': HiddenInput(),
+			'material': HiddenInput(),
 			'content': Textarea(attrs = { 'placeholder': _('Write a comment here'), 'rows': 6, 'style': 'resize: none;' }),
 			'rating_value': RadioSelect()
 		}
