@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import redirect, render_to_response, RequestContext
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login as login_to_site
-from django.views.decorators.csrf import csrf_protect
-from django.utils.decorators import method_decorator
-from django.core.urlresolvers import reverse_lazy
 from apps.fmfn.models import (
 	Material,
 	ActionLog,
@@ -15,18 +9,22 @@ from apps.fmfn.models import (
 	Theme,
 	Language
 )
-from apps.fmfn.forms import MaterialForm, CommentForm
+from django.shortcuts import redirect, render_to_response, RequestContext
 from apps.fmfn.decorators import role_required, ajax_required
+from django.contrib.auth.decorators import login_required
+from apps.fmfn.forms import MaterialForm, CommentForm
+from django.views.decorators.csrf import csrf_protect
+from django.utils.decorators import method_decorator
+from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponseBadRequest
 from django.views.generic import View
 from django.http import JsonResponse
-from django.http import HttpResponseBadRequest
 
 __all__ = [ 'create', 'edit','view' ]
 
-""" The following view handle list, create, read, update and delete operations on Materials.
-"""
 class CreateMaterialView(View):
-
+	""" The following view handle list, create, read, update and delete operations on Materials.
+	"""
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
