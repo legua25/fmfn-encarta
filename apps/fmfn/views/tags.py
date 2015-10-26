@@ -136,7 +136,6 @@ class TagsView(View):
 
 			# Retrieve tag name
 			name = request.POST['name']
-			print("Helooooooooooooo: %s"%(name))
 
 			# Determine tag type and update tag name
 			if tag_type == 'theme': tag_cls = Theme
