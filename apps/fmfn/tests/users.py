@@ -17,8 +17,11 @@ __all__ = [
 ]
 User = get_user_model()
 
-class _EditUserTest(TestCase):
-
+class _UserTest(TestCase):
+	"""
+		Class containing a collection of tests which verify that user roles limitations are effectively applied on certain modules.
+			It assumes that certain grades, campus and roles have been previously defined in the system.
+	"""
 	email_address = ''
 	password = ''
 	role = Role.objects.get(id = 2)
@@ -56,7 +59,10 @@ class _EditUserTest(TestCase):
 		self.client.login(email_address = self.email_address, password = self.password)
 
 	def test_edit_profile(self):
-
+		"""
+			Test which verifies that roles allowed to edit other users are effectively able to,
+			otherwise, that a 40x is replied.
+		"""
 		user_target = User.objects.get(id = self.user_id)
 
 		with open('./media/users/test.jpg') as f:
@@ -118,7 +124,10 @@ class _EditUserTest(TestCase):
 			self.assertIn(log.status, [401, 403])
 
 	def test_view_profile(self):
-
+		"""
+			Test which verifies that roles allowed to view other users have access,
+			otherwise, that a 40x is replied.
+		"""
 		response = self.client.get(reverse_lazy('users:view', kwargs = { 'user_id': self.user_id }), data = {
 		}, follow = True)
 
@@ -144,21 +153,30 @@ class _EditUserTest(TestCase):
 			self.assertEqual(log.category, 1)
 			self.assertIn(log.status, [401, 403])
 
-class AdminUserTest(_EditUserTest):
-
+class AdminUserTest(_UserTest):
+	"""
+		Represents the basic data of the user to be tested:
+			An admin user basic data
+	"""
 	email_address = 'test_admin@example.com'
 	password = 'ta_asdfg'
 	role = Role.objects.get(id = 3)
 	should_pass = True
 
-class ExternalUserTest(_EditUserTest):
-
+class ExternalUserTest(_UserTest):
+	"""
+		Represents the basic data of the user to be tested:
+			A malicious professor account trying to mess with the system privileges basic data >:)
+	"""
 	email_address = 'test_external@example.com'
 	password = 'te_asdfg'
 	role = Role.objects.get(id = 2)
 
-class SelfUserTest(_EditUserTest):
-
+class SelfUserTest(_UserTest):
+	"""
+		Represents the basic data of the user to be tested:
+			A professor type account user basic data
+	"""
 	email_address = 'test@example.com'
 	password = 'asdfg'
 	role = Role.objects.get(id = 2)

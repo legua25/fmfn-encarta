@@ -51,7 +51,12 @@ class CreateUserView(View):
 create = CreateUserView.as_view()
 
 class EditUserView(View):
-
+	"""
+		Class responsible to handle user requests to edit user profiles:
+			Receives the logged user request containing the target user profile id to edit.
+				It evaluates if the user according to its role should be allowed or denied the edit to the target user profile
+			Returns the target user profile edit form on success, 40X otherwise.
+	"""
 	@method_decorator(login_required)
 	@method_decorator(role_required('teacher'))
 	def get(self, request, user_id = 0):
@@ -132,7 +137,12 @@ class EditUserView(View):
 edit = EditUserView.as_view()
 
 class ViewUserView(View):
-
+	"""
+		Class responsible to handle user requests inquiring about user profiles:
+			Receives the logged user request containing the target user profile id to display.
+				It evaluates if the user according to its role should be allowed or denied access to the target user profile
+			Returns the target user profile view on success, 40X otherwise.
+	"""
 	@method_decorator(login_required)
 	@method_decorator(role_required('teacher'))
 	def get(self, request, user_id = 0):
