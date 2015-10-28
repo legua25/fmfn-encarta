@@ -6,3 +6,4 @@ import search
 import portfolio
 import users
 import tags
+import downloads

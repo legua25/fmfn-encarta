@@ -33,7 +33,8 @@ urlpatterns = [
 	 	url(r'^(?P<content_id>[\d]+)/', include([
 
 	 		url(r'^$',views.materials.view, name = 'view'),  # GET, POST
-	 		url(r'^edit/$', views.materials.edit, name = 'edit')  # GET, POST, DELETE
+	 		url(r'^edit/$', views.materials.edit, name = 'edit'),  # GET, POST, DELETE
+		    url(r'^download/$', views.downloads.downloads, name = 'download')  # GET
 
 	 	]))
 
