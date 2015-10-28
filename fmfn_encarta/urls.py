@@ -35,7 +35,7 @@ urlpatterns = [
 
 	 		url(r'^$',views.materials.view, name = 'view'),  # GET, POST
 	 		url(r'^edit/$', views.materials.edit, name = 'edit'),  # GET, POST, DELETE
-		    url(r'^download/$', views.downloads.downloads, name = 'download')  # GET
+		    url(r'^download/$', views.materials.download, name = 'download')  # GET
 
 	 	]))
 
@@ -89,7 +89,7 @@ urlpatterns = [
 	], namespace = 'portfolio', app_name = 'fmfn')),
 
 	# Management
-	# url(r'^manage/', include([
+	url(r'^manage/', include([
 
 	# 	url(r'^statistics/', None, name = 'stats'),  # GET
 	# 	url(r'^reports/', include([
@@ -99,9 +99,9 @@ urlpatterns = [
 	# 		url(R'^(?P<report_id>[\d]+)/$', None, name = 'manage')  # PATCH
 
 	# 	])),
-	# 	url(r'^log/$', None, name = 'logging'),
-	# 	url(r'^advanced/', include(admin.site.urls))
+	# 	url(r'^log/$', None, name = 'logging')
 
-	# ], namespace = 'management', app_name = 'apps.fmfn'))
+	], namespace = 'management', app_name = 'apps.fmfn')),
+	url(r'^manage/advanced/$', include(admin.site.urls))
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

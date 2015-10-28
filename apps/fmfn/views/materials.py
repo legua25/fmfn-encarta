@@ -8,20 +8,26 @@ from apps.fmfn.models import (
 	Theme,
 	Language,
 	Comment,
-	Portfolio
+	Download
 )
 from django.shortcuts import redirect, render_to_response, RequestContext
 from apps.fmfn.decorators import role_required, ajax_required
+from django.http import HttpResponseForbidden, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponseForbidden
 from apps.fmfn.forms import MaterialForm
 from django.views.generic import View
 from django.http import JsonResponse
+from mimetypes import guess_type
 
-__all__ = [ 'create', 'edit','view' ]
+__all__ = [
+	'create',
+	'edit',
+	'view',
+	'download'
+]
 
 class CreateMaterialView(View):
 
@@ -112,7 +118,7 @@ class EditMaterialView(View):
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
-	@method_decorator(ajax_required)
+	@method_decorator(csrf_protect)
 	def delete(self, request, content_id = 0):
 
 		material = Material.objects.active().get(id = content_id)
@@ -142,11 +148,6 @@ class MaterialDetailView(View):
 
 		else:
 
-			in_portfolio = Portfolio.objects.user(request.user).items.filter(material = material).exists()
-			types = material.types.active()
-			languages = material.themes.active()
-			themes = material.languages.active()
-			ages = material.suggested_ages.active()
 			ActionLog.objects.log_content('Viewed material (id: %s)' % content_id, user = request.user)
 			return render_to_response('materials/detail.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
@@ -195,3 +196,40 @@ class MaterialDetailView(View):
 			}, status = 201)
 
 view = MaterialDetailView.as_view()
+
+class MaterialDownloadView(View):
+
+	@method_decorator(login_required)
+	@method_decorator(role_required('parent'))
+	def get(self, request, content_id = 0):
+
+		# Attempt to load the material
+		try: material = Material.objects.active().get(id = content_id)
+		except Material.DoesNotExist:
+
+			ActionLog.objects.log_content('Attempted to load nonexistent material (id: %s)' % content_id, user = request.user, status = 403)
+			return HttpResponseForbidden()
+
+		else:
+
+			# Check if the material has a content attached
+			if bool(material.content.name) is False:
+
+				ActionLog.objects.log_content('Attempted to download material without attached content (id: %s)' % content_id, user = request.user, status = 403)
+				return HttpResponseForbidden()
+
+			# Register the download
+			Download.objects.create(
+				user = request.user,
+				material = material,
+			)
+
+			# Get the material content type we'll use it later
+			content_type, _ = guess_type(material.content.name, strict = True)
+
+			ActionLog.objects.log_content('Downloaded material (id: %s)' % content_id, user = request.user, status = 200)
+
+			# Read the file into the output stream and send it to the user
+			return HttpResponse(material.content.read(), content_type = content_type)
+
+download = MaterialDownloadView.as_view()
