@@ -7,7 +7,7 @@
             <div class="title-material">{{ material.title }}</div>
 
             {% if material.content %}
-                <a href="{{ material.link }}" class="link-visit" target="_blank"><i class="fa fa-floppy-o"></i>
+                <a href="{% url 'content:download' contenat_id %}" class="link-visit" target="_blank"><i class="fa fa-floppy-o"></i>
                     {% trans 'download content' %}</a>
             {% endif %}
 
