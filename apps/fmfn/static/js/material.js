@@ -673,7 +673,12 @@ $(document).on('click', '.abort-delete-tag', function () {
     $('#delete-tag-modal').foundation('reveal', 'close');
 });
 
-$(document).on('click', '#delete-this-material', function () {
+$(document).on('click', '.abort-delete-material', function () {
+    console.log(this);
+    $('#delete-material-modal').foundation('reveal', 'close');
+});
+
+$(document).on('click', '#send-delete-material', function () {
     var url = $('input[name="url-material-delete"]').val();
     var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
     $.ajax({
@@ -684,12 +689,14 @@ $(document).on('click', '#delete-this-material', function () {
         },
         success: function (response) {
             console.log(response);
+            window.location.replace("/");
         },
         error: function (xhr, textStatus, thrownError) {
             console.log(xhr.statusText);
         }
     });
 });
+
 
 function displaySucessNotification(message, id) {
     var html = '<div data-alert class="alert-box success radius">';

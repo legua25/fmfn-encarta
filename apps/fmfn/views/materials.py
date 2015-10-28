@@ -7,7 +7,8 @@ from apps.fmfn.models import (
 	Type,
 	Theme,
 	Language,
-	Comment
+	Comment,
+	Portfolio
 )
 from django.shortcuts import redirect, render_to_response, RequestContext
 from apps.fmfn.decorators import role_required, ajax_required
@@ -141,6 +142,11 @@ class MaterialDetailView(View):
 
 		else:
 
+			in_portfolio = Portfolio.objects.user(request.user).items.filter(material = material).exists()
+			types = material.types.active()
+			languages = material.themes.active()
+			themes = material.languages.active()
+			ages = material.suggested_ages.active()
 			ActionLog.objects.log_content('Viewed material (id: %s)' % content_id, user = request.user)
 			return render_to_response('materials/detail.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)

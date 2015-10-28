@@ -20,7 +20,7 @@
 <!--Themes tags modal-->
 
 <!-- Theme edit modal -->
-<div aria-hidden="true" id="edit-themes-modal" class="reveal-modal edition-modal" data-reveal>
+<div id="edit-themes-modal" class="reveal-modal edition-modal" aria-hidden="true" role="dialog">
     <p class="lead">{% trans 'Edit your tag' %}</p>
 
     <div id="edit-theme-area">
@@ -60,7 +60,7 @@
 <!--Types tags modal-->
 
 <!-- Type edit modal -->
-<div aria-hidden="true" id="edit-types-modal" class="reveal-modal edition-modal" data-reveal>
+<div id="edit-types-modal" class="reveal-modal edition-modal" aria-hidden="true" role="dialog">
     <p class="lead">{% trans 'Edit your tag' %}</p>
 
     <div id="edit-type-area">
@@ -102,7 +102,7 @@
 <!--Languages tags modal-->
 
 <!--Language edit modal-->
-<div aria-hidden="true" id="edit-languages-modal" class="reveal-modal edition-modal" data-reveal>
+<div id="edit-languages-modal" class="reveal-modal edition-modal"  aria-hidden="true" role="dialog">
     <p class="lead">{% trans 'Edit your tag' %}</p>
 
     <div id="edit-language-area">
@@ -119,8 +119,8 @@
 </div>
 <!--Language edit modal-->
 
-<!--Delete modal-->
-<div aria-hidden="true" id="delete-tag-modal" class="reveal-modal edition-modal" data-reveal>
+<!--Delete tag modal-->
+<div id="delete-tag-modal" class="reveal-modal edition-modal" aria-hidden="true" role="dialog">
     <p class="lead">{% blocktrans %}
         Deleting a tag is a permanent action, and the tag <strong id="tag-to-delete">Example</strong> will dissapear from all the materials that contain it
     {% endblocktrans %}</p>
@@ -136,4 +136,20 @@
         </div>
     </div>
 </div>
-<!---Delete modal--->
+<!---Delete tag modal--->
+
+<!-- Delete material modal -->
+<div id="delete-material-modal" class="reveal-modal edition-modal" aria-hidden="true" role="dialog" data-reveal>
+    <p class="lead">{% blocktrans %}
+        Deleting a material is a permanent action
+    {% endblocktrans %}</p>
+    <p class="lead"><strong>{% trans 'Are you sure about performing this action?' %}</strong></p>
+    <div id="delete-tag-area" class="form">
+        {% csrf_token %}
+        <div class="two-buttons">
+            <button id="send-delete-material">{% trans 'Yes' %}</button>
+            <button class="delete abort-delete-material">{% trans 'Cancel' %}</button>
+        </div>
+    </div>
+</div>
+<!-- Delete material modal -->

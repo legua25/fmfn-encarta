@@ -172,7 +172,7 @@
             <div class="two-buttons">
                 <button type="submit">{% trans 'Submit' %}</button>
                 <input type="hidden" name="url-material-delete" value="{% url 'content:edit' content_id %}">
-                <button class="delete" type="button" id="delete-this-material">{% trans 'Delete' %}</button>
+                <button class="delete" type="button" id="delete-this-material" data-reveal-id="delete-material-modal">{% trans 'Delete' %}</button>
             </div>
         </form>
     </div>

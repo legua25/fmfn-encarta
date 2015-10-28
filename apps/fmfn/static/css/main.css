@@ -12117,9 +12117,10 @@ html, body {
   background-color: white;
   margin-left: 2.5%;
   box-shadow: 0px 3px 5px #888888;
+  min-height: 100%;
 }
 
-/* line 87, ../sass/helpers/_base.scss */
+/* line 88, ../sass/helpers/_base.scss */
 .tag {
   display: inline-block;
   background-color: #0078a0;
@@ -12140,20 +12141,20 @@ html, body {
   margin: 3px 3px 3px 3px;
 }
 
-/* line 107, ../sass/helpers/_base.scss */
+/* line 108, ../sass/helpers/_base.scss */
 .description {
   color: #5e5e5e;
   font-weight: 300;
 }
 
-/* line 113, ../sass/helpers/_base.scss */
+/* line 114, ../sass/helpers/_base.scss */
 .emphasis {
   font-weight: 700;
   padding-top: 15px;
   padding-bottom: 5px;
 }
 
-/* line 119, ../sass/helpers/_base.scss */
+/* line 120, ../sass/helpers/_base.scss */
 .sub-heading {
   font-size: 20px;
   font-weight: 300;
@@ -12163,47 +12164,47 @@ html, body {
   padding-top: 30px;
 }
 
-/* line 128, ../sass/helpers/_base.scss */
+/* line 129, ../sass/helpers/_base.scss */
 .display-in-line {
   display: inline-block;
 }
 
-/* line 132, ../sass/helpers/_base.scss */
+/* line 133, ../sass/helpers/_base.scss */
 .sub-heading-helper {
   width: 50%;
 }
 
-/* line 138, ../sass/helpers/_base.scss */
+/* line 139, ../sass/helpers/_base.scss */
 .form {
   width: 100%;
 }
-/* line 140, ../sass/helpers/_base.scss */
+/* line 141, ../sass/helpers/_base.scss */
 .form .three-elements {
   width: 33%;
   display: inline-block;
   padding-right: 5px;
 }
-/* line 145, ../sass/helpers/_base.scss */
+/* line 146, ../sass/helpers/_base.scss */
 .form .element-in-block {
   width: 33%;
   display: block;
   margin-bottom: 10px;
 }
-/* line 151, ../sass/helpers/_base.scss */
+/* line 152, ../sass/helpers/_base.scss */
 .form .two-elements {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
   width: 41.66667%;
   float: left;
 }
-/* line 155, ../sass/helpers/_base.scss */
+/* line 156, ../sass/helpers/_base.scss */
 .form .two-elements-exact {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
   width: 50%;
   float: left;
 }
-/* line 159, ../sass/helpers/_base.scss */
+/* line 160, ../sass/helpers/_base.scss */
 .form .middle-element {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
@@ -12211,32 +12212,32 @@ html, body {
   float: left;
   text-align: center;
 }
-/* line 164, ../sass/helpers/_base.scss */
+/* line 165, ../sass/helpers/_base.scss */
 .form button {
   margin-top: 20px;
   width: 100%;
   color: white;
 }
-/* line 170, ../sass/helpers/_base.scss */
+/* line 171, ../sass/helpers/_base.scss */
 .form .two-buttons {
   width: 100%;
   display: block;
   text-align: center;
   margin-top: 20px;
 }
-/* line 175, ../sass/helpers/_base.scss */
+/* line 176, ../sass/helpers/_base.scss */
 .form .two-buttons button {
   display: inline-block;
   width: 47%;
   margin-right: 2%;
   color: white;
 }
-/* line 180, ../sass/helpers/_base.scss */
+/* line 181, ../sass/helpers/_base.scss */
 .form .two-buttons button.delete {
   background-color: #b30000;
 }
 
-/* line 187, ../sass/helpers/_base.scss */
+/* line 188, ../sass/helpers/_base.scss */
 .error {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
@@ -12246,6 +12247,11 @@ html, body {
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
   border-top-left-radius: 3px;
+}
+
+/* line 195, ../sass/helpers/_base.scss */
+select[multiple] {
+  height: 0;
 }
 
 /* line 1, ../sass/helpers/_forms.scss */
@@ -12605,4 +12611,90 @@ button {
   width: 20%;
   display: inline-block;
   color: #FFFFFF;
+}
+
+/* line 1, ../sass/pages/_detailMaterial.scss */
+.heading-material {
+  margin-top: 35px;
+  display: block;
+}
+/* line 4, ../sass/pages/_detailMaterial.scss */
+.heading-material .title-material {
+  font-weight: 700;
+  font-size: 30px;
+  color: #343434;
+  min-width: 60%;
+  display: inline-block;
+}
+/* line 11, ../sass/pages/_detailMaterial.scss */
+.heading-material .link-visit {
+  padding: 5px 8px 5px 8px;
+  display: inline-block;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  background-color: #EBEBEB;
+  border: solid 1px #d2d2d2;
+  color: #858585;
+  font-weight: 400;
+}
+/* line 12, ../sass/pages/_detailMaterial.scss */
+.heading-material .link-visit i {
+  padding-right: 5px;
+  color: #2980B9;
+}
+/* line 28, ../sass/pages/_detailMaterial.scss */
+.heading-material .add-favorites {
+  padding: 5px 8px 5px 8px;
+  display: inline-block;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  background-color: #EBEBEB;
+  border: solid 1px #d2d2d2;
+  color: #858585;
+  font-weight: 400;
+}
+/* line 29, ../sass/pages/_detailMaterial.scss */
+.heading-material .add-favorites i {
+  padding-right: 5px;
+  color: #DF2828;
+}
+
+/* line 46, ../sass/pages/_detailMaterial.scss */
+.description-material {
+  color: #444444;
+  padding-top: 10px;
+}
+
+/* line 51, ../sass/pages/_detailMaterial.scss */
+.tags-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+/* line 54, ../sass/pages/_detailMaterial.scss */
+.tags-container .material-tags {
+  padding: 3px 5px 3px 5px;
+  background-color: #f3f3f3;
+  font-size: 13px;
+  border: solid 1px #b8b8b8;
+  color: #b8b8b8;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
 }
