@@ -110,7 +110,7 @@ class EditMaterialView(View):
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
-	@method_decorator(csrf_protect)
+	@method_decorator(ajax_required)
 	def delete(self, request, content_id = 0):
 
 		material = Material.objects.get(id = content_id)
