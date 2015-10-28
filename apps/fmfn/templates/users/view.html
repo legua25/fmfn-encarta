@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load i18n %}
 
-	{% block title %}{% trans 'Edit User' %}{% endblock title %}
+	{% block title %}{% trans 'View User' %}{% endblock title %}
 	{% block content %}
 		<nav class="navbar navbar-static-top navbar-inverse"></nav>
 		<main id="content" class="row-fluid">
@@ -21,6 +21,24 @@
 	                                <dt>{% trans 'Full name' %}</dt> <dd class="form-static">{{ u.get_full_name }}</dd>
 	                                <dt>{% trans 'Email address' %}</dt> <dd class="form-static">{{ u.email_address }}</dd>
 	                                <dt>{% trans 'Campus' %}</dt> <dd class="form-static">{{ u.campus }}</dd>
+
+	                                <!-- Teaching grades section-->
+				                    <div class="description emphasis">{% trans 'Teaching grades' %}</div>
+				                    <div id="user-grades">
+				                        <div id="id_grades">
+				                            {% for grade in u.grades.all %}
+				                                <input type="checkbox" id="id_grades_{{ forloop.counter }}" name="grades"
+				                                       checked="checked"
+				                                        style="visibility: hidden;"
+					                                    disabled="disabled"/>
+				                                <label for="id_grades_{{ forloop.counter }}" class="checkbox">
+				                                   {{ grade }}
+				                                </label>
+				                            {% endfor %}
+				                        </div>
+				                    </div>
+				                    <!-- Teaching grades section-->
+
 	                                <dt></dt> <dd class="form-static"></dd>
                                 </dl>
                             </article>
