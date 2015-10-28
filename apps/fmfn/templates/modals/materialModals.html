@@ -119,7 +119,7 @@
 </div>
 <!--Language edit modal-->
 
-<!--Delete modal-->
+<!--Delete tag modal-->
 <div aria-hidden="true" id="delete-tag-modal" class="reveal-modal edition-modal" data-reveal>
     <p class="lead">{% blocktrans %}
         Deleting a tag is a permanent action, and the tag <strong id="tag-to-delete">Example</strong> will dissapear from all the materials that contain it
@@ -136,4 +136,21 @@
         </div>
     </div>
 </div>
-<!---Delete modal--->
+<!---Delete tag modal--->
+
+
+<!-- Delete material modal -->
+<div id="delete-material-modal" class="reveal-modal edition-modal" aria-hidden="true" role="dialog" data-reveal>
+    <p class="lead">{% blocktrans %}
+        Deleting a material is a permanent action
+    {% endblocktrans %}</p>
+    <p class="lead"><strong>{% trans 'Are you sure about performing this action?' %}</strong></p>
+    <div id="delete-tag-area" class="form">
+        {% csrf_token %}
+        <div class="two-buttons">
+            <button id="send-delete-material">{% trans 'Yes' %}</button>
+            <button class="delete abort-delete-material">{% trans 'Cancel' %}</button>
+        </div>
+    </div>
+</div>
+<!-- Delete material modal -->

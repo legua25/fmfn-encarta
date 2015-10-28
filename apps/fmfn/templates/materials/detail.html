@@ -1,18 +1,60 @@
 {% extends 'base/base-2cols.html' %}
 {% load i18n widget_tweaks %}
+{% load roles %}
 {% block title %}{{ material.title }}{% endblock %}
 {% block canvas %}
+    <div class="ninenty">
+        <div class="heading-material">
+            <div class="title-material">{{ material.title }}</div>
 
-    <div class="ninety">
-        <div class="heading">
-            <h1>{{ material.title }}</h1>
+            {% if material.content %}
+                <a href="{% url 'content:download' content_id %}" class="link-visit" target="_blank"><i
+                        class="fa fa-floppy-o"></i>
+                    {% trans 'download content' %}</a>
+            {% endif %}
+
+            {% if material.link %}
+                <a href="{{ material.link }}" class="link-visit" target="_blank"><i class="fa fa-external-link"></i>
+                    {% trans 'visit the link' %}</a>
+            {% endif %}
+
+            {% if not in_portfolio %}
+                <a class="add-favorites"><i class="fa fa-heart"></i>{% trans 'add to favorites' %}</a>
+            {% endif %}
+
+            {% if user|has_role:'content manager' %}
+                <a href="{% url 'content:edit' content_id %}" class="link-visit"><i class="fa fa-pencil"></i>Edit</a>
+            {% endif %}
+
+            <a href="#" class="error-report"><i class="fa fa-exclamation"></i>{% trans 'report error' %}</a>
+
         </div>
-        <div id="general">
+
+
+        <div class="description-material">
             <p>{{ material.description }}</p>
 
-            {% if material.link  %}<div>{{ material.link }}</div>{% endif %}
+            <div class="tags-container">
+                {% for theme in themes %}
+                    <span class="material-tags">{{ theme.name }}</span>
+                {% endfor %}
+
+                {% for type in types %}
+                    <span class="material-tags">{{ type.name }}</span>
+                {% endfor %}
+
+                {% for lang in languages %}
+                    <span class="material-tags">{{ lang.name }}</span>
+                {% endfor %}
+
+                {% for age in ages %}
+                    <span class="material-tags">{{ age.name }}</span>
+                {% endfor %}
+            </div>
+
+
             <form action="#" id="comment-form">
-                 {% csrf_token %}
+                {% csrf_token %}
                 {{ form.content }}
                 {{ form.rating_value }}
                 {{ form.user }}
@@ -20,20 +62,18 @@
                 <button id="send-comment">Comment</button>
 
             </form>
-        <div>
-            {% if comments %}
-                {% for comment in comments %}
-                    <div>
-                        <div>{{ comment.content }}</div>
-                        <div>{{ comment.date_created }}</div>
-                        <div>{{ comment.rating_value }}</div>
-                    </div>
+            <div>
+                {% if comments %}
+                    {% for comment in comments %}
+                        <div>
+                            <div>{{ comment.content }}</div>
+                            <div>{{ comment.date_created }}</div>
+                            <div>{{ comment.rating_value }}</div>
+                        </div>
 
-                {% endfor %}
-            {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
         </div>
-        </div>
-
-
     </div>
-{% endblock canvas%}
+{% endblock canvas %}

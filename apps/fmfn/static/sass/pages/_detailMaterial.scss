@@ -1,0 +1,86 @@
+.heading-material {
+  margin-top: 35px;
+  display: block;
+  .title-material {
+    font-weight: $bold;
+    font-size: 30px;
+    color: $mild-black;
+    min-width: 100%;
+    display: inline-block;
+  }
+  .link-visit {
+    i {
+      padding-right: 5px;
+      color: $sky-blue;
+    }
+    padding: 5px 8px 5px 8px;
+    display: inline-block;
+    @include border-top-radius(3px);
+    @include border-right-radius(3px);
+    @include border-bottom-radius(3px);
+    @include border-left-radius(3px);
+    background-color: $wet-cement;
+    border: solid 1px darken($wet-cement, 10%);
+    color: darken($wet-cement, 40%);
+    font-weight: $normal;
+  }
+
+  .add-favorites {
+    i {
+      padding-right: 5px;
+      color: $red-hearth;
+    }
+    padding: 5px 8px 5px 8px;
+    display: inline-block;
+    @include border-top-radius(3px);
+    @include border-right-radius(3px);
+    @include border-bottom-radius(3px);
+    @include border-left-radius(3px);
+    background-color: $wet-cement;
+    border: solid 1px darken($wet-cement, 10%);
+    color: darken($wet-cement, 40%);
+    font-weight: $normal;
+  }
+}
+
+.description-material {
+  color: $main-black;
+  padding-top: 10px;
+}
+
+.tags-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  .material-tags {
+    padding: 3px 5px 3px 5px;
+    background-color: lighten($wet-cement, 3%);
+    font-size: 13px;
+    border: solid 1px darken($wet-cement, 20%);
+    color: darken($wet-cement, 20%);
+    @include border-top-radius(3px);
+    @include border-right-radius(3px);
+    @include border-bottom-radius(3px);
+    @include border-left-radius(3px);
+  }
+  cursor: default;
+}
+
+.error-report {
+  &:hover{
+    color: white;
+  }
+  i {
+    padding-right: 5px;
+  }
+  padding: 5px 8px 5px 8px;
+  display: inline-block;
+  @include border-top-radius(3px);
+  @include border-right-radius(3px);
+  @include border-bottom-radius(3px);
+  @include border-left-radius(3px);
+  background-color: $red-hearth;
+  border: solid 1px darken($red-hearth, 10%);
+  color: white;
+  font-weight: $normal;
+
+}
