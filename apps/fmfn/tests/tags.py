@@ -175,7 +175,7 @@ class _TagTest(TestCase):
 
 		# Test case: a tag creation request arrives
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.delete(reverse_lazy('tags:edit', kwargs = { 'tag_type': self.tag_name, 'tag_id': tag.id }), follow = True)
+		response = self.client.post(reverse_lazy('tags:delete', kwargs = { 'tag_type': self.tag_name, 'tag_id': tag.id }), follow = True)
 
 		# Check status code
 		self.assertEqual(response.status_code, 200)

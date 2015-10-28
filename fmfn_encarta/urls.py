@@ -32,7 +32,7 @@ urlpatterns = [
 	 	url(r'create/$', views.materials.create, name = 'create'),  # GET, PUT
 	 	url(r'^(?P<content_id>[\d]+)/', include([
 
-	 		url(r'^$',views.materials.view, name = 'view'),  # GET
+	 		url(r'^$',views.materials.view, name = 'view'),  # GET, POST
 	 		url(r'^edit/$', views.materials.edit, name = 'edit')  # GET, POST, DELETE
 
 	 	]))
@@ -44,7 +44,8 @@ urlpatterns = [
 
         url(r'^$', views.tags.tags, name = 'list'),  # GET
         url(r'^create/$', views.tags.tags, name = 'create', kwargs = { 'action': 'create' }),  # POST
-        url(r'^(?P<tag_id>[\d]+)/edit/$', views.tags.tags, name = 'edit', kwargs = { 'action': 'edit' })  # POST, DELETE
+        url(r'^(?P<tag_id>[\d]+)/edit/$', views.tags.tags, name = 'edit', kwargs = { 'action': 'edit' }), # POST
+		url(r'^(?P<tag_id>[\d]+)/delete/$', views.tags.tags, name = 'delete', kwargs = { 'action': 'delete' })  # POST
 
     ], namespace = 'tags', app_name = 'fmfn')),
 

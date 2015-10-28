@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
+from apps.fmfn.models import SchoolGrade, Role, Campus
 from django.utils.crypto import constant_time_compare
 from django.contrib.auth import get_user_model
-from apps.fmfn.models import SchoolGrade, Role
 from imagekit.processors import ResizeToFill
 from django.forms import *
 from imagekit.forms import ProcessedImageField as ImageField
@@ -27,6 +27,16 @@ class UserCreationForm(Form):
 		max_length = 128,
 		required = True,
 		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
+	)
+	role = ModelChoiceField(Role.objects.active(),
+	    empty_label = None,
+	    required = False,
+	    widget = RadioSelect()
+	)
+	campus = ModelChoiceField(Campus.objects.active(),
+	    empty_label = None,
+	    required = True,
+	    widget = Select()
 	)
 
 	def clean(self):

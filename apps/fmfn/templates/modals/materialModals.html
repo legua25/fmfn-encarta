@@ -1,0 +1,139 @@
+{% load static i18n widget_tweaks %}
+<!--Themes tags modal-->
+<div id="themes-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true"
+     role="dialog">
+    <p class="lead">{% trans 'Here you can delete, edit and add tags to themes' %}</p>
+
+    <div id="themes-notifications"></div>
+    <div id="insert-theme-area" class="form-modal">
+        {% csrf_token %}
+        <input type="hidden" name="create-theme-url" value="{% url 'tags:create' tag_type='theme' %}"/>
+
+        <div id="theme-error" class="alert-box alert"
+             style="display: none;">{% trans 'Please be sure to fill the field' %}</div>
+        <input type="text" placeholder="{% trans 'Add a new theme' %}" id="new-theme">
+        <button id="insert-theme-button"> Add tag</button>
+    </div>
+    <div id="themes-modal-content" class="tags-area">{% trans 'Loading your tags' %}</div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+<!--Themes tags modal-->
+
+<!-- Theme edit modal -->
+<div aria-hidden="true" id="edit-themes-modal" class="reveal-modal edition-modal" data-reveal>
+    <p class="lead">{% trans 'Edit your tag' %}</p>
+
+    <div id="edit-theme-area">
+        {% csrf_token %}
+        <input type="hidden" name="div-theme-change"/>
+
+        <div id="theme-edit-error" class="alert-box alert"
+             style="display: none;">{% trans 'Please be sure to fill the field' %}</div>
+        <input type="text" placeholder="{% trans 'Edit the tag' %}" id="edit-theme">
+        <button id="send-theme-edition">{% trans 'Save' %}</button>
+    </div>
+
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<!-- Theme edit modal -->
+
+<!--Types tags modal-->
+<div id="types-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true"
+     role="dialog">
+    <h2 id="modalTitle">{% trans 'Types tags' %}</h2>
+
+    <p class="lead">{% trans 'Here you can delete, edit and add tags to types' %}</p>
+
+    <div id="types-notifications"></div>
+    <div id="insert-type-area" class="form-modal">
+        {% csrf_token %}
+        <input type="hidden" name="create-type-url" value="{% url 'tags:create' tag_type='type' %}"/>
+
+        <div id="type-error" class="alert-box alert"
+             style="display: none;">{% trans 'Please be sure to fill the field' %}</div>
+        <input type="text" placeholder="{% trans 'Add a new theme' %}" id="new-type">
+        <button id="insert-type-button"> Add tag</button>
+    </div>
+    <div id="types-modal-content">{% trans 'Loading your tags' %}</div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+<!--Types tags modal-->
+
+<!-- Type edit modal -->
+<div aria-hidden="true" id="edit-types-modal" class="reveal-modal edition-modal" data-reveal>
+    <p class="lead">{% trans 'Edit your tag' %}</p>
+
+    <div id="edit-type-area">
+        {% csrf_token %}
+        <input type="hidden" name="div-type-change"/>
+
+        <div id="type-edit-error" class="alert-box alert"
+             style="display: none;">{% trans 'Please be sure to fill the field' %}</div>
+        <input type="text" placeholder="{% trans 'Edit the tag' %}" id="edit-type">
+        <button id="send-type-edition">{% trans 'Save' %}</button>
+    </div>
+
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<!-- Type edit modal -->
+
+
+<!--Languages tags modal-->
+<div id="languages-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true"
+     role="dialog">
+    <h2 id="modalTitle">{% trans 'Languages tags' %}</h2>
+
+    <p class="lead">{% trans 'Here you can delete, edit and add tags to languages' %}</p>
+
+    <div id="languages-notifications"></div>
+    <div id="insert-language-area" class="form-modal">
+        {% csrf_token %}
+        <input type="hidden" name="create-language-url" value="{% url 'tags:create' tag_type='language' %}"/>
+
+        <div id="language-error" class="alert-box alert"
+             style="display: none;">{% trans 'Please be sure to fill the field' %}</div>
+        <input type="text" placeholder="{% trans 'Add a new theme' %}" id="new-language">
+        <button id="insert-language-button"> Add tag</button>
+    </div>
+
+    <div id="languages-modal-content">{% trans 'Loading your tags' %}</div>
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+<!--Languages tags modal-->
+
+<!--Language edit modal-->
+<div aria-hidden="true" id="edit-languages-modal" class="reveal-modal edition-modal" data-reveal>
+    <p class="lead">{% trans 'Edit your tag' %}</p>
+
+    <div id="edit-language-area">
+        {% csrf_token %}
+        <input type="hidden" name="div-language-change"/>
+
+        <div id="language-edit-error" class="alert-box alert"
+             style="display: none;">{% trans 'Please be sure to fill the field' %}</div>
+        <input type="text" placeholder="{% trans 'Edit the tag' %}" id="edit-language">
+        <button id="send-language-edition">{% trans 'Save' %}</button>
+    </div>
+
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<!--Language edit modal-->
+
+<!--Delete modal-->
+<div aria-hidden="true" id="delete-tag-modal" class="reveal-modal edition-modal" data-reveal>
+    <p class="lead">{% blocktrans %}
+        Deleting a tag is a permanent action, and the tag <strong id="tag-to-delete">Example</strong> will dissapear from all the materials that contain it
+    {% endblocktrans %}</p>
+    <p class="lead"><strong>{% trans 'Are you sure about performing this action?' %}</strong></p>
+
+    <div id="delete-tag-area" class="form">
+        {% csrf_token %}
+        <input type="hidden" name="div-to-erase"/>
+        <input type="hidden" name="type-of-tag"/>
+        <div class="two-buttons">
+            <button id="send-delete-tag">{% trans 'Yes' %}</button>
+            <button class="delete abort-delete-tag">{% trans 'Cancel' %}</button>
+        </div>
+    </div>
+</div>
+<!---Delete modal--->

@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from apps.fmfn.models import (
+	Material,
+	ActionLog,
+	SchoolGrade,
+	Type,
+	Theme,
+	Language,
+	Comment
+)
 from django.shortcuts import redirect, render_to_response, RequestContext
+from apps.fmfn.decorators import role_required, ajax_required
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login as login_to_site
+from apps.fmfn.forms import MaterialForm, CommentForm
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
-from apps.fmfn.models import Material, ActionLog
-from apps.fmfn.forms import MaterialForm
-from apps.fmfn.decorators import role_required
+from django.http import HttpResponseForbidden
 from django.views.generic import View
 from django.http import JsonResponse
 
@@ -21,6 +29,16 @@ class CreateMaterialView(View):
 	def get(self, request):
 
 		form = MaterialForm(initial = { 'user': request.user })
+		fields = {
+			'suggested_ages': SchoolGrade,
+			'types': Type,
+			'themes': Theme,
+			'languages': Language
+		}
+
+		for field, queryset in fields.iteritems():
+			form.fields[field].queryset = queryset.objects.active()
+
 		return render_to_response('materials/create.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
@@ -51,8 +69,19 @@ class EditMaterialView(View):
 	@method_decorator(login_required)
 	@method_decorator(role_required('content manager'))
 	def get(self, request, content_id = 0):
+
 		material = Material.objects.get(id = content_id)
+
 		form = MaterialForm(instance = material, initial = {'user': request.user })
+		fields = {
+			'suggested_ages': SchoolGrade,
+			'types': Type,
+			'themes': Theme,
+			'languages': Language
+		}
+
+		for field, queryset in fields.iteritems():
+			form.fields[field].queryset = queryset.objects.active()
 
 		return render_to_response('materials/edit.html', context = RequestContext(request, locals()))
 
@@ -66,6 +95,7 @@ class EditMaterialView(View):
 			instance = material,
 			initial = { 'user': request.user }
 		)
+
 		#TODO: prepopulate form (checkboxes)
 		if form.is_valid():
 
@@ -99,11 +129,62 @@ edit = EditMaterialView.as_view()
 class MaterialDetailView(View):
 
 	@method_decorator(login_required)
-	@method_decorator(role_required('content manager'))
+	@method_decorator(role_required('parent'))
 	def get(self, request, content_id = 0):
-		material = Material.objects.get(id=content_id)
-		#TODO: redirect to error page if material is null
-		ActionLog.objects.log_content('Viewed material (id: %s)' % material.id, status = 200, user = request.user)
-		return render_to_response('materials/detail.html', context = RequestContext(request, locals()))
+
+		try: material = Material.objects.get(id = content_id)
+		except Material.DoesNotExist:
+
+			ActionLog.objects.log_content('Attempted to load nonexistent material (id: %s)' % content_id, user = request.user, status = 403)
+			return HttpResponseForbidden()
+
+		else:
+
+			ActionLog.objects.log_content('Viewed material (id: %s)' % content_id, user = request.user)
+			return render_to_response('materials/detail.html', context = RequestContext(request, locals()))
+	@method_decorator(login_required)
+	@method_decorator(ajax_required)
+	@method_decorator(role_required('teacher'))
+	def post(self,request, content_id = 0):
+		""" This method is called when the user posts a comment on a material detail view.
+			It validates that the user has already rated such material and that the comment's length is lower than 500 chars
+		"""
+
+		try: material = Material.objects.get(id = content_id)
+		except Material.DoesNotExist:
+
+			ActionLog.objects.log_content('Attempted to recover nonexistent material (id: %s)' % content_id, user = request.user, status = 403)
+			return HttpResponseForbidden()
+		else:
+
+			if Comment.objects.active().filter(user = request.user, material = material).exists():
+
+				ActionLog.objects.log_content('User has already issued comment for this material (id: %s)' % content_id, user = request.user, status = 403)
+				return HttpResponseForbidden()
+
+			content, rating = request.POST.get('content', None), request.POST.get('rating_value', None)
+			if content is None or rating is None:
+
+				ActionLog.objects.log_content('Comment data was missing or is invalid', user = request.user, status = 403)
+				return HttpResponseForbidden()
+
+			comment = Comment.objects.create(
+				user = request.user,
+				material = material,
+				content = content,
+				rating_value = rating
+			)
+
+			ActionLog.objects.log_content('Added comment for material (id: %s)' % content_id, user = request.user, status = 201)
+			return JsonResponse({
+				'version': '1.0.0',
+				'status': 201,
+				'data': {
+					'content': comment.content,
+					'user': request.user.id,
+					'material': material.id,
+					'rating': int(comment.rating_value)
+				}
+			}, status = 201)
 
 view = MaterialDetailView.as_view()
