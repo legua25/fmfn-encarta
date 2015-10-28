@@ -12,7 +12,8 @@ from django.forms import ModelForm as Form
 __all__ = [
 	'UserCreationForm',
 	'BasicEditForm',
-	'AdminEditForm'
+	'AdminEditForm',
+	'UserViewForm'
 ]
 User = get_user_model()
 
@@ -101,6 +102,40 @@ class BasicEditForm(UserEditForm):
 		model = User
 		fields = [ 'photo' ]
 class AdminEditForm(UserEditForm):
+
+	role = ModelChoiceField(Role.objects.active(),
+	    empty_label = None,
+	    required = False,
+	    widget = RadioSelect()
+	)
+	grades = ModelMultipleChoiceField(SchoolGrade.objects.active(),
+		required = False,
+		widget = CheckboxSelectMultiple()
+	)
+
+	is_managed = True
+
+	class Meta(object):
+
+		model = User
+		fields = [
+			'photo',
+			'email_address',
+			'first_name',
+			'father_family_name',
+			'mother_family_name',
+			'campus',
+			'role',
+			'grades'
+		]
+		widgets = {
+			'email_address': EmailInput(attrs = { 'placeholder': _('Email address') }),
+			'first_name': TextInput(attrs = { 'placeholder': _('First name') }),
+			'father_family_name': TextInput(attrs = { 'placeholder': _('Father\'s family name') }),
+			'mother_family_name': TextInput(attrs = { 'placeholder': _('Mother\'s family name') })
+		}
+
+class UserViewForm(Form):
 
 	role = ModelChoiceField(Role.objects.active(),
 	    empty_label = None,

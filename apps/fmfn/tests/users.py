@@ -11,14 +11,17 @@ from apps.fmfn.models import (
 )
 
 __all__ = [
-	'ExternalEditTest',
-	'AdminEditTest',
-	'SelfEditTest'
+	'ExternalUserTest',
+	'AdminUserTest',
+	'SelfUserTest'
 ]
 User = get_user_model()
 
-class _EditUserTest(TestCase):
-
+class _UserTest(TestCase):
+	"""
+		Class containing a collection of tests which verify that user roles limitations are effectively applied on certain modules.
+			It assumes that certain grades, campus and roles have been previously defined in the system.
+	"""
 	email_address = ''
 	password = ''
 	role = Role.objects.get(id = 2)
@@ -56,7 +59,10 @@ class _EditUserTest(TestCase):
 		self.client.login(email_address = self.email_address, password = self.password)
 
 	def test_edit_profile(self):
-
+		"""
+			Test which verifies that roles allowed to edit other users are effectively able to,
+			otherwise, that a 40x is replied.
+		"""
 		user_target = User.objects.get(id = self.user_id)
 
 		with open('./media/users/test.jpg') as f:
@@ -109,29 +115,68 @@ class _EditUserTest(TestCase):
 			user = User.objects.get(id = self.user_id)
 			self.assertNotEqual(user.first_name, 'John')
 			self.assertNotEqual(user.father_family_name, 'Doe')
-			self.assertEqual(user.photo.name, 'users/default.png')
+			self.assertEqual(user.photo.name, 'users/default.jpg')
 
 			self.assertTrue(bool(ActionLog.objects.active()))
 
 			log = ActionLog.objects.latest('action_date')
 			self.assertEqual(log.category, 1)
+			self.assertIn(log.status, [ 401, 403 ])
+	def test_view_profile(self):
+		"""
+			Test which verifies that roles allowed to view other users have access,
+			otherwise, that a 40x is replied.
+		"""
+		action_log_count = ActionLog.objects.active().count()
+		response = self.client.get(reverse_lazy('users:view', kwargs = { 'user_id': self.user_id }), follow = True)
+
+		if self.should_pass:
+			# If the role has enough privileges, allow
+			self.assertEqual(response.status_code, 200)
+
+			# Check if the action log has a new entry:
+			self.assertEqual(action_log_count + 1, ActionLog.objects.active().count())
+
+			# Check the entry has the right category and status
+			log = ActionLog.objects.latest('action_date')
+			self.assertEqual(log.category, 1)
+			self.assertEqual(log.status, 200)
+		else:
+			# Deny
+			self.assertIn(response.status_code, [ 401, 403 ])
+
+			# Check if the action log has a new entry:
+			self.assertEqual(action_log_count + 1, ActionLog.objects.active().count())
+
+			# Check the entry has the right category and status
+			log = ActionLog.objects.latest('action_date')
+			self.assertEqual(log.category, 1)
 			self.assertIn(log.status, [401, 403])
 
-class AdminEditTest(_EditUserTest):
-
+class AdminUserTest(_UserTest):
+	"""
+		Represents the basic data of the user to be tested:
+			An admin user basic data
+	"""
 	email_address = 'test_admin@example.com'
 	password = 'ta_asdfg'
 	role = Role.objects.get(id = 3)
 	should_pass = True
 
-class ExternalEditTest(_EditUserTest):
-
+class ExternalUserTest(_UserTest):
+	"""
+		Represents the basic data of the user to be tested:
+			A malicious professor account trying to mess with the system privileges basic data >:)
+	"""
 	email_address = 'test_external@example.com'
 	password = 'te_asdfg'
 	role = Role.objects.get(id = 2)
 
-class SelfEditTest(_EditUserTest):
-
+class SelfUserTest(_UserTest):
+	"""
+		Represents the basic data of the user to be tested:
+			A professor type account user basic data
+	"""
 	email_address = 'test@example.com'
 	password = 'asdfg'
 	role = Role.objects.get(id = 2)
