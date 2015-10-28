@@ -29,7 +29,7 @@ class PortfolioView(View):
 	def put(self, request, content_id = 0):
 
 		# Attempt to load the material
-		try: material = Material.objects.get(id = content_id)
+		try: material = Material.objects.active().get(id = content_id)
 		except Material.DoesNotExist:
 
 			ActionLog.objects.log_content('Failed to locate material with ID \'%s\'' % content_id, status = 403, user = request.user)
@@ -66,7 +66,7 @@ class PortfolioView(View):
 	def delete(self, request, content_id = 0):
 
 		# Attempt to load the material
-		try: material = Material.objects.get(id = content_id)
+		try: material = Material.objects.active().get(id = content_id)
 		except Material.DoesNotExist:
 
 			ActionLog.objects.log_content('Failed to locate material with ID \'%s\'' % content_id, status = 403, user = request.user)

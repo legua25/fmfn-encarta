@@ -75,7 +75,7 @@ class User(Model, AbstractBaseUser, PermissionsMixin):
 		upload_to = upload_photo,
 		processors = [ ResizeToFill(240, 240) ],
 		blank = True,
-		default = 'users/default.png',
+		default = 'users/default.jpg',
 		options = { 'quality': 80 },
 		verbose_name = _('user photo')
 	)
