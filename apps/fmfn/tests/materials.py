@@ -301,6 +301,7 @@ class MaterialTest(TestCase):
 		download_count = len(Download.objects.active())
 		log_count = len(ActionLog.objects.active())
 
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
 		response = self.client.get(reverse_lazy('content:download',kwargs = { 'content_id': 0 }), follow = True)
 
 		# Check status code
@@ -310,7 +311,7 @@ class MaterialTest(TestCase):
 		self.assertEqual(len(Download.objects.active()), download_count)
 
 		# Test action log
-		self.assertEqual(len(ActionLog.objects.active()), (log_count + 3))
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 1))
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 403)
 
