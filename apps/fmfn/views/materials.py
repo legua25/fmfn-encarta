@@ -198,15 +198,22 @@ class MaterialDetailView(View):
 view = MaterialDetailView.as_view()
 
 class MaterialDownloadView(View):
-
+	"""
+		This view handles the logic for downloading material
+	"""
 	@method_decorator(login_required)
 	@method_decorator(role_required('parent'))
 	def get(self, request, content_id = 0):
+		""" This method is called when the user requests to download a material
+			It validates the material exists and is active, registers the download and serves the file
+			Returns forbidden response if unsuccessful and HttpResponse with the material if successful
+		"""
 
 		# Attempt to load the material
 		try: material = Material.objects.active().get(id = content_id)
 		except Material.DoesNotExist:
 
+			# If not exists, write in Action Log and return forbidden
 			ActionLog.objects.log_content('Attempted to load nonexistent material (id: %s)' % content_id, user = request.user, status = 403)
 			return HttpResponseForbidden()
 
@@ -215,6 +222,7 @@ class MaterialDownloadView(View):
 			# Check if the material has a content attached
 			if bool(material.content.name) is False:
 
+				# If no content, write in Action Log and return forbidden
 				ActionLog.objects.log_content('Attempted to download material without attached content (id: %s)' % content_id, user = request.user, status = 403)
 				return HttpResponseForbidden()
 
@@ -227,6 +235,7 @@ class MaterialDownloadView(View):
 			# Get the material content type we'll use it later
 			content_type, _ = guess_type(material.content.name, strict = True)
 
+			# Write in Action Log
 			ActionLog.objects.log_content('Downloaded material (id: %s)' % content_id, user = request.user, status = 200)
 
 			# Read the file into the output stream and send it to the user
