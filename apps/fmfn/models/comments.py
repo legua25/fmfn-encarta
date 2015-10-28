@@ -45,6 +45,7 @@ class Comment(Model):
         blank = False,
         null = False
 	)
+
     class Meta(object):
 
         verbose_name = _('material comment')

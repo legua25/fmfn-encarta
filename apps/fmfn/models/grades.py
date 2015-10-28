@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import smart_str
 from django.db.models import *
 from _base import Model
 
@@ -17,7 +18,7 @@ class Campus(Model):
 		verbose_name = _('date added')
 	)
 
-	def __str__(self): return self.name
+	def __str__(self): return smart_str(self.name)
 
 	class Meta(object):
 
@@ -40,8 +41,7 @@ class SchoolGrade(Model):
 	min_age = PositiveSmallIntegerField(verbose_name = _('minimum expected age'))
 	max_age = PositiveSmallIntegerField(verbose_name = _('maximum expected age'))
 
-	def __str__(self): return self.name
-	def __unicode__(self): return unicode(self.__str__())
+	def __str__(self): return smart_str(self.name)
 
 	class Meta(object):
 
