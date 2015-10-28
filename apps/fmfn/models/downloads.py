@@ -13,7 +13,7 @@ class Download(Model):
 		related_name = '+',
 		verbose_name = _('user')
 	)
-	material = ForeignKey(settings.AUTH_USER_MODEL,
+	material = ForeignKey('fmfn.Material',
 		related_name = '+',
 		verbose_name = _('material')
 	)
