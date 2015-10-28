@@ -12,11 +12,11 @@ from apps.fmfn.models import (
 from django.shortcuts import redirect, render_to_response, RequestContext
 from apps.fmfn.decorators import role_required, ajax_required
 from django.contrib.auth.decorators import login_required
-from apps.fmfn.forms import MaterialForm, CommentForm
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseForbidden
+from apps.fmfn.forms import MaterialForm
 from django.views.generic import View
 from django.http import JsonResponse
 
@@ -52,6 +52,7 @@ class CreateMaterialView(View):
 			material = form.instance
 			#TODO:set upload_to attribute to destination path
 			form.save()
+
 			ActionLog.objects.log_content('Registered new material entry (id: %s)' % material.id, user = request.user, status = 201)
 			return redirect(reverse_lazy('content:view', kwargs = { 'content_id': material.id }))
 
@@ -70,7 +71,7 @@ class EditMaterialView(View):
 	@method_decorator(role_required('content manager'))
 	def get(self, request, content_id = 0):
 
-		material = Material.objects.get(id = content_id)
+		material = Material.objects.active().get(id = content_id)
 
 		form = MaterialForm(instance = material, initial = {'user': request.user })
 		fields = {
@@ -90,7 +91,7 @@ class EditMaterialView(View):
 	@method_decorator(csrf_protect)
 	def post(self, request, content_id = 0):
 
-		material = Material.objects.get(id = content_id)
+		material = Material.objects.active().get(id = content_id)
 		form = MaterialForm(request.POST, request.FILES,
 			instance = material,
 			initial = { 'user': request.user }
@@ -113,7 +114,7 @@ class EditMaterialView(View):
 	@method_decorator(ajax_required)
 	def delete(self, request, content_id = 0):
 
-		material = Material.objects.get(id = content_id)
+		material = Material.objects.active().get(id = content_id)
 
 		ActionLog.objects.log_content('Deleted material (id: %s)' % material.id, status = 200, user = request.user)
 		material.delete()
@@ -132,7 +133,7 @@ class MaterialDetailView(View):
 	@method_decorator(role_required('parent'))
 	def get(self, request, content_id = 0):
 
-		try: material = Material.objects.get(id = content_id)
+		try: material = Material.objects.active().get(id = content_id)
 		except Material.DoesNotExist:
 
 			ActionLog.objects.log_content('Attempted to load nonexistent material (id: %s)' % content_id, user = request.user, status = 403)
@@ -150,7 +151,7 @@ class MaterialDetailView(View):
 			It validates that the user has already rated such material and that the comment's length is lower than 500 chars
 		"""
 
-		try: material = Material.objects.get(id = content_id)
+		try: material = Material.objects.active().get(id = content_id)
 		except Material.DoesNotExist:
 
 			ActionLog.objects.log_content('Attempted to recover nonexistent material (id: %s)' % content_id, user = request.user, status = 403)
