@@ -56,7 +56,7 @@ class EditUserView(View):
 	@method_decorator(role_required('teacher'))
 	def get(self, request, user_id = 0):
 
-		try: u = User.objects.get(id = user_id)
+		try: u = User.objects.active().get(id = user_id)
 		except User.DoesNotExist:
 
 			ActionLog.objects.log_account('Invalid user profile information request : (user_id: %s)' % user_id, user = request.user, status = 401)
@@ -78,7 +78,7 @@ class EditUserView(View):
 	@method_decorator(role_required('teacher'))
 	def post(self, request, user_id = 0):
 
-		try: u = User.objects.get(id = user_id)
+		try: u = User.objects.active().get(id = user_id)
 		except User.DoesNotExist:
 
 			ActionLog.objects.log_account('User requested to edit does not exist: (user_id: %s)' % user_id, user = request.user, status = 401)
@@ -113,7 +113,7 @@ class EditUserView(View):
 	@method_decorator(role_required('user manager'))
 	def delete(self, request, user_id = 0):
 
-		try: u = User.objects.get(id = user_id)
+		try: u = User.objects.active().get(id = user_id)
 		except User.DoesNotExist:
 
 			ActionLog.objects.log_account('Attempted to delete user account', user = request.user, status = 401)
