@@ -11,16 +11,23 @@ from apps.fmfn.models import (
 )
 from django.shortcuts import redirect, render_to_response, RequestContext
 from apps.fmfn.decorators import role_required, ajax_required
+from django.http import HttpResponseForbidden, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponseForbidden
 from apps.fmfn.forms import MaterialForm
 from django.views.generic import View
 from django.http import JsonResponse
+from django.conf import settings
+import os
 
-__all__ = [ 'create', 'edit','view' ]
+__all__ = [
+	'create',
+	'edit',
+	'view',
+	'download'
+]
 
 class CreateMaterialView(View):
 
@@ -189,3 +196,33 @@ class MaterialDetailView(View):
 			}, status = 201)
 
 view = MaterialDetailView.as_view()
+
+class MaterialDownloadView(View):
+
+	@method_decorator(login_required)
+	@method_decorator(role_required('parent'))
+	def get(self, request, content_id = 0):
+
+		# Attempt to load the material
+		try: material = Material.objects.active().get(id = content_id)
+		except Material.DoesNotExist:
+
+			ActionLog.objects.log_content('Attempted to load nonexistent material (id: %s)' % content_id, user = request.user, status = 403)
+			return HttpResponseForbidden()
+
+		else:
+
+			# Check if the material has a content attached
+			if material.content.name is None:
+
+				ActionLog.objects.log_content('Attempted to download material without attached content (id: %s)' % content_id, user = request.user, status = 403)
+				return HttpResponseForbidden()
+
+			# Get the material content type we'll use it later
+			content_type = material.content.content_type
+
+			# Read the file into the output stream and send it to the user
+			with open(os.path.join(settings.MEDIA_ROOT, material.content.name), 'r') as f:
+				return HttpResponse(f.read(), content_type = content_type)
+
+download = MaterialDownloadView.as_view()
