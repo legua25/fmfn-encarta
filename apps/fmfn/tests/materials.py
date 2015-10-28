@@ -5,6 +5,7 @@ from apps.fmfn.models import (
 	Material,
 	Role,
 	Campus,
+	Download,
 	Language,
 	SchoolGrade
 )
@@ -241,3 +242,96 @@ class MaterialTest(TestCase):
 			self.assertTrue(cmp(saved_file, file))
 
 		os.remove('test.txt')
+
+	def _create_file(self, add_content = True):
+
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		with open('media/materials/files/test.jpg','rb') as f:
+
+			data = {
+				'title': 'file test',
+				'description': 'This material works best for testing purposes'
+			}
+			if add_content: data['content'] = f
+			else: data['link'] = 'http://localhost/'
+
+			self.client.post(reverse_lazy('content:create'), data = data, follow = True)
+
+	def test_no_content(self):
+
+		download_count = len(Download.objects.active())
+		log_count = len(ActionLog.objects.active())
+
+		self._create_file(add_content = False)
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.get(reverse_lazy('content:download',kwargs={ 'content_id': Material.objects.last().id }))
+
+		# Check status code
+		self.assertEqual(response.status_code, 403)
+
+		# Test action log
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 3))
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 403)
+
+	def test_inactive_material(self):
+
+		download_count = len(Download.objects.active())
+		log_count = len(ActionLog.objects.active())
+
+		self._create_file(add_content = False)
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		material = Material.objects.last()
+		material.active = False
+		material.save()
+
+		response = self.client.get(reverse_lazy('content:download',kwargs = { 'content_id': material.id }), follow = True)
+
+		# Check status code
+		self.assertEqual(response.status_code, 403)
+
+		# Test action log
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 3))
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 403)
+	def test_material_does_not_exist(self):
+
+		download_count = len(Download.objects.active())
+		log_count = len(ActionLog.objects.active())
+
+		response = self.client.get(reverse_lazy('content:download',kwargs = { 'content_id': 0 }), follow = True)
+
+		# Check status code
+		self.assertEqual(response.status_code, 403)
+
+		# Check download count
+		self.assertEqual(len(Download.objects.active()), download_count)
+
+		# Test action log
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 3))
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 403)
+
+	def test_material_downloaded(self):
+		download_count = len(Download.objects.active())
+		log_count = len(ActionLog.objects.active())
+
+		self._create_file()
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.get(reverse_lazy('content:download',kwargs = { 'content_id': Material.objects.last().id }), follow = True)
+
+		material = Material.objects.last()
+
+		# Check status code
+		self.assertEqual(response.status_code, 200)
+
+		# Check download count
+		self.assertEqual(len(Download.objects.active()), (download_count + 1))
+
+		# Test action log
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 3))
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+

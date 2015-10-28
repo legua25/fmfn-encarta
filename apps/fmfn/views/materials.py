@@ -7,7 +7,8 @@ from apps.fmfn.models import (
 	Type,
 	Theme,
 	Language,
-	Comment
+	Comment,
+	Download
 )
 from django.shortcuts import redirect, render_to_response, RequestContext
 from apps.fmfn.decorators import role_required, ajax_required
@@ -19,8 +20,7 @@ from django.core.urlresolvers import reverse_lazy
 from apps.fmfn.forms import MaterialForm
 from django.views.generic import View
 from django.http import JsonResponse
-from django.conf import settings
-import os
+from mimetypes import guess_type
 
 __all__ = [
 	'create',
@@ -213,16 +213,23 @@ class MaterialDownloadView(View):
 		else:
 
 			# Check if the material has a content attached
-			if material.content.name is None:
+			if bool(material.content.name) is False:
 
 				ActionLog.objects.log_content('Attempted to download material without attached content (id: %s)' % content_id, user = request.user, status = 403)
 				return HttpResponseForbidden()
 
+			# Register the download
+			Download.objects.create(
+				user = request.user,
+				material = material,
+			)
+
 			# Get the material content type we'll use it later
-			content_type = material.content.content_type
+			content_type, _ = guess_type(material.content.name, strict = True)
+
+			ActionLog.objects.log_content('Downloaded material (id: %s)' % content_id, user = request.user, status = 200)
 
 			# Read the file into the output stream and send it to the user
-			with open(os.path.join(settings.MEDIA_ROOT, material.content.name), 'r') as f:
-				return HttpResponse(f.read(), content_type = content_type)
+			return HttpResponse(material.content.read(), content_type = content_type)
 
 download = MaterialDownloadView.as_view()
