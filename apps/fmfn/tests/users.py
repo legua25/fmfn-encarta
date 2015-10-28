@@ -115,31 +115,29 @@ class _UserTest(TestCase):
 			user = User.objects.get(id = self.user_id)
 			self.assertNotEqual(user.first_name, 'John')
 			self.assertNotEqual(user.father_family_name, 'Doe')
-			self.assertEqual(user.photo.name, 'users/default.png')
+			self.assertEqual(user.photo.name, 'users/default.jpg')
 
 			self.assertTrue(bool(ActionLog.objects.active()))
 
 			log = ActionLog.objects.latest('action_date')
 			self.assertEqual(log.category, 1)
-			self.assertIn(log.status, [401, 403])
-
+			self.assertIn(log.status, [ 401, 403 ])
 	def test_view_profile(self):
 		"""
 			Test which verifies that roles allowed to view other users have access,
 			otherwise, that a 40x is replied.
 		"""
-		response = self.client.get(reverse_lazy('users:view', kwargs = { 'user_id': self.user_id }), data = {
-		}, follow = True)
+		action_log_count = ActionLog.objects.active().count()
+		response = self.client.get(reverse_lazy('users:view', kwargs = { 'user_id': self.user_id }), follow = True)
 
 		if self.should_pass:
 			# If the role has enough privileges, allow
 			self.assertEqual(response.status_code, 200)
 
-			url, status = response.redirect_chain[-1]
-			self.assertIn(status, [ 301, 302 ])
+			# Check if the action log has a new entry:
+			self.assertEqual(action_log_count + 1, ActionLog.objects.active().count())
 
-			self.assertTrue(bool(ActionLog.objects.active()))
-
+			# Check the entry has the right category and status
 			log = ActionLog.objects.latest('action_date')
 			self.assertEqual(log.category, 1)
 			self.assertEqual(log.status, 200)
@@ -147,8 +145,10 @@ class _UserTest(TestCase):
 			# Deny
 			self.assertIn(response.status_code, [ 401, 403 ])
 
-			self.assertTrue(bool(ActionLog.objects.active()))
+			# Check if the action log has a new entry:
+			self.assertEqual(action_log_count + 1, ActionLog.objects.active().count())
 
+			# Check the entry has the right category and status
 			log = ActionLog.objects.latest('action_date')
 			self.assertEqual(log.category, 1)
 			self.assertIn(log.status, [401, 403])
