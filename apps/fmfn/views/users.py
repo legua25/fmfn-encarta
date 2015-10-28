@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from apps.fmfn.forms import UserCreationForm, BasicEditForm, AdminEditForm
+from apps.fmfn.forms import UserCreationForm, BasicEditForm, AdminEditForm, UserViewForm
 from django.shortcuts import render_to_response, redirect, RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
@@ -51,7 +51,12 @@ class CreateUserView(View):
 create = CreateUserView.as_view()
 
 class EditUserView(View):
-
+	"""
+		Class responsible to handle user requests to edit user profiles:
+			Receives the logged user request containing the target user profile id to edit.
+				It evaluates if the user according to its role should be allowed or denied the edit to the target user profile
+			Returns the target user profile edit form on success, 40X otherwise.
+	"""
 	@method_decorator(login_required)
 	@method_decorator(role_required('teacher'))
 	def get(self, request, user_id = 0):
@@ -130,4 +135,33 @@ class EditUserView(View):
 			}, context = RequestContext(request, locals()))
 
 edit = EditUserView.as_view()
+
+class ViewUserView(View):
+	"""
+		Class responsible to handle user requests inquiring about user profiles:
+			Receives the logged user request containing the target user profile id to display.
+				It evaluates if the user according to its role should be allowed or denied access to the target user profile
+			Returns the target user profile view on success, 40X otherwise.
+	"""
+	@method_decorator(login_required)
+	@method_decorator(role_required('teacher'))
+	def get(self, request, user_id = 0):
+
+		try: u = User.objects.get(id = user_id)
+		except User.DoesNotExist:
+
+			ActionLog.objects.log_account('Invalid user profile information request : (user_id: %s)' % user_id, user = request.user, status = 401)
+			return HttpResponseForbidden()
+		else:
+			if request.user.belongs_to('user manager'): form = UserViewForm(instance = u)
+			else:
+				if request.user.id == int(user_id): form = UserViewForm(instance = u)
+				else:
+					ActionLog.objects.log_account('Attempted to view user profile information without enough privileges : (user_id: %s)' % user_id, user = request.user, status = 401)
+					return HttpResponseForbidden()
+		ActionLog.objects.log_account('Displayed user profile information (email address: %s)' % u.email_address, user = request.user)
+		return render_to_response('users/view.html', context = RequestContext(request, locals()))
+
+
+view = ViewUserView.as_view()
 
