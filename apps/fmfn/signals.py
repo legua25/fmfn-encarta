@@ -12,13 +12,13 @@ from apps.fmfn.models import (
 
 User = get_user_model()
 
-def users_to_remind(self):
-	users = []
-	for download in Download.objects.get(active=1):
-		if download.material not in Rating.objects.get(active=1):
-			users.append(download.user)
-
-	return users
+def unreviewed_materials(user):
+	# Query comments for materials filtered by user
+	# Store a list of the id's of the materials
+	# Query downloads for materials filtered by user
+	# Store a list of the id's of the materials
+	# id's on the second list that are not in the first are the unreviewed materials for user
+	pass
 
 @receiver(user_logged_in)
 def send_reminders(sender, user, request, **kwargs):
