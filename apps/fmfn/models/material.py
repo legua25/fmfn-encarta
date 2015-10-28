@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.utils.encoding import smart_str
 from django.conf import settings
 from django.db.models import *
 from _base import Model
@@ -70,7 +71,7 @@ class Material(Model):
 	    verbose_name= _('material language'),
 	)
 
-	def __str__(self): return self.title
+	def __str__(self): return smart_str(self.title)
 
 	class Meta(object):
 
