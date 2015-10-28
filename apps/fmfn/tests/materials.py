@@ -1,263 +1,243 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.core.urlresolvers import reverse_lazy, reverse
+from apps.fmfn.models import (
+	ActionLog,
+	Material,
+	Role,
+	Campus,
+	Language,
+	SchoolGrade
+)
+from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
-from apps.fmfn.models import ActionLog, Material, Grade
-import json
+import os
 
-__all__ = ['CreateMaterialTest', 'EditMaterialTest', 'DeleteMaterialTest']
+__all__ = [
+	'MaterialTest'
+]
 User = get_user_model()
 
+class MaterialTest(TestCase):
+	""" Material CRUD tests:
+		- test_material_created: basic material creation flow
+		- test_material_edited: basic material edition flow
+		- test_material_deleted: basic material deletion flow
+		- test_too_much_content: alternative flow where the user inputs both a link and a file
+		- test_not_enough_content: alternative flow where the user doesn't input a file nor a link
+		- test_material_detail: basic material display flow
+		- test_file_uploaded: checks that a file is correctly uploaded to the destination path
+	"""
 
-class CreateMaterialTest(TestCase):
+	fixtures = [ 'roles', 'grades', 'campus']
+
 	def setUp(self):
-		self.client = Client()
-		grade = Grade.objects.create(
-			name='Preescolar',
-			min_age=3,
-			max_age=6
+
+		self.client = Client(enforce_csrf_checks = False)
+		self.user = User.objects.create_user(
+			email_address = 'test1@example.com',
+			password = 'asdfgh',
+			role = Role.objects.get(id = 5),
+			campus = Campus.objects.get(id = 1)
 		)
-		grade.save()
 
-		# Create test users
-		# active user
-		user1 = User.objects.create_user(
-			username='test1@example.com',
-			email='test1@example.com',
-			password='asdfg123'
-		)
-		user1.is_active = True
-
-		# inactive user
-		user2 = User.objects.create_user(
-			username='test2@example.com',
-			email='test2@example.com',
-			password='asdfg123'
-		)
-		user2.is_active = False
-
-		user1.save()
-		user2.save()
-		ActionLog.objects.all().delete()
-
-	# Checks that the input data was stored successfully in the database
 	def test_material_created(self):
-
-		data = {'title': 'Matemáticas I',
-		        'description': 'Descripción de material 1',
-		        'link': 'http://www.google.com',
-		        'suggested_ages': 1,
-		        'user': 1};
-		response = self.client.post(reverse_lazy('/content/create/'), data)
-
-		# 302 status means the system redirected the user successfully
-		self.assertEqual(response.status_code, 302)
-
-		# checking that the latest record's info matches the input
-
-		latest = Material.objects.latest('title')
-		self.assertEqual(latest.title, data['title'])
-		self.assertEqual(latest.description, data['description'])
-		self.assertEqual(latest.link, data['link'])
-		self.assertEqual(latest.suggested_ages, data['suggested_ages'])
-		self.assertEqual(latest.user, data['description'])
-
-	# Verifies that any inactive is unable to create a material, this test should fail
-	# TODO: check that the user has permission to edit a material
-
-	def test_inactive_user(self):
-		data = {'title': 'Matemáticas I',
-		        'description': 'Descripción de material 1',
-		        'link': 'http://www.google.com',
-		        'suggested_ages': 1,
-		        'user': 2
-		        };
-		response = self.client.post(reverse_lazy('/content/create'), data)
-		# response 401 - unauthorized
-		self.assertEqual(response.status_code, 401)
-
-
-class EditMaterialTest(TestCase):
-	def setUp(self):
-		self.client = Client()
-
-		# Create test users
-		# active user
-		user1 = User.objects.create_user(
-			username='test1@example.com',
-			email='test1@example.com',
-			password='asdfg123'
-		)
-		user1.is_active = True
-
-		material = Material.objects.create(
-			title='Actividad de Español II',
-			description='Descripción de material español',
-			link='http://facebook.com',
-			suggested_ages=1,
-			user=1
-		)
-
-		user1.save()
-		material.save()
-
-	def test_material_edited(self):
-		data = {'title': 'Matemáticas II',
-		        'description': 'Descripción de material 1 edit',
-		        'link': 'http://www.google.com.mx',
-		        'suggested_ages': 1,
-		        'user': 1};
-		response = self.client.post(reverse_lazy('/content/1/edit'), data)
-
-		record = Material.objects.latest()
-		self.assertEqual(response.status_code, 302)
-		self.assertEqual(record.title, data['title'])
-		self.assertEqual(record.description, data['description'])
-		self.assertEqual(record.link, data['link'])
-
-
-class DeleteMaterialTest(TestCase):
-
-	def setUp(self):
-		self.client = Client()
-		material = Material.objects.create(
-			title='Actividad de Español II',
-			description='Descripción de material español',
-			link='http://facebook.com',
-			suggested_ages=1,
-			user=1
-		)
-		material.save()
-
-	def test_material_deleted(self):
-		response = self.client.delete(reverse_lazy('/content/1/delete'), data={'id': 1})
-		self.assertEqual(response.status_code, 302)
-		self.assertEqual(Material.objects.get(id=1).is_active, False)
-
-class ListMaterialTest(TestCase):
-
-	def setUp(self):
-
-		self.client = Client()
-		Material.objects.create(
-			title='Actividad de Español II',
-			description='Descripción de material español',
-			link='http://facebook.com',
-			suggested_ages=1,
-			user=1
-		)
-		Material.objects.create(
-			title='Actividad de Matematicas II',
-			description='Descripción de material mate',
-			link='http://twitter.com',
-			suggested_ages=1,
-			user=1
-		)
-		Material.objects.create(
-			title='Actividad de Fisica II',
-			description='Descripción de material fisica',
-			link='http://twitter.com',
-			suggested_ages=2,
-			user=1
-		)
-
-	def test_list_materials(self):
-		pass
-		# response = self.client.get(reverse_lazy('/content/list'))[:2]
-		# response = Material.objects.all()[:2]
-		# self.assertEqual(response.status_code, 302)
-		# self.assertEqual(Material.objects.all()[:2])
-
-class FilterMaterialTest(TestCase):
-
-	def setUp(self):
-		self.client = Client()
-
-		Material.objects.create(
-			title='Actividad de Español II',
-			description='Descripción de material español',
-			link='http://facebook.com',
-			suggested_ages=1,
-			user=1
-		)
-
-		Material.objects.create(
-			title='Actividad de Matematicas II',
-			description='Descripción de material mate',
-			link='http://twitter.com',
-			suggested_ages=1,
-			user=1
-		)
-
-		Material.objects.create(
-			title='Actividad de Fisica II',
-			description='Descripción de material fisica',
-			link='http://twitter.com',
-			suggested_ages=2,
-			user=1
-		)
-
-	def test_filter_materials(self):
-
-		"""
-			Inputs: request.GET['query'] (optional): The filter criteria to use in order to select tags. Defaults to None.
-			Outputs:
-
-				A JSON document complying with the following schema:
-
-				{
-					"$schema": "http://json-schema.org/draft-04/schema#",
-
-					"id": "http://jsonschema.net/tag-list",
-					"type": "object",
-					"properties": {
-
-						"type": { "id": "http://jsonschema.net/material-list/", "type": "string" },
-						"data": {
-							"id": "http://jsonschema.net/material-list/data",
-							"type": "array",
-							"items": [
-								{
-									"id": "http://jsonschema.net/material-list/data/material",
-									"type": "object",
-									"properties": {
-										"id": { "id": "http://jsonschema.net/tag-list/data/tag/id", "type": "integer" },
-										"title": { "title": "http://jsonschema.net/tag-list/data/tag/name", "type": "string" }
-										"link": { "link": "http://jsonschema.net/tag-list/data/tag/name", "type": "string" }
-										"suggested_ages": { "2": "http://jsonschema.net/tag-list/data/tag/id", "type": "integer" },
-										"user": { "1": "http://jsonschema.net/tag-list/data/tag/id", "type": "integer" }
-									}
-								}
-							]
-						}
-
-					},
-					"required": [ "type", "data" ]
-				}
-
+		""" After executing content/create function, verifies that:
+			- the http responses are successful
+			- the ActionLog contains the latest operation registry
+			- the latest entry in the log contains a 200 response code
+			- the materials count increased by one
 		"""
 
-		response = self.client.get(reverse_lazy('content:list'), data = {
-			'suggested_ages': 1
+		material_count = len(Material.objects.active())
+		log_count = len(ActionLog.objects.active())
+
+		# Test case: a valid submission arrives
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		response = self.client.post(reverse_lazy('content:create'), data = {
+			'title': 'A material test',
+			'description': 'This material works best for testing purposes',
+			'link':'http://www.google.com'
 		}, follow = True)
 
-		response_data = json.loads(response.body)
-		self.assertTrue(response_data.get('suggested_ages', False))
-		resp_data = response_data['data']
+		# Check the response status sequence
+		self.assertEqual(response.status_code, 200)
+		url, status = response.redirect_chain[-1]
+		self.assertEqual(status, 302)
 
-		self.assertTrue(bool(Material.objects.active().filter(id__in = [ material['id'] for material in resp_data['data'] ])))
+		# Check the materials count increased by one
+		self.assertEqual(len(Material.objects.active()), (material_count + 1))
 
-		# Test material count is valid
-		self.assertEqual(len(resp_data), len(Material.objects.get(suggedted_ages = 1)))
+		# Check the action log
+		self.assertTrue(bool(ActionLog.objects.active()))
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 2))
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 
-		# Test a specific material
-		self.assertEqual(response_data['data'][0], {
-			'id': 1,
-			'name': Material.objects.get(id = 1).name
-		})
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+	def test_material_edited(self):
+		""" After executing edit function, verifies that:
+			- the http responses are successful
+			- the ActionLog contains the latest operation registry
+			- the latest entry in the log contains a 200 response code
+			-the fields edited did change in the database
+		"""
 
-		# Test response code
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		log_count = len(ActionLog.objects.active())
+
+		test_material = Material.objects.create(
+								title = 'Material a editar',
+								description = 'Descripcion de prueba',
+								link = 'http://blah.com'
+		)
+		test_data = {
+			'title': 'Material editado',
+			'description': 'Descripción editada',
+			'link': 'http://www.hola.com'
+		}
+		response = self.client.post(reverse_lazy('content:edit', kwargs= {'content_id':test_material.id}), data=test_data, follow=True)
+		test_material = Material.objects.active().get(title = 'Material editado')
+		# Check the response status sequence
+		self.assertEqual(response.status_code, 200)
+		url, status = response.redirect_chain[-1]
+		self.assertEqual(status, 302)
+		# Check the action log
+		self.assertTrue(bool(ActionLog.objects.active()))
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 2))
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200 )
+		self.assertEqual(test_data['description'],test_material.description)
+		self.assertEqual(test_data['link'],test_material.link)
+	def test_material_deleted(self):
+		""" After executing delete function, verifies that:
+			- the http responses are successful
+			- the ActionLog contains the latest operation registry
+			- the latest entry in the log contains a 200 response code
+			- the active materials count decreased by one
+			- the document schema reflects the last operation
+		"""
+
+		material = Material.objects.create(
+			title = 'Test material',
+			description = 'A material destined to test deletion',
+			link = 'http://127.0.0.1:8000/',
+			user = self.user
+		)
+		material_count = len(Material.objects.active())
+		material_id = material.id
+
+		# Test case: a valid submission arrives
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.delete(reverse_lazy('content:edit', kwargs = { 'content_id': material_id }), follow = True)
+
+		# Check the response status sequence
 		self.assertEqual(response.status_code, 200)
 
+		# Test the document schema
+		self.assertJSONEqual(str(response.content), {
+			'version': '1.0.0',
+			'status': 200,
+			'material': { 'id': material_id, 'status': 'delete' }
+		})
 
+		# Check the materials count increased by one
+		self.assertEqual(len(Material.objects.active()), (material_count - 1))
+
+		# Check the action log
+		self.assertTrue(bool(ActionLog.objects.active()))
+		self.assertEqual(len(ActionLog.objects.active()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+	def test_too_much_content(self):
+		""" After executing the create function with an invalid set of data (both a file and a link are sent to the function) , verifies that:
+			- the http responses are unsuccessful
+			- the ActionLog contains the latest operation registry
+			- the latest entry in the log contains a 401 response code
+			- the object wasn't created
+		"""
+
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		with open('test.txt','w+') as file :
+			test_data = {
+				'title': 'Material no creado',
+				'description': 'Descripción editada',
+				'link': 'http://www.hola.com',
+				'content': file
+			}
+			response = self.client.post(reverse_lazy('content:create'),data=test_data)
+			# Check the response status sequence
+			self.assertEqual(response.status_code, 401)
+			# Check the action log
+			self.assertTrue(bool(ActionLog.objects.active()))
+			self.assertEqual(len(ActionLog.objects.active()), 1)
+			self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+			self.assertEqual(ActionLog.objects.latest('action_date').status, 401)
+	def test_not_enough_content(self):
+		""" After executing the create function with an invalid set of data (neither a file nor a link are sent to the function) , verifies that:
+			- the http responses are unsuccessful
+			- the ActionLog contains the latest operation registry
+			- the latest entry in the log contains a 401 response code
+			- the object wasn't modified
+		"""
+
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		response = self.client.post(reverse_lazy('content:create'), data = {
+			'title': 'A material test',
+			'description': 'This material works best for testing purposes',
+		})
+		# Check the response status
+		self.assertEqual(response.status_code, 401)
+
+		# Check the action log
+		self.assertTrue(bool(ActionLog.objects.active()))
+		self.assertEqual(len(ActionLog.objects.active()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 401 )
+	def test_material_detail(self):
+		""" After executing the view material function, verifies that:
+			- the http responses are successful
+			- the ActionLog contains the latest operation registry
+			- the latest entry in the log contains a 200 response code
+		"""
+
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		test_material = Material.objects.create(
+								title = 'Material a editar',
+								description = 'Descripcion de prueba',
+								link = 'http://blah.com'
+		)
+		response = self.client.get(reverse_lazy('content:view',kwargs={'content_id':test_material.id}))
+		self.assertEqual(response.status_code,200)
+		# Check the action log
+		self.assertTrue(bool(ActionLog.objects.active()))
+		self.assertEqual(len(ActionLog.objects.active()), 1)
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, 200 )
+	def test_file_uploaded(self):
+		""" After executing the create function, having selected a content file, verifies that:
+			- the http responses are successful
+			- the ActionLog contains the latest operation registry
+			- the latest entry in the log contains a 200 response code
+			- the file stored equals the file sent in the form
+		"""
+
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		with open('test.txt','w+') as f:
+			f.write(b'testing')
+
+		with open('test.txt','r') as f:
+			response = self.client.post(reverse_lazy('content:create'), data = {
+				'title': 'file test',
+				'description': 'This material works best for testing purposes',
+				'content': f
+			}, follow = True)
+
+			self.assertEqual(response.status_code, 200)
+			saved_file = list(Material.objects.active())[-1].content
+			self.assertTrue(cmp(saved_file, file))
+
+		os.remove('test.txt')

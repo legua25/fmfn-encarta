@@ -1,0 +1,11 @@
+{% load i18n %}
+
+<h3>{% trans 'Password recovery - Next steps' %}</h3>
+<p>
+	{% blocktrans %}You have received this email because a password recovery request was issued for your account. If you
+	did not issue this request, please disregard this message and contact a system administrator.{% endblocktrans %}
+</p>
+<p>
+	{% blocktrans %}To continue with the recovery process, please follow this link: {% endblocktrans %}
+	<a href="{{ protocol }}://{{ domain }}{% url 'accounts:reset' user_id token %}">{{ protocol }}://{{ domain }}/accounts/recover/reset/</a>
+</p>

@@ -1,0 +1,105 @@
+{% extends 'base/base-2cols.html' %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{% trans 'Edit User' %}{% endblock title %}
+
+{% block canvas %}
+    <div class="ninenty">
+        <div class="heading">{% trans 'Edit User' %}</div>
+        <div class="description">
+            {% blocktrans with u.email_address as email %}You are editing the account of
+                <strong>{{ email }}</strong>{% endblocktrans %}
+        </div>
+
+        <!--Errors section-->
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert-box alert">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+        <!--Errors section-->
+
+        <form action="{% url 'users:edit' user_id %}" enctype="multipart/form-data" method="post" class="form">
+            {% csrf_token %}
+
+            <div id="basic" class="container-fluid">
+                <div class="sub-heading">{% trans 'Public Profile' %}</div>
+
+
+                <div id="user-photo" class="two-elements">
+                    <div class="description emphasis">{% trans 'Profile picture' %}</div>
+                    {{ form.photo | add_class:'form-control' }}
+                </div>
+                <div id="user-password" class="two-elements-exact">
+                    <div class="description emphasis">{% trans 'Password' %}</div>
+                    {{ form.password | attr:'required' }}<br/>
+                    {{ form.repeat | attr:'required' }}
+                </div>
+            </div>
+
+            {% if form.is_managed %}
+                <div id="advanced">
+
+                    <div class="sub-heading">{% trans 'Advanced Information' %}</div>
+
+                    <!-- General info section -->
+                    <div class="description emphasis">{% trans 'General information' %}</div>
+                    <div id="user-name">
+                        <div id="user-first-name"
+                             class="three-elements">{{ form.first_name | add_class:'error' | attr:'required' }}</div>
+                        <div id="user-father-family-name"
+                             class="three-elements">{{ form.father_family_name | add_class:'error' }}</div>
+                        <div id="user-mother-family-name"
+                             class="three-elements">{{ form.mother_family_name | add_class:'error' }}</div>
+                    </div>
+                    <div class="description emphasis">{% trans 'E-mail' %}</div>
+                    <div id="user-email" class="element-in-block">
+                        {{ form.email_address | add_class:'form-control' }}
+                    </div>
+                    <!-- General info section -->
+
+                    <!--Campus section-->
+                    <div class="description emphasis">{% trans 'Campus information' %}</div>
+                    {{ form.campus | add_class:'form-control' | add_class:'element-in-block' }}
+                    <!--Campus section-->
+
+                    <!--Rol section-->
+                    <div class="description emphasis">{% trans 'Role information' %}</div>
+                    <div id="id_role">
+                        {% for role in form.fields.role.choices %}
+                            <input type="radio" id="id_role_{{ forloop.counter }}" name="role"
+                                   value="{{ role.0 }}"
+                                    {% if role.0 == form.role.value %} checked{% endif %}
+                                   style="visibility:hidden;"/>
+                            <label for="id_role_{{ forloop.counter }}" class="checkbox">
+                                {% blocktrans with role.1|title as name %}{{ name }}{% endblocktrans %}
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <!--Rol section-->
+
+                    <!-- Teaching grades section-->
+                    <div class="description emphasis">{% trans 'Teaching grades' %}</div>
+                    <div id="user-grades">
+                        <div id="id_grades">
+                            {% for grade in form.fields.grades.choices %}
+                                <input type="checkbox" id="id_grades_{{ forloop.counter }}" name="grades"
+                                       value="{{ grade.0 }}"{% if grade.0 in form.grades.value %}
+                                       checked{% endif %} 
+                                        style="visibility: hidden;"/>
+                                <label for="id_grades_{{ forloop.counter }}" class="checkbox">
+                                    {% blocktrans with grade.1|title as name %}{{ name }}{% endblocktrans %}
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Teaching grades section-->
+
+                </div>
+            {% endif %}
+
+            <button class="btn btn-primary" type="submit">{% trans 'Save' %}</button>
+
+        </form>
+    </div>
+{% endblock canvas %}

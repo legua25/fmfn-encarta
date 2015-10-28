@@ -1,0 +1,58 @@
+#id_grades {
+  display: inline-block;
+  label {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 15px;
+    padding-left: 15px;
+    border: solid #e2e2e2 1px;
+    color: darken($wet-cement, 40%);
+    @include border-top-radius(3px);
+    @include border-right-radius(3px);
+    @include border-bottom-radius(3px);
+    @include border-left-radius(3px);
+    background-color: lighten($wet-cement,3%);
+  }
+
+  input[type="checkbox"]:checked + label {
+    background-color: $tag-blue;
+    border: solid $tag-blue 1px;
+    color: white;
+  }
+}
+
+#id_role {
+
+  width: 100%;
+
+  label {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 15px;
+    padding-left: 15px;
+    border: solid #e2e2e2 1px;
+    color: darken($wet-cement, 40%);
+    @include border-top-radius(3px);
+    @include border-right-radius(3px);
+    @include border-bottom-radius(3px);
+    @include border-left-radius(3px);
+    background-color: lighten($wet-cement,3%);
+  }
+
+  .role-name{
+    font-weight: $bold;
+    width: 20%;
+  }
+
+  .role-description{
+
+  }
+
+  input[type="radio"]:checked + label {
+    background-color: $tag-blue;
+    border: solid $tag-blue 1px;
+    color: white;
+  }
+
+}
+

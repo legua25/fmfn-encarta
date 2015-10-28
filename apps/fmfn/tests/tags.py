@@ -2,88 +2,193 @@
 from __future__ import unicode_literals
 from django.core.urlresolvers import reverse_lazy
 from django.test import TestCase, Client
-from classifiers import Type, Theme, Language, MaterialTag
-import json
+from django.contrib.auth import get_user_model
+from apps.fmfn.models import (
+	Type,
+	Theme,
+	Language,
+	Role,
+	Campus,
+	ActionLog
+)
 
-class TagsTest(TestCase):
+__all__ = [
+	'TypeTagTest',
+	'ThemeTagTest',
+	'LanguageTagTest'
+]
+User = get_user_model()
+
+class _TagTest(TestCase):
+	"""
+
+	Defines a generic test for all three tag types: Type, Theme and Language.
+	Specifies a setup and tests for tag listing, creation, edition and deletion.
+		-Test response status codes
+		-Test object creation/edition in database
+		-Test action log entries
+
+	"""
+	tag_class = Type
+	fixtures = [ 'grades', 'roles', 'campus' ]
+
+	@property
+	def tag_name(self): return self.tag_class.__name__.lower()
 
 	def setUp(self):
-		self.client = Client(HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+		"""
+			Creates an AJAX client for processing requests and a user user for login
+		"""
 
-	def test_put(self):
-		data = { 'type': 'theme', 'name': 'filosofia' }
-		response = self.client.put(reverse_lazy('content-tags:create'), data = data)
-		response_json = json.loads(response.body)
+		# Create AJAX request client
+		self.client = Client(
+			enforce_csrf_checks = False,
+			HTTP_X_REQUESTED_WITH = 'XMLHttpRequest'
+		)
 
-		self.assertEqual(data['type'], response_json['data']['type'])
-		self.assertEqual(data['name'], response_json['data']['name'])
+		# Create user
+		self.user = User.objects.create_user(
+			email_address = 'test1@example.com',
+			password = 'asdfgh',
+			role = Role.objects.get(id = 4),
+			campus = Campus.objects.get(id = 1)
+		)
+
+	def _action_log_tests(self, log_count, status):
+		"""
+			Test new object creation in log and correctness of category and status code
+		"""
+
+		self.assertEqual(len(ActionLog.objects.active()), (log_count + 1))
+		self.assertEqual(ActionLog.objects.latest('action_date').category, 4)
+		self.assertEqual(ActionLog.objects.latest('action_date').status, status)
+
+	def test_create_new_tag(self):
+		"""
+
+			Generates a post request with new tag information.
+				-Asserts the response status code, database and action log are as expected
+			Generates a post request with existing tag information.
+				-Asserts the response status code is correct
+
+		"""
+		tag_count = len(self.tag_class.objects.active())
+		log_count = len(ActionLog.objects.active())
+		self.assertEqual(tag_count, 0)
+
+		# Test case: a tag creation request arrives
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.post(reverse_lazy('tags:create', kwargs = { 'tag_type': self.tag_name }), data = {
+			'name': 'philosophy'
+		}, follow = True)
+
+		# Check status code
 		self.assertEqual(response.status_code, 201)
 
-	def test_post(self):
-		data = { 'type': 'theme', 'data': {'name': 'filosofia'} }
+		# Check material count
+		self.assertEqual(len(self.tag_class.objects.active()), (tag_count + 1))
 
-		response = self.client.post(reverse_lazy('content-tags:edit'), data = data)
-		response_json = json.loads(response.body)
+		# Check action log
+		self._action_log_tests(log_count, 201)
 
-		self.assertEqual(data['type'], response_json['data']['type'])
-		self.assertEqual(data['data']['name'], response_json['data']['name'])
-		self.assertEqual(response.status_code, 200)
+		# Test case: a repeated tag creation request arrives
+		self.tag_class.objects.create(name = 'test')
+		log_count = len(ActionLog.objects.active())
 
-
-	def test_get(self):
-		responses = []
-		Type.objects.create(name = "Humanidades")
-		Theme.objects.create(name = "Filosofia")
-		Language.objects.create(name = "Español")
-
-		responses[0] = self.client.get(reverse_lazy('content-tags:list'), data = {
-			'type': 'language'
-		}, follow = True)
-		responses[1] = self.client.get(reverse_lazy('content-tags:list'), data = {
-			'type': 'type'
-		}, follow = True)
-		responses[2] = self.client.get(reverse_lazy('content-tags:list'), data = {
-			'type': 'theme'
-		}, follow = True)
-
-		for response in responses:
-			response_data = json.loads(response.body)
-			# Test all tags exist in the given category
-			self.assertTrue(response_data.get('type', False) in [ 'type', 'theme', 'language' ])
-			resp_type = response_data['type']
-			resp_data = response_data['data']
-			if resp_type == 'type':
-				self.assertTrue(bool(Type.objects.active().filter(id__in = [ tag['id'] for tag in resp_data])))
-				self.assertEqual(len(resp_data), len(Type.objects.active()))
-			elif resp_type == 'theme':
-				self.assertTrue(bool(Theme.objects.active().filter(id__in = [ tag['id'] for tag in resp_data])))
-				self.assertEqual(len(resp_data), len(Theme.objects.active()))
-			elif resp_type == 'language':
-				self.assertTrue(bool(Language.objects.active().filter(id__in = [ tag['id'] for tag in resp_data ])))
-				self.assertEqual(len(resp_data), len(Language.objects.active()))
-
-
-		# Test a specific tag
-		self.assertEqual(response_data['data'][0], {
-			'id': 1,
-			'name': Type.objects.get(id = 1).name
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.post(reverse_lazy('tags:create', kwargs = { 'tag_type': self.tag_name }), data = {
+			'name': 'test'
 		})
 
-		# Test response code
+		# Check status code
+		self.assertEqual(response.status_code, 302)
+
+		# Check action log
+		self._action_log_tests(log_count, 302)
+
+	def test_list_tags(self):
+		"""
+			Generates a get request specifying a tag type
+				-Asserts response status code and action log are as expected
+
+		"""
+		log_count = len(ActionLog.objects.active())
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.get(reverse_lazy('tags:list', kwargs = { 'tag_type': self.tag_name }), follow = True)
+
+		# Check status code
 		self.assertEqual(response.status_code, 200)
 
-	def test_delete(self):
-		json_string = {'name': 'ingles'}
-		json_data = json.dumps(json_string)
+		# Check action log
+		self._action_log_tests(log_count, 200)
+	def test_list_filtered_tags(self):
+		"""
+			Generates a get request specifying a tag type and filter pattern
+				-Asserts response status code and action log are as expected
 
-		response = self.client.delete(reverse_lazy('content-tags:edit'), json_data, content_type="application/json")
+		"""
 
+		log_count = len(ActionLog.objects.active())
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.get(reverse_lazy('tags:list', kwargs = { 'tag_type': self.tag_name }), data = {
+			'filter': 'tag'
+		}, follow = True)
 
-		self.assertEqual(response.status_code, 204)
-		self.assertEqual(record.active, False)
+		# Check status code
+		self.assertEqual(response.status_code, 200)
 
+		# Check action log
+		self._action_log_tests(log_count, 200)
+	def test_edit_tag(self):
+		"""
+			Generates a post request specifying a tag id and a new name
+				-Asserts the response status code, database and action log are as expected
 
+		"""
 
+		log_count = ActionLog.objects.active().count()
+		tag = self.tag_class.objects.create(name = 'test')
 
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.post(reverse_lazy('tags:edit', kwargs = { 'tag_type': self.tag_name, 'tag_id': tag.id }), data = {
+			'name': 'test1',
+		}, follow = True)
 
+		# Check status code
+		self.assertEqual(response.status_code, 200)
 
+		# Check tag changes
+		self.assertEqual(self.tag_class.objects.filter(name = 'test1').count(), 1)
+
+		# Check action log
+		self._action_log_tests(log_count, 201)
+	def test_delete_tag(self):
+		"""
+			Generates a post request specifying a tag id and a new name
+				-Asserts the response status code, database and action log are as expected
+
+		"""
+
+		tag = self.tag_class.objects.create(name = 'test')
+		log_count = len(ActionLog.objects.active())
+		tag_count = len(self.tag_class.objects.active())
+
+		# Test case: a tag creation request arrives
+		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+		response = self.client.post(reverse_lazy('tags:delete', kwargs = { 'tag_type': self.tag_name, 'tag_id': tag.id }), follow = True)
+
+		# Check status code
+		self.assertEqual(response.status_code, 200)
+
+		# Check material count
+		self.assertEqual(len(self.tag_class.objects.active()), (tag_count - 1))
+
+		# Check action log
+		self._action_log_tests(log_count, 200)
+
+class TypeTagTest(_TagTest):
+	tag_class = Type
+class ThemeTagTest(_TagTest):
+	tag_class = Theme
+class LanguageTagTest(_TagTest):
+	tag_class = Language

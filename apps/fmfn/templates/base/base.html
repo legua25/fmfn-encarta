@@ -1,18 +1,56 @@
 {% load static i18n widget_tweaks %}
 {% get_current_language as language %}
+
 <!DOCTYPE html>
-	<html lang="{{ language }}">
-	<head>
-		<title>{% block title %}{% endblock title %} | FMFN</title>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+<html lang="{{ language }}" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>{% block title %}{% endblock %}</title>
 
-		<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Language" content="es"/>
 
-		<script src="{% static 'bootstrap/js/jquery.min.js' %}" defer></script>
-		<script src="{% static 'bootstrap/js/bootstrap.min.js' %}" defer></script>
-	</head>
-	<body>
-		{% block content %}{% endblock content %}
-	</body>
+    <!-- CSS -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'/>
+    <link href="" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/main.css' %}" rel="stylesheet"/>
+    {% block css %}{% endblock %}
+
+    <!-- JS -->
+    <script type="text/javascript" src="{% static 'js/foundation/vendor/modernizr.js' %}"></script>
+    {% block js_head %}{% endblock %}
+
+</head>
+<body>
+{% block content %}{% endblock %}
+
+<div class="modals">
+    {% block modals %}{% endblock %}
+</div>
+
+<!-- JS -->
+<script src="{% static 'js/foundation/vendor/jquery.js' %}"></script>
+<script src="{% static 'js/foundation/vendor/fastclick.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/foundation/foundation.js' %}"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+<script>
+    $(document).foundation({
+        reveal: {
+            multiple_opened: true,
+            close_on_background_click: false,
+            close_on_esc: false
+        }
+    });
+    $(document).ready(function () {
+        $('.reveal-modal').css('max-height', $('html').height() - 110 + 'px'); // 100 +10px to keep modal effect visible
+    });
+    // Reset max-height after window resize
+    $(window).resize(function () {
+        $('.reveal-modal').css('max-height', $('html').height() - 110 + 'px');
+    });
+    $('select').select2();
+</script>
+{% block js_footer %}{% endblock %}
+</body>
 </html>

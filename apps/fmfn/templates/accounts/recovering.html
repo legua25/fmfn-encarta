@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Recover password' %}{% endblock title %}
+{% block content %}
+    <div class="login">
+        <div class="title"> Correo enviado con exito </div>
+        <div class="message">
+            {% blocktrans with user.email as email %}Se ha enviado un correo electronico a {{ email }} con las
+                instrucciones necesarias para recuperar tu contraseña.
+                No deberias demorar en recibirlo. Si no lo recibe en un periodo de tiempo considerable, por favor
+                contacte al administrador
+                del sistema para informarle de esta situacion.{% endblocktrans %}
+        </div>
+        <a href="{% url 'accounts:login' %}"> Regresar a login</a>
+    </div>
+{% endblock %}

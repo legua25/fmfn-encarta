@@ -1,0 +1,183 @@
+{% extends 'base/base-2cols.html' %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans 'Register Material' %}{% endblock title %}
+{% block canvas %}
+    <div class="ninenty">
+
+        <div class="heading">
+            {% trans 'Register Material' %}
+        </div>
+
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert-box alert">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form action="{% url 'content:create' %}" method="post" class="form" enctype="multipart/form-data">
+
+            {% csrf_token %}
+            <div id="general">
+
+                <!--Title section-->
+                <div class="sub-heading">{% trans '1)  Write the title for the material' %}</div>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    {% for error in form.title.errors %}
+                        <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                    {% endfor %}
+                {% endif %}
+                <!--Title section-->
+
+                <!--Description section-->
+                <div class="sub-heading">{% trans '2)  Write a little description of the material' %}</div>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    {% for error in form.description.errors %}
+                        <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                    {% endfor %}
+                {% endif %}
+                <!--Description section-->
+
+                <!--Attach section-->
+                <div class="sub-heading">{% trans '3)  Attach a file or a link' %}</div>
+                <div class="two-elements">
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                        {% for error in form.content.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <p class="middle-element"><strong>{% trans 'or' %}</strong></p>
+
+                <div class="two-elements">
+                    {{ form.link }}
+                    {% if form.link.errors %}
+                        {% for error in form.link.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <!--Attach section-->
+            </div>
+
+            <div id="tags">
+                <!-- Age tags section-->
+                <div id="tags-ages">
+                    <div class="sub-heading">{% trans '4) Select the ages' %}</div>
+                    {% for age in form.fields.suggested_ages.choices %}
+                        <input type="checkbox"
+                               id="id_suggested_ages_{{ forloop.counter }}"
+                               name="suggested_ages" value="{{ age.0 }}"
+                               style="visibility: hidden;"/>
+                        <label for="id_suggested_ages_{{ forloop.counter }}" class="checkbox">
+                            {% blocktrans with age.1|title as name %}
+                                {{ name }}{% endblocktrans %}
+                        </label>
+                    {% endfor %}
+
+                    {% if form.suggested_ages.errors %}
+                        {% for error in form.suggested_ages.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <!-- Age tags section -->
+
+                <!-- Type tags section -->
+                <div class="sub-heading display-in-line">
+                    {% trans '5) Select the type of the material' %}
+                </div>
+                <div class="sub-heading-helper display-in-line">
+                    <a href="#" data-reveal-id="types-modal"
+                       id="show-types">{% trans 'administrate types' %}</a>
+                </div>
+                <div id="tags-types">
+                    {% for type in form.fields.types.choices %}
+                        <input type="checkbox"
+                               id="id_types_{{ forloop.counter }}"
+                               name="types" value="{{ type.0 }}" style="visibility: hidden"/>
+                        <label for="id_types_{{ forloop.counter }}"
+                               class="checkbox">
+                            {% blocktrans with type.1|title as name %}
+                                {{ name }}
+                            {% endblocktrans %}
+                        </label>
+                    {% endfor %}
+
+                    {% if form.types.errors %}
+                        {% for error in form.types.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <!-- Type tags section -->
+
+                <!-- Languages tags section -->
+                <div class="sub-heading display-in-line">
+                    {% trans '6) Select the languages' %}
+                </div>
+                <div class="sub-heading-helper display-in-line">
+                    <a href="#" data-reveal-id="languages-modal"
+                       id="show-languages">{% trans 'administrate languages' %}</a>
+                </div>
+                <div id="tags-languages">
+                    {% for lang in form.fields.languages.choices %}
+                        <input type="checkbox"
+                               id="id_languages_{{ forloop.counter }}"
+                               name="languages" value="{{ lang.0 }}"
+                               style="visibility: hidden;"/>
+                        <label for="id_languages_{{ forloop.counter }}"
+                               class="checkbox">
+                            {% blocktrans with lang.1|title as name %}
+                                {{ name }}
+                            {% endblocktrans %}
+                        </label>
+                    {% endfor %}
+
+                    {% if form.languages.errors %}
+                        {% for error in form.languages.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <!-- Languages tags section -->
+
+                <!-- Themes tags section -->
+                <div id="tags-themes">
+                    <div class="sub-heading display-in-line">
+                        {% trans '7) Select the themes & topics' %}
+                    </div>
+                    <div class="sub-heading-helper display-in-line">
+                        <a href="#" data-reveal-id="themes-modal"
+                           id="show-themes">{% trans 'administrate themes & topics' %}</a>
+                    </div>
+                    {{ form.themes }}
+
+                    {% if form.themes.errors %}
+                        {% for error in form.themes.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <!-- Themes tags section -->
+
+            </div>
+
+            <div class="actions">
+                <button type="submit">{% trans 'Submit' %}</button>
+            </div>
+        </form>
+    </div>
+{% endblock canvas %}
+
+{% block modals %}
+    {% include "modals/materialModals.html" %}
+{% endblock %}
+
+{% block js_footer %}
+    <script src="{% static 'js/material.js' %}"></script>
+{% endblock %}

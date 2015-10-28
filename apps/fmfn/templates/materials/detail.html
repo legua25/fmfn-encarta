@@ -1,0 +1,39 @@
+{% extends 'base/base-2cols.html' %}
+{% load i18n widget_tweaks %}
+{% block title %}{{ material.title }}{% endblock %}
+{% block canvas %}
+
+    <div class="ninety">
+        <div class="heading">
+            <h1>{{ material.title }}</h1>
+        </div>
+        <div id="general">
+            <p>{{ material.description }}</p>
+
+            {% if material.link  %}<div>{{ material.link }}</div>{% endif %}
+            <form action="#" id="comment-form">
+                 {% csrf_token %}
+                {{ form.content }}
+                {{ form.rating_value }}
+                {{ form.user }}
+                {{ form.material }}
+                <button id="send-comment">Comment</button>
+
+            </form>
+        <div>
+            {% if comments %}
+                {% for comment in comments %}
+                    <div>
+                        <div>{{ comment.content }}</div>
+                        <div>{{ comment.date_created }}</div>
+                        <div>{{ comment.rating_value }}</div>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+        </div>
+        </div>
+
+
+    </div>
+{% endblock canvas%}
