@@ -2,12 +2,13 @@
 from __future__ import unicode_literals
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import RedirectView
+from django.conf.urls.static import static
 from django.conf.urls import include, url
+from django.conf import settings
 from django.contrib import admin
 from apps.fmfn import views
 
 from django.http import HttpResponse
-from django.template import Template, Context
 
 redirect = RedirectView.as_view
 
@@ -32,7 +33,7 @@ urlpatterns = [
 	 	url(r'create/$', views.materials.create, name = 'create'),  # GET, PUT
 	 	url(r'^(?P<content_id>[\d]+)/', include([
 
-	 		url(r'^$',views.materials.view, name = 'view'),  # GET
+	 		url(r'^$',views.materials.view, name = 'view'),  # GET, POST
 	 		url(r'^edit/$', views.materials.edit, name = 'edit')  # GET, POST, DELETE
 
 	 	]))
@@ -44,7 +45,8 @@ urlpatterns = [
 
         url(r'^$', views.tags.tags, name = 'list'),  # GET
         url(r'^create/$', views.tags.tags, name = 'create', kwargs = { 'action': 'create' }),  # POST
-        url(r'^(?P<tag_id>[\d]+)/edit/$', views.tags.tags, name = 'edit', kwargs = { 'action': 'edit' })  # POST, DELETE
+        url(r'^(?P<tag_id>[\d]+)/edit/$', views.tags.tags, name = 'edit', kwargs = { 'action': 'edit' }), # POST
+		url(r'^(?P<tag_id>[\d]+)/delete/$', views.tags.tags, name = 'delete', kwargs = { 'action': 'delete' })  # POST
 
     ], namespace = 'tags', app_name = 'fmfn')),
 
@@ -71,12 +73,19 @@ urlpatterns = [
 	 	url(r'^(?P<user_id>[\d]+)/', include([
 
 	 		url(r'^$',  views.users.view, name = 'view'),  # GET, POST
-	 		url(r'^edit/$', views.users.edit, name = 'edit'),  # GET, POST, DELETE
-	# 		url(r'^portfolio/$', None, name = 'portfolio')  # GET, PUT, DELETE
+	 		url(r'^edit/$', views.users.edit, name = 'edit')  # GET, POST, DELETE
 
 		]))
 
 	], namespace = 'users', app_name = 'apps.fmfn')),
+
+	# Portfolio (favorites) management
+	url(r'^portfolio/', include([
+
+		url(r'^$', views.portfolio.manage, name = 'view'),  # GET
+		url(r'^(?P<content_id>[\d]+)/$', views.portfolio.manage, name = 'edit')  # PUT, DELETE
+
+	], namespace = 'portfolio', app_name = 'fmfn')),
 
 	# Management
 	# url(r'^manage/', include([
@@ -94,4 +103,4 @@ urlpatterns = [
 
 	# ], namespace = 'management', app_name = 'apps.fmfn'))
 
-]
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

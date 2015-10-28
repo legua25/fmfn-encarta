@@ -69,12 +69,13 @@ class TagsView(View):
 		elif tag_type == 'type': data = Type.objects.active().filter(name__icontains = filters)
 		elif tag_type == 'language': data = Language.objects.active().filter(name__icontains = filters)
 		else:
+
 			# If type is invalid, return error
-			ActionLog.objects.log_content('Failed to display %s tags' % tag_type, user = request.user, status = 401)
+			ActionLog.objects.log_tags('Failed to display %s tags' % tag_type, user = request.user, status = 401)
 			return HttpResponseForbidden()
 
 		# Return tags list JSON
-		ActionLog.objects.log_content('Located tag cluster', user = request.user)
+		ActionLog.objects.log_tags('Located tag cluster', user = request.user)
 		return JsonResponse({
 			'version': '1.0.0',
 			'status': 200,
@@ -98,18 +99,30 @@ class TagsView(View):
 			elif tag_type == 'theme': tag_cls = Theme
 			elif tag_type == 'language': tag_cls = Language
 			else:
+
 				# If not valid, return error
-				ActionLog.objects.log_content('Failed to create tag entry (id: %s)' % tag_id, user = request.user, status = 401)
+				ActionLog.objects.log_tags('Failed to create tag entry (id: %s)' % tag_id, user = request.user, status = 401)
 				return HttpResponseForbidden()
 
 			# Ensure that a tag with the same name does not exist
-			if bool(tag_cls.objects.filter(name__iexact = name)) is False:
+			if not tag_cls.objects.active().filter(name__iexact = name).exists():
 
 				# Create tag
 				tag = tag_cls.objects.create(name = name)
 
 				# Return response JSON
-				ActionLog.objects.log_content('Created tag entry (id: %s)' % tag_id, user = request.user, status = 201)
+				ActionLog.objects.log_tags('Created tag entry (id: %s)' % tag_id, user = request.user, status = 201)
+				return JsonResponse({
+					'version': '1.0.0',
+					'status': 201,
+					'data': { 'type': tag_type, 'id': tag.id, 'name': tag.name }
+				}, status = 201)
+			elif bool(tag_cls.objects.inactive().filter(name__iexact = name)) is True:
+
+				tag = tag_cls.objects.inactive().get(name__iexact = name)
+				tag.active = True
+				tag.save()
+
 				return JsonResponse({
 					'version': '1.0.0',
 					'status': 201,
@@ -117,7 +130,7 @@ class TagsView(View):
 				}, status = 201)
 
 			# Return duplicate tag response JSON
-			ActionLog.objects.log_content('Failed to create tag entry (id: %s)' % tag_id, user = request.user, status = 302)
+			ActionLog.objects.log_tags('Failed to create tag entry (id: %s)' % tag_id, user = request.user, status = 302)
 			return JsonResponse({
 				'version': '1.0.0',
 				'status': 302
@@ -145,7 +158,7 @@ class TagsView(View):
 				tag.name = name
 				tag.save()
 
-			ActionLog.objects.log_content('Edited tag (category: %s, id: %s)' % (tag_type, tag_id), user = request.user, status = 201)
+			ActionLog.objects.log_tags('Edited tag (category: %s, id: %s)' % (tag_type, tag_id), user = request.user, status = 201)
 
 			# Return response JSON
 			return JsonResponse({
@@ -153,25 +166,23 @@ class TagsView(View):
 				'status': 200,
 				'data': { 'type': tag_type, 'id': tag_id, 'name': name }
 			})
-	@method_decorator(login_required)
-	@method_decorator(ajax_required)
-	@method_decorator(role_required('content manager'))
-	def delete(self, request, tag_type = '', tag_id = 0, **kwargs):
 
-		# Determine tag type and delete specified tag, if valid
-		if tag_type == 'theme': Theme.objects.get(id = tag_id).delete()
-		elif tag_type == 'type': Type.objects.get(id = tag_id).delete()
-		elif tag_type == 'language': Language.objects.get(id = tag_id).delete()
-		else:
-			# If not valid, return an error
-			ActionLog.objects.log_content('Failed to delete tag entry (id: %s)' % tag_id, user = request.user, status = 401)
-			return HttpResponseForbidden()
+		#Tag deletion request
+		elif action == 'delete':
 
-		# Return response JSON
-		ActionLog.objects.log_content('Deleted tag (id: %s)' % tag_id, user = request.user)
-		return JsonResponse({
-			'version': '1.0.0',
-			'status': 200
-		})
+			if tag_type == 'theme': Theme.objects.get(id = tag_id).delete()
+			elif tag_type == 'type': Type.objects.get(id = tag_id).delete()
+			elif tag_type == 'language': Language.objects.get(id = tag_id).delete()
+			else:
+				# If not valid, return an error
+				ActionLog.objects.log_tags('Failed to delete tag entry (id: %s)' % tag_id, user = request.user, status = 401)
+				return HttpResponseForbidden()
+
+			# Return response JSON
+			ActionLog.objects.log_tags('Deleted tag (id: %s)' % tag_id, user = request.user)
+			return JsonResponse({
+				'version': '1.0.0',
+				'status': 200
+			})
 
 tags = TagsView.as_view()

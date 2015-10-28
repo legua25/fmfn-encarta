@@ -1,0 +1,23 @@
+[
+	{
+		"pk": 1,
+		"model": "fmfn.User",
+		"fields": {
+			"first_name": "",
+			"mother_family_name": "",
+			"father_family_name": "",
+			"photo": "users/default.png",
+			"is_superuser": true,
+			"grades": [],
+			"last_login": null,
+			"groups": [],
+			"active": true,
+			"role": 5,
+			"user_permissions": [],
+			"password": "pbkdf2_sha256$20000$onoWjhcjdTiu$J3a40JSpN3btgJyNlV300mnLswuc4GzDm5Lmpr3U1V8=",
+			"email_address": "me@example.com",
+			"campus": 1,
+			"date_joined": "2015-10-22T14:12:05.083Z"
+		}
+	}
+]

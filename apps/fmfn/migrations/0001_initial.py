@@ -2,9 +2,9 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import apps.fmfn.models.material
-import imagekit.models.fields
+import apps.fmfn.models.users
 from django.conf import settings
+import imagekit.models.fields
 
 
 class Migration(migrations.Migration):
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(max_length=64, verbose_name='first name')),
                 ('father_family_name', models.CharField(default='', max_length=64, verbose_name="father's family name", blank=True)),
                 ('mother_family_name', models.CharField(default='', max_length=64, verbose_name="mother's family name", blank=True)),
-                ('photo', imagekit.models.fields.ProcessedImageField(upload_to=b'', verbose_name='user photo')),
+                ('photo', imagekit.models.fields.ProcessedImageField(default='users/default.png', upload_to=apps.fmfn.models.users.upload_photo, verbose_name='user photo', blank=True)),
             ],
             options={
                 'verbose_name': 'user',
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('category', models.PositiveSmallIntegerField(verbose_name='performed action category', choices=[(1, 'account control'), (2, 'content management')])),
+                ('category', models.PositiveSmallIntegerField(verbose_name='performed action category', choices=[(1, 'account control'), (2, 'content management'), (4, 'tag management')])),
                 ('action', models.CharField(max_length=512, verbose_name='performed action', db_index=True)),
                 ('status', models.PositiveSmallIntegerField(verbose_name='performed action status code')),
                 ('action_date', models.DateTimeField(auto_now_add=True, verbose_name='performed action date', db_index=True)),
@@ -68,8 +68,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('content', models.CharField(max_length=64, verbose_name='comment content')),
+                ('content', models.CharField(max_length=500, verbose_name='comment content')),
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='date created')),
+                ('rating_value', models.PositiveSmallIntegerField(verbose_name='rating values', choices=[(1, 'bad'), (2, 'regular'), (3, 'good'), (4, 'very good'), (5, 'excellent')])),
             ],
             options={
                 'verbose_name': 'material comment',
@@ -91,6 +92,18 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Item',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('active', models.BooleanField(default=True, verbose_name='is active')),
+                ('date_added', models.DateTimeField(auto_now_add=True, verbose_name='date added')),
+            ],
+            options={
+                'verbose_name': 'portfolio item',
+                'verbose_name_plural': 'portfolio items',
+            },
+        ),
+        migrations.CreateModel(
             name='Language',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -108,8 +121,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
                 ('title', models.CharField(max_length=128, verbose_name='title')),
-                ('content', models.FileField(upload_to=apps.fmfn.models.material.upload_to, null=True, verbose_name='content file', blank=True)),
-                ('link', models.URLField(default='', null=True, verbose_name='content link', blank=True)),
+                ('content', models.FileField(upload_to='materials/files', null=True, verbose_name='content file', blank=True)),
+                ('link', models.URLField(null=True, verbose_name='content link', blank=True)),
                 ('description', models.CharField(max_length=1024, null=True, verbose_name='description', blank=True)),
                 ('languages', models.ManyToManyField(related_name='materials', verbose_name='material language', to='fmfn.Language', blank=True)),
             ],
@@ -123,26 +136,11 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('materials', models.ManyToManyField(related_name='+', verbose_name='materials', to='fmfn.Material')),
                 ('user', models.ForeignKey(related_name='portfolio', verbose_name='user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'portfolio',
                 'verbose_name_plural': 'portfolios',
-            },
-        ),
-        migrations.CreateModel(
-            name='Rating',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('active', models.BooleanField(default=True, verbose_name='is active')),
-                ('rating_value', models.PositiveSmallIntegerField(verbose_name='rating values', choices=[(1, 'bad'), (2, 'regular'), (3, 'good'), (4, 'very good'), (5, 'excellent')])),
-                ('material', models.ForeignKey(related_name='ratings', verbose_name='material', to='fmfn.Material')),
-                ('user', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'verbose_name': 'rating',
-                'verbose_name_plural': 'ratings',
             },
         ),
         migrations.CreateModel(
@@ -198,8 +196,8 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=64, verbose_name='type name')),
             ],
             options={
-                'verbose_name': 'material type',
-                'verbose_name_plural': 'material types',
+                'verbose_name': 'material theme',
+                'verbose_name_plural': 'material themes',
             },
         ),
         migrations.CreateModel(
@@ -233,6 +231,16 @@ class Migration(migrations.Migration):
             model_name='material',
             name='user',
             field=models.ForeignKey(related_name='materials', verbose_name='uploading user', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+        ),
+        migrations.AddField(
+            model_name='item',
+            name='material',
+            field=models.ForeignKey(related_name='+', verbose_name='material', to='fmfn.Material'),
+        ),
+        migrations.AddField(
+            model_name='item',
+            name='portfolio',
+            field=models.ForeignKey(related_name='items', verbose_name='portfolio items', to='fmfn.Portfolio'),
         ),
         migrations.AddField(
             model_name='comment',

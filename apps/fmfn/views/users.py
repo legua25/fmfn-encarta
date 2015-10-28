@@ -155,13 +155,11 @@ class ViewUserView(View):
 		else:
 			if request.user.belongs_to('user manager'): form = UserViewForm(instance = u)
 			else:
-
 				if request.user.id == int(user_id): form = UserViewForm(instance = u)
 				else:
-
 					ActionLog.objects.log_account('Attempted to view user profile information without enough privileges : (user_id: %s)' % user_id, user = request.user, status = 401)
 					return HttpResponseForbidden()
-
+		ActionLog.objects.log_account('Displayed user profile information (email address: %s)' % u.email_address, user = request.user)
 		return render_to_response('users/view.html', context = RequestContext(request, locals()))
 
 

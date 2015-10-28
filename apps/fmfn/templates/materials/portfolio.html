@@ -1,0 +1,11 @@
+{% extends 'base/base-2cols.html' %}
+{% load i18n %}
+
+	{% block canvas %}
+		<section class="block-list">
+			<header>{% trans 'Portfolio' %}</header>
+			<ul>{% for item in items %}{% with item.material as material %}
+				<li><a href="{% url 'content:view' material.id %}">{{ material.title }}</a></li>{% endwith %}{% endfor %}
+			</ul>
+		</section>
+	{% endblock %}
