@@ -41,18 +41,26 @@
                     {% trans 'visit the link' %}</a>
             {% endif %}
 
-            {% if not in_portfolio %}
-                <a class="add-favorites"><i class="fa fa-heart"></i>{% trans 'add to favorites' %}</a>
-            {% endif %}
+            <input type="hidden" value="{% url 'portfolio:edit' content_id %}" name="put-tag">
 
-            {% if in_portfolio %}
-                <a class="add-favorites"><i class="fa fa-heart"></i>{% trans 'remove from favorites' %}</a>
-            {% endif %}
+            <div id="contain-portfolio" style="display: inline-block;">
+                {% csrf_token %}
+                {% if not in_portfolio %}
+                    <a class="add-favorites" id="add-portfolio"><i
+                            class="fa fa-heart-o"></i>{% trans 'add to favorites' %}</a>
+                {% endif %}
+
+                {% if in_portfolio %}
+                    <a class="add-favorites" id="remove-portfolio"><i
+                            class="fa fa-heart"></i>{% trans 'remove from favorites' %}</a>
+                {% endif %}
+            </div>
 
             <a href="#" class="error-report"><i class="fa fa-exclamation"></i>{% trans 'report error' %}</a>
 
             {% if user|has_role:'content manager' %}
-                <a href="{% url 'content:edit' content_id %}" class="link-visit"><i class="fa fa-pencil"></i>Edit</a>
+                <a href="{% url 'content:edit' content_id %}" class="link-visit"><i
+                        class="fa fa-pencil"></i>{% trans 'edit material' %}</a>
             {% endif %}
 
             <hr>
@@ -160,4 +168,5 @@
 
 {% block js_footer %}
     <script src="{% static 'js/rating.js' %}"></script>
+    <script src="{% static 'js/portfolio.js' %}"></script>
 {% endblock %}

@@ -149,7 +149,7 @@ class MaterialDetailView(View):
 
 		else:
 
-			in_portfolio = Portfolio.objects.user(request.user).items.filter(material = material).exists()
+			in_portfolio = Portfolio.objects.user(request.user).items.filter(material = material,active= True).exists()
 			has_commented = Comment.objects.active().filter(user=request.user,material=material).exists()
 			comments = Comment.objects.active().filter(material=material)
 			types = material.types.active()
