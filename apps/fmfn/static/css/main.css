@@ -12683,7 +12683,7 @@ button {
 }
 
 /* line 55, ../sass/pages/_detailMaterial.scss */
-.add-favorites {
+.add-favorites, .remove-favorites {
   color: #2980B9;
   padding: 5px 8px 5px 8px;
   display: inline-block;
@@ -12700,7 +12700,7 @@ button {
   font-weight: 400;
 }
 /* line 57, ../sass/pages/_detailMaterial.scss */
-.add-favorites i {
+.add-favorites i, .remove-favorites i {
   padding-right: 5px;
   color: #DF2828;
 }

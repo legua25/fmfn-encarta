@@ -75,13 +75,13 @@ class PortfolioView(View):
 
 			# Check the material is not already added
 			portfolio = Portfolio.objects.user(request.user)
-			if portfolio.items.filter(material = material, active = False).exists():
+			if not portfolio.items.filter(active = True).filter(material = material).exists():
 
 				ActionLog.objects.log_content('Cannot remove non-included material', status = 403, user = request.user)
 				return HttpResponseForbidden()
 
 			# Add the item to the portfolio
-			portfolio.items.get(material = material).delete()
+			portfolio.items.filter(active = True).get(material = material).delete()
 			ActionLog.objects.log_content('Removed material ID \'%s\' to user portfolio' % content_id, user = request.user)
 
 			# Serialize the material

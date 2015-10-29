@@ -1,5 +1,5 @@
-$(document).on('click', '#remove-portfolio', function () {
-    console.log('probando');
+$(document).on('click', '.remove-favorites', function () {
+    console.log('remover');
     var url = $("input[name=put-tag]").val();
     var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
     $.ajax({
@@ -9,7 +9,7 @@ $(document).on('click', '#remove-portfolio', function () {
             'X-CSRFToken': csfrToken
         },
         success: function (response) {
-            $('#remove-portfolio').hide();
+            $('.remove-favorites').hide();
             var html = '<a class="add-favorites" id="add-portfolio"><i class="fa fa-heart-o"></i> add to favorites </a>';
             $('#contain-portfolio').append(html);
         },
@@ -23,7 +23,8 @@ $(document).on('click', '#remove-portfolio', function () {
     console.log(url);
 });
 
-$(document).on('click', '#add-portfolio', function () {
+$(document).on('click', '.add-favorites', function () {
+    console.log('añadir');
     var url = $("input[name=put-tag]").val();
     var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
     $.ajax({
@@ -33,8 +34,8 @@ $(document).on('click', '#add-portfolio', function () {
             'X-CSRFToken': csfrToken
         },
         success: function (response) {
-            $('#add-portfolio').hide();
-            var html = '<a class="add-favorites" id="remove-portfolio"><i class="fa fa-heart"></i> remove from favorites </a>';
+            $('.add-favorites').hide();
+            var html = '<a class="remove-favorites" id="remove-portfolio"><i class="fa fa-heart"></i> remove from favorites </a>';
             $('#contain-portfolio').append(html);
         },
         error: function (xhr, textStatus, thrownError) {
