@@ -12615,7 +12615,7 @@ button {
 
 /* line 1, ../sass/pages/_detailMaterial.scss */
 .heading-material {
-  margin-top: 35px;
+  margin-top: 20px;
   display: block;
 }
 /* line 4, ../sass/pages/_detailMaterial.scss */
@@ -12626,64 +12626,20 @@ button {
   min-width: 100%;
   display: inline-block;
 }
-/* line 11, ../sass/pages/_detailMaterial.scss */
-.heading-material .link-visit {
-  padding: 5px 8px 5px 8px;
-  display: inline-block;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border-top-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  border-top-left-radius: 3px;
-  background-color: #EBEBEB;
-  border: solid 1px #d2d2d2;
-  color: #858585;
-  font-weight: 400;
-}
-/* line 12, ../sass/pages/_detailMaterial.scss */
-.heading-material .link-visit i {
-  padding-right: 5px;
-  color: #2980B9;
-}
-/* line 28, ../sass/pages/_detailMaterial.scss */
-.heading-material .add-favorites {
-  padding: 5px 8px 5px 8px;
-  display: inline-block;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border-top-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  border-top-left-radius: 3px;
-  background-color: #EBEBEB;
-  border: solid 1px #d2d2d2;
-  color: #858585;
-  font-weight: 400;
-}
-/* line 29, ../sass/pages/_detailMaterial.scss */
-.heading-material .add-favorites i {
-  padding-right: 5px;
-  color: #DF2828;
-}
 
-/* line 46, ../sass/pages/_detailMaterial.scss */
+/* line 13, ../sass/pages/_detailMaterial.scss */
 .description-material {
   color: #444444;
   padding-top: 10px;
 }
 
-/* line 51, ../sass/pages/_detailMaterial.scss */
+/* line 18, ../sass/pages/_detailMaterial.scss */
 .tags-container {
   margin-top: 20px;
   margin-bottom: 20px;
   cursor: default;
 }
-/* line 54, ../sass/pages/_detailMaterial.scss */
+/* line 21, ../sass/pages/_detailMaterial.scss */
 .tags-container .material-tags {
   padding: 3px 5px 3px 5px;
   background-color: #f3f3f3;
@@ -12700,7 +12656,7 @@ button {
   border-top-left-radius: 3px;
 }
 
-/* line 68, ../sass/pages/_detailMaterial.scss */
+/* line 35, ../sass/pages/_detailMaterial.scss */
 .error-report {
   padding: 5px 8px 5px 8px;
   display: inline-block;
@@ -12717,11 +12673,117 @@ button {
   color: white;
   font-weight: 400;
 }
-/* line 69, ../sass/pages/_detailMaterial.scss */
+/* line 36, ../sass/pages/_detailMaterial.scss */
 .error-report:hover {
   color: white;
 }
-/* line 72, ../sass/pages/_detailMaterial.scss */
+/* line 39, ../sass/pages/_detailMaterial.scss */
 .error-report i {
   padding-right: 5px;
+}
+
+/* line 55, ../sass/pages/_detailMaterial.scss */
+.add-favorites {
+  color: #2980B9;
+  padding: 5px 8px 5px 8px;
+  display: inline-block;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  background-color: #EBEBEB;
+  border: solid 1px #d2d2d2;
+  font-weight: 400;
+}
+/* line 57, ../sass/pages/_detailMaterial.scss */
+.add-favorites i {
+  padding-right: 5px;
+  color: #DF2828;
+}
+
+/* line 72, ../sass/pages/_detailMaterial.scss */
+.link-visit {
+  color: #2980B9;
+  padding: 5px 8px 5px 8px;
+  display: inline-block;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  background-color: #EBEBEB;
+  border: solid 1px #d2d2d2;
+  font-weight: 400;
+}
+/* line 74, ../sass/pages/_detailMaterial.scss */
+.link-visit i {
+  padding-right: 5px;
+}
+
+/* line 88, ../sass/pages/_detailMaterial.scss */
+#stars {
+  font-size: 20px;
+  width: 50%;
+  display: inline-block;
+}
+/* line 90, ../sass/pages/_detailMaterial.scss */
+#stars i {
+  padding: 5px 5px 5px 5px;
+}
+
+/* line 97, ../sass/pages/_detailMaterial.scss */
+.filled {
+  color: #FFD700;
+}
+
+/* line 101, ../sass/pages/_detailMaterial.scss */
+.rating {
+  padding-bottom: 10px;
+}
+
+/* line 105, ../sass/pages/_detailMaterial.scss */
+.ind-comment {
+  background-color: #f8f8f8;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px 10px 10px 10px;
+}
+/* line 114, ../sass/pages/_detailMaterial.scss */
+.ind-comment .display-in-line {
+  margin-left: 5px;
+}
+/* line 117, ../sass/pages/_detailMaterial.scss */
+.ind-comment .author {
+  color: #343434;
+  font-weight: 700;
+}
+/* line 121, ../sass/pages/_detailMaterial.scss */
+.ind-comment .content {
+  color: #444444;
+  width: 100%;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+/* line 129, ../sass/pages/_detailMaterial.scss */
+.no-comments {
+  color: #dedede;
+  font-weight: 600;
+  font-size: 25px;
+  margin-top: 10px;
 }

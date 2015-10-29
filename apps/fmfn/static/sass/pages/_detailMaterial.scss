@@ -1,5 +1,5 @@
 .heading-material {
-  margin-top: 35px;
+  margin-top: 20px;
   display: block;
   .title-material {
     font-weight: $bold;
@@ -7,39 +7,6 @@
     color: $mild-black;
     min-width: 100%;
     display: inline-block;
-  }
-  .link-visit {
-    i {
-      padding-right: 5px;
-      color: $sky-blue;
-    }
-    padding: 5px 8px 5px 8px;
-    display: inline-block;
-    @include border-top-radius(3px);
-    @include border-right-radius(3px);
-    @include border-bottom-radius(3px);
-    @include border-left-radius(3px);
-    background-color: $wet-cement;
-    border: solid 1px darken($wet-cement, 10%);
-    color: darken($wet-cement, 40%);
-    font-weight: $normal;
-  }
-
-  .add-favorites {
-    i {
-      padding-right: 5px;
-      color: $red-hearth;
-    }
-    padding: 5px 8px 5px 8px;
-    display: inline-block;
-    @include border-top-radius(3px);
-    @include border-right-radius(3px);
-    @include border-bottom-radius(3px);
-    @include border-left-radius(3px);
-    background-color: $wet-cement;
-    border: solid 1px darken($wet-cement, 10%);
-    color: darken($wet-cement, 40%);
-    font-weight: $normal;
   }
 }
 
@@ -66,7 +33,7 @@
 }
 
 .error-report {
-  &:hover{
+  &:hover {
     color: white;
   }
   i {
@@ -83,4 +50,85 @@
   color: white;
   font-weight: $normal;
 
+}
+
+.add-favorites {
+  color: $sky-blue;
+  i {
+    padding-right: 5px;
+    color: $red-hearth;
+  }
+  padding: 5px 8px 5px 8px;
+  display: inline-block;
+  @include border-top-radius(3px);
+  @include border-right-radius(3px);
+  @include border-bottom-radius(3px);
+  @include border-left-radius(3px);
+  background-color: $wet-cement;
+  border: solid 1px darken($wet-cement, 10%);
+  font-weight: $normal;
+}
+
+.link-visit {
+  color: $sky-blue;
+  i {
+    padding-right: 5px;
+  }
+  padding: 5px 8px 5px 8px;
+  display: inline-block;
+  @include border-top-radius(3px);
+  @include border-right-radius(3px);
+  @include border-bottom-radius(3px);
+  @include border-left-radius(3px);
+  background-color: $wet-cement;
+  border: solid 1px darken($wet-cement, 10%);
+  font-weight: $normal;
+}
+
+#stars {
+  font-size: 20px;
+  i {
+    padding: 5px 5px 5px 5px;
+  }
+  width: 50%;
+  display: inline-block;
+}
+
+.filled {
+  color: #FFD700;
+}
+
+.rating{
+  padding-bottom: 10px;
+}
+
+.ind-comment{
+  background-color: lighten($wet-cement,5%);
+  @include border-top-radius(3px);
+  @include border-right-radius(3px);
+  @include border-bottom-radius(3px);
+  @include border-left-radius(3px);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px 10px 10px 10px;
+  .display-in-line{
+    margin-left: 5px;
+  }
+  .author{
+    color: $mild-black;
+    font-weight: $bold;
+  }
+  .content{
+    color: $main-black;
+    width: 100%;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+}
+
+.no-comments{
+  color: darken($wet-cement,5%);
+  font-weight: $semi-bold;
+  font-size: 25px;
+  margin-top: 10px;
 }

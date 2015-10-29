@@ -1,35 +1,12 @@
 {% extends 'base/base-2cols.html' %}
-{% load i18n widget_tweaks %}
+{% load i18n widget_tweaks static %}
 {% load roles %}
 {% block title %}{{ material.title }}{% endblock %}
 {% block canvas %}
     <div class="ninenty">
         <div class="heading-material">
             <div class="title-material">{{ material.title }}</div>
-
-            {% if material.content %}
-                <a href="{% url 'content:download' content_id %}" class="link-visit" target="_blank"><i
-                        class="fa fa-floppy-o"></i>
-                    {% trans 'download content' %}</a>
-            {% endif %}
-
-            {% if material.link %}
-                <a href="{{ material.link }}" class="link-visit" target="_blank"><i class="fa fa-external-link"></i>
-                    {% trans 'visit the link' %}</a>
-            {% endif %}
-
-            {% if not in_portfolio %}
-                <a class="add-favorites"><i class="fa fa-heart"></i>{% trans 'add to favorites' %}</a>
-            {% endif %}
-
-            {% if user|has_role:'content manager' %}
-                <a href="{% url 'content:edit' content_id %}" class="link-visit"><i class="fa fa-pencil"></i>Edit</a>
-            {% endif %}
-
-            <a href="#" class="error-report"><i class="fa fa-exclamation"></i>{% trans 'report error' %}</a>
-
         </div>
-
 
         <div class="description-material">
             <p>{{ material.description }}</p>
@@ -52,7 +29,35 @@
                 {% endfor %}
             </div>
 
+            <hr>
+            {% if material.content %}
+                <a href="{% url 'content:download' content_id %}" class="link-visit" target="_blank"><i
+                        class="fa fa-floppy-o"></i>
+                    {% trans 'download content' %}</a>
+            {% endif %}
 
+            {% if material.link %}
+                <a href="{{ material.link }}" class="link-visit" target="_blank"><i class="fa fa-external-link"></i>
+                    {% trans 'visit the link' %}</a>
+            {% endif %}
+
+            {% if not in_portfolio %}
+                <a class="add-favorites"><i class="fa fa-heart"></i>{% trans 'add to favorites' %}</a>
+            {% endif %}
+
+            {% if in_portfolio %}
+                <a class="add-favorites"><i class="fa fa-heart"></i>{% trans 'remove from favorites' %}</a>
+            {% endif %}
+
+            <a href="#" class="error-report"><i class="fa fa-exclamation"></i>{% trans 'report error' %}</a>
+
+            {% if user|has_role:'content manager' %}
+                <a href="{% url 'content:edit' content_id %}" class="link-visit"><i class="fa fa-pencil"></i>Edit</a>
+            {% endif %}
+
+            <hr>
+
+            {% comment %}
             <form action="#" id="comment-form">
                 {% csrf_token %}
                 {{ form.content }}
@@ -60,20 +65,99 @@
                 {{ form.user }}
                 {{ form.material }}
                 <button id="send-comment">Comment</button>
-
             </form>
+            {% endcomment %}
+
+            {% if not has_commented %}
+                {% if user|has_role:'teacher' %}
+                    <div class="form">
+                        <button id="leave-comment">{% trans 'leave a comment' %}</button>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <div id="comment-form" class="form" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" value="{{ user.id }}" name="id-user">
+                <input type="hidden" value="{{ content_id }}" name="id-content">
+                <input type="hidden" value="{% url 'content:view' content_id %}" name="url-material">
+                <input type="hidden" id="count">
+
+                <div class="row lead rating">
+                    <span>{% trans 'star rating:' %}</span>
+
+                    <div id="stars" class="starrr"></div>
+                </div>
+                <div id="comment-error" class="alert-box alert"
+                     style="display: none;">{% trans 'Please be sure to fill the field' %}</div>
+                    <textarea id="comment-content" cols="40"
+                              rows="4" maxlength="500" style="resize: none;"
+                              placeholder="{% trans 'Tell us about this material' %}"></textarea>
+                <button id="send-comment">{% trans 'Comment' %}</button>
+                <hr>
+            </div>
             <div>
                 {% if comments %}
-                    {% for comment in comments %}
-                        <div>
-                            <div>{{ comment.content }}</div>
-                            <div>{{ comment.date_created }}</div>
-                            <div>{{ comment.rating_value }}</div>
-                        </div>
-
-                    {% endfor %}
+                    <div id="material-comments">
+                        <div class="sub-heading">Comments</div>
+                        {% for comment in comments %}
+                            <div class="ind-comment">
+                                <div class="author display-in-line">By: {{ comment.user }}</div>
+                                <div class="rating display-in-line">
+                                    {% with range=comment.rating_value %}
+                                        {% if range == 5 %}
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                        {% elif range == 4 %}
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star-o"></i>
+                                        {% elif range == 3 %}
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                        {% elif range == 2 %}
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                        {% elif range == 1 %}
+                                            <i class="fa fa-star filled"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                        {% elif range == 0 %}
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                        {% endif %}
+                                    {% endwith %}</div>
+                                <p class="content">{{ comment.content }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="material-comments">
+                        <div class="sub-heading">Comments</div>
+                        <div class="no-comments">{% trans 'This material has no comments yet' %}</div>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
 {% endblock canvas %}
+
+{% block js_footer %}
+    <script src="{% static 'js/rating.js' %}"></script>
+{% endblock %}
