@@ -244,9 +244,14 @@ class MaterialTest(TestCase):
 		os.remove('test.txt')
 
 	def _create_file(self, add_content = True):
+		"""
+			Logs in as a valid user and saves a material with a JPG content file attached if specified
+		"""
 
+		# Login
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
 
+		# Open file
 		with open('media/materials/files/test.jpg','rb') as f:
 
 			data = {
@@ -256,15 +261,21 @@ class MaterialTest(TestCase):
 			if add_content: data['content'] = f
 			else: data['link'] = 'http://localhost/'
 
+			# Create material with content
 			self.client.post(reverse_lazy('content:create'), data = data, follow = True)
 
 	def test_no_content(self):
+		"""
+			Asserts response code and action log are correct for a request for a download with no attachment
+		"""
 
-		download_count = len(Download.objects.active())
 		log_count = len(ActionLog.objects.active())
 
+		# Create file with no content
 		self._create_file(add_content = False)
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		# Request download for file
 		response = self.client.get(reverse_lazy('content:download',kwargs={ 'content_id': Material.objects.last().id }))
 
 		# Check status code
@@ -276,17 +287,21 @@ class MaterialTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 403)
 
 	def test_inactive_material(self):
-
-		download_count = len(Download.objects.active())
+		"""
+			Asserts response code and action log are correct for a request for an inactive file
+		"""
 		log_count = len(ActionLog.objects.active())
 
+		# Create file without content
 		self._create_file(add_content = False)
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
 
+		# Deactivate file
 		material = Material.objects.last()
 		material.active = False
 		material.save()
 
+		# Request download for file
 		response = self.client.get(reverse_lazy('content:download',kwargs = { 'content_id': material.id }), follow = True)
 
 		# Check status code
@@ -297,17 +312,21 @@ class MaterialTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').category, 2)
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 403)
 	def test_material_does_not_exist(self):
-
+		"""
+			Asserts response code, database values and action log are correct for a request for an inexistent material
+		"""
 		download_count = len(Download.objects.active())
 		log_count = len(ActionLog.objects.active())
 
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
+
+		# Request download for file
 		response = self.client.get(reverse_lazy('content:download',kwargs = { 'content_id': 0 }), follow = True)
 
 		# Check status code
 		self.assertEqual(response.status_code, 403)
 
-		# Check download count
+		# Check download count is unaffected
 		self.assertEqual(len(Download.objects.active()), download_count)
 
 		# Test action log
@@ -316,14 +335,17 @@ class MaterialTest(TestCase):
 		self.assertEqual(ActionLog.objects.latest('action_date').status, 403)
 
 	def test_material_downloaded(self):
+		"""
+			Asserts response code, database values and action log are correct for a request for an existent material
+		"""
 		download_count = len(Download.objects.active())
 		log_count = len(ActionLog.objects.active())
 
+		# Create a valid material and requests the download
 		self._create_file()
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
 		response = self.client.get(reverse_lazy('content:download',kwargs = { 'content_id': Material.objects.last().id }), follow = True)
 
-		material = Material.objects.last()
 
 		# Check status code
 		self.assertEqual(response.status_code, 200)
