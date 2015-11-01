@@ -18,7 +18,7 @@ urlpatterns = [
 	url(r'^', include([
 
 		url(r'^$', redirect(url = reverse_lazy('search')), name = 'index'),  # GET
-		url(r'^search/$', include([
+		url(r'^search/', include([
 
 			url(r'^$', views.search.search, name = 'search'),  # GET
 	 		url(r'^api/$', views.search.search, name = 'filter')  # POST
