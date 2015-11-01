@@ -6,28 +6,31 @@
 
 {% block canvas %}
     <div id="search-bar">
-        <p>¿Conoces el titulo?</p>
-        <input type="text">
-        <div id="age-tags" class="search-section">
-            <p>Selecciona una edad</p>
-            <label class="tag"> Preescolar </label>
-            <label class="tag"> Primaria baja </label>
-            <label class="tag"> Preescolar </label>
-            <label class="tag"> Primaria baja </label>
-        </div>
-        <div id="type-tags" class="search-section">
-            <p>Selecciona un tipo de material</p>
-            <label for="#" class="tag"> Juego </label>
-            <label for="#" class="tag"> Didactico </label>
-            <label for="#" class="tag"> Lectura </label>
-        </div>
-        <div id="lang-tags" class="search-section">
-            <p>Selecciona un lenguaje</p>
-            <label for="#" class="tag"> Español </label>
-            <label for="#" class="tag"> Otomi </label>
-            <label for="#" class="tag"> Ingles </label>
-        </div>
-        <button>Buscar</button>
+	    <form action="{% url 'filter' %}" method="post">
+		    {% csrf_token %}
+	        <p>¿Conoces el titulo?</p>
+	        <input type="text" id="title">
+	        <div id="age-tags" class="search-section">
+	            <p>Selecciona una edad</p>
+	            <label class="tag"> Preescolar </label>
+	            <label class="tag"> Primaria baja </label>
+	            <label class="tag"> Preescolar </label>
+	            <label class="tag"> Primaria baja </label>
+	        </div>
+	        <div id="type-tags" class="search-section">
+	            <p>Selecciona un tipo de material</p>
+	            <label for="#" class="tag"> Juego </label>
+	            <label for="#" class="tag"> Didactico </label>
+	            <label for="#" class="tag"> Lectura </label>
+	        </div>
+	        <div id="lang-tags" class="search-section">
+	            <p>Selecciona un lenguaje</p>
+	            <label for="#" class="tag"> Español </label>
+	            <label for="#" class="tag"> Otomi </label>
+	            <label for="#" class="tag"> Ingles </label>
+	        </div>
+	        <button id="busqueda-material" type="submit">Buscar</button>
+	    </form>
     </div>
 
     <div id="results">
@@ -35,4 +38,30 @@
             Ejemplo de material
         {% endblock %}
     </div>
+
+{% endblock %}
+{% block js-inline %}
+		$(document).ready(function(){
+			$("form").submit(function(e) {
+				e.preventDefault();
+				formData = {
+					filter: $("#title").val(),
+					csrfmiddlewaretoken:'{{csrf_token}}'
+				};
+
+				console.log(JSON.stringify(formData));
+				URL = $(this).attr("action");
+
+				$.ajax(URL, {
+					method: 'POST',
+					data: formData,
+					success: function (data, textStatus, jqXHR) {
+						console.log(JSON.stringify(data));
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+						console.log("fail");
+					}
+				});
+			});
+		});
 {% endblock %}
