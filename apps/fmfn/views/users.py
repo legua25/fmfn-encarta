@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
-from apps.fmfn.decorators import role_required
+from apps.fmfn.decorators import role_required, ajax_required
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseForbidden
 from apps.fmfn.models import ActionLog
@@ -114,25 +114,30 @@ class EditUserView(View):
 		# Log the error and resend the form
 		ActionLog.objects.log_account('Attempted to edit user profile information with invalid detail(s) (email address: %s)' % u.email_address, user = request.user, status = 401)
 		return render_to_response('users/edit.html', context = RequestContext(request, locals()))
+
+	@method_decorator(ajax_required)
 	@method_decorator(login_required)
+	@method_decorator(csrf_protect)
 	@method_decorator(role_required('user manager'))
 	def delete(self, request, user_id = 0):
 
+		#Fetch the user to delete
 		try: u = User.objects.active().get(id = user_id)
+
+		#It either does not exist or it is inactive
 		except User.DoesNotExist:
 
 			ActionLog.objects.log_account('Attempted to delete user account', user = request.user, status = 401)
 			return HttpResponseForbidden()
 
 		else:
-
 			u.delete()
-			ActionLog.objects.log_account('Deleted user account (email address: %s)' % u.email_address, user = request.user.email)
+			ActionLog.objects.log_account('Deleted user account (email address: %s)' % u.email_address, user = request.user)
 
 			return JsonResponse({
 				'version': '1.0.0',
 				'status': 200
-			}, context = RequestContext(request, locals()))
+			})
 
 edit = EditUserView.as_view()
 

@@ -26,6 +26,7 @@ class _UserTest(TestCase):
 	password = ''
 	role = Role.objects.get(id = 2)
 	should_pass = False
+	should_pass_delete = False
 	use_self = False
 
 	fixtures = [
@@ -36,7 +37,10 @@ class _UserTest(TestCase):
 
 	def setUp(self):
 
-		self.client = Client(enforce_csrf_checks = False)
+		self.client = Client(
+			enforce_csrf_checks = False,
+			HTTP_X_REQUESTED_WITH = 'XMLHttpRequest'
+		)
 
 		user = User.objects.create_user(
 			email_address = 'test@example.com',
@@ -122,6 +126,7 @@ class _UserTest(TestCase):
 			log = ActionLog.objects.latest('action_date')
 			self.assertEqual(log.category, 1)
 			self.assertIn(log.status, [ 401, 403 ])
+
 	def test_view_profile(self):
 		"""
 			Test which verifies that roles allowed to view other users have access,
@@ -146,7 +151,56 @@ class _UserTest(TestCase):
 			self.assertIn(response.status_code, [ 401, 403 ])
 
 			# Check if the action log has a new entry:
-			self.assertEqual(action_log_count + 1, ActionLog.objects.active().count())
+			self.assertEqual(ActionLog.objects.active().count(), action_log_count + 1)
+
+			# Check the entry has the right category and status
+			log = ActionLog.objects.latest('action_date')
+			self.assertEqual(log.category, 1)
+			self.assertIn(log.status, [401, 403])
+
+	def test_delete_user(self):
+		"""
+			Test which verifies that roles allowed to delete other users are able to,
+			otherwise, that a 40x is replied.
+			Main:
+				Delete an active user
+			Alternatives:
+				Delete an inactive user or one that doesn't exist (test_delete_user_invalid)
+		"""
+		action_log_count = ActionLog.objects.active().count()
+		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': self.user_id }), follow = True)
+
+		if self.should_pass_delete:
+			# If the role has enough privileges, allow
+			self.assertEqual(response.status_code, 200)
+
+			# Check if the action log has a new entry:
+			self.assertEqual(ActionLog.objects.active().count(), action_log_count + 1)
+
+			# Check the entry has the right category and status
+			log = ActionLog.objects.latest('action_date')
+			self.assertEqual(log.category, 1)
+			self.assertEqual(log.status, 200)
+		else:
+			# Check the user was not deleted:
+			user = User.objects.get(id = self.user_id)
+			self.assertTrue(user.active)
+
+	def test_delete_user_invalid(self):
+		"""
+			Test which verifies that a 40x is replied if the user is invalid or has already been deleted.
+		"""
+		action_log_count = ActionLog.objects.active().count()
+		#Try to delete an invalid user_id
+		response = self.client.delete(reverse_lazy('users:edit', kwargs = { 'user_id': 999 }), follow = True)
+
+		# User Manager Only:
+		if self.should_pass_delete:
+			# Even if the role has enough privileges, deny:
+			self.assertIn(response.status_code, [ 401, 403 ])
+
+			# Check if the action log has a new entry:
+			self.assertEqual(ActionLog.objects.active().count(), action_log_count + 1)
 
 			# Check the entry has the right category and status
 			log = ActionLog.objects.latest('action_date')
@@ -162,6 +216,8 @@ class AdminUserTest(_UserTest):
 	password = 'ta_asdfg'
 	role = Role.objects.get(id = 3)
 	should_pass = True
+	should_pass_delete = True
+
 
 class ExternalUserTest(_UserTest):
 	"""
