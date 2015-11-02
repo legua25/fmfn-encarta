@@ -91,7 +91,14 @@ urlpatterns = [
 	# Management
 	url(r'^manage/', include([
 
-	# 	url(r'^statistics/', None, name = 'stats'),  # GET
+		url(r'^statistics/', include([
+
+			url(r'^$', lambda request: HttpResponse(), name = 'reporting'),  # GET
+			url(r'^content/$', views.reporting.materials, name = 'content'),  # GET
+			url(r'^users/$', lambda request: HttpResponse(), name = 'users'),  # GET
+			url(r'^comments/$', lambda request: HttpResponse(), name = 'comments')  # GET
+
+		])),
 		url(r'^reports/', include([
 
 			url(r'^$', views.reports.reports, name = 'list'),  # GET
