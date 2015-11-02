@@ -109,6 +109,10 @@ class ReportsView(View):
 				'data': { 'description': new_report.description, 'material': new_report.material.id, 'user': new_report.user.id }
 			}, status = 201)
 
+	@method_decorator(login_required)
+	@method_decorator(ajax_required)
+	@method_decorator(csrf_protect)
+	@method_decorator(role_required('content manager'))
 	def patch(self, request, report_id = 0):
 		"""
 			Receives a patch request and report id. Modifies specified report to "resolved" status and returns JSON
@@ -131,6 +135,10 @@ class ReportsView(View):
 			'data': { 'description': report.description, 'material': report.material.id, 'user': report.user.id }
 		})
 
+	@method_decorator(login_required)
+	@method_decorator(ajax_required)
+	@method_decorator(csrf_protect)
+	@method_decorator(role_required('content manager'))
 	def delete(self, request, report_id = 0):
 		"""
 			Receives a delete request and report id. Modifies specified report to "rejected" status and returns JSON
