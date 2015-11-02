@@ -20,10 +20,10 @@
   margin-bottom: 20px;
   .material-tags {
     padding: 3px 5px 3px 5px;
-    background-color: lighten($wet-cement, 3%);
+    background-color: $tag-blue;
     font-size: 13px;
-    border: solid 1px darken($wet-cement, 20%);
-    color: darken($wet-cement, 20%);
+    border: solid 1px darken($tag-blue, 5%);
+    color: white;
     @include border-top-radius(3px);
     @include border-right-radius(3px);
     @include border-bottom-radius(3px);

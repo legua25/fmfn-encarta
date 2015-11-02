@@ -41,7 +41,7 @@ class MaterialForm(Form):
 			'link': URLInput(attrs = { 'placeholder': _('Link to reference') }),
 			'suggested_ages': CheckboxSelectMultiple(),
 			'types': CheckboxSelectMultiple(),
-			'themes': Select2MultipleWidget,
+			'themes': Select2MultipleWidget(),
 			'languages': CheckboxSelectMultiple(),
 			'user': HiddenInput()
 		}

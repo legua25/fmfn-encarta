@@ -1,26 +1,61 @@
-#search-bar{
-  font-size: 1em;
-  padding-top: 10px;
-  max-height: 100%;
-  min-height: 100%;
-  background-color: #CCC;
-  @include grid-column(4);
-  overflow-y: scroll;
+#canvas {
+  padding-right: 0;
+  #search-bar {
+    font-size: 1em;
+    padding-top: 10px;
+    max-height: 100%;
+    min-height: 100%;
+    background-color: darken($wet-cement, 7%);
+    @include grid-column(4);
+    width: 33.33%;
+    overflow-y: scroll;
+    border-right: solid 1.5px darken($wet-cement, 10%);
 
-  button{
-    width: 100%;
-    background-color: #008CBA;
-    color: white;
-    text-align: center;
-    @include border-top-radius(3px);
-    @include border-right-radius(3px);
-    @include border-bottom-radius(3px);
-    @include border-left-radius(3px);
-    padding-top: 7px;
-    padding-bottom: 7px;
+    button {
+      width: 100%;
+      background-color: #008CBA;
+      color: white;
+      text-align: center;
+      @include border-top-radius(3px);
+      @include border-right-radius(3px);
+      @include border-bottom-radius(3px);
+      @include border-left-radius(3px);
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+
+    label{
+      width: 40%;
+      margin: 5px 5px 5px 5px;
+      text-align: center;
+    }
+    .sub-heading-search {
+      font-size: 18px;
+      font-weight: $light;
+      border-bottom: solid $mild-black 1px;
+      width: 90%;
+      margin-bottom: 15px;
+      padding-top: 15px;
+    }
+
   }
-}
 
-#results{
-  @include grid-column(8);
+  #results {
+    width: 66.66%;
+    min-height: 100%;
+    overflow-y: scroll;
+  }
+
+  #make-search {
+    padding-top: 70px;
+    font-size: 70px;
+    text-align: center;
+    color: darken(#E6E6E6, 10%);
+    .text {
+      text-align: center;
+      vertical-align: middle;
+      color: darken(#E6E6E6, 10%);
+      font-size: 40px;
+    }
+  }
 }
