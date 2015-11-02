@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from apps.fmfn.models import ActionLog, Material, Portfolio, Item
 from django.shortcuts import render_to_response, RequestContext
 from apps.fmfn.decorators import role_required, ajax_required
@@ -19,7 +20,13 @@ class PortfolioView(View):
 	def get(self, request):
 
 		portfolio = Portfolio.objects.user(request.user)
-		items = portfolio.items.filter(active = True)
+
+		paginator = Paginator(portfolio.items.filter(active = True), request.GET.get('page_size', 15))
+		page = request.GET.get('page', 1)
+
+		try: items = paginator.page(page)
+		except EmptyPage: items = paginator.page(paginator.num_pages)
+		except PageNotAnInteger: items = paginator.page(1)
 
 		return render_to_response('materials/portfolio.html', context = RequestContext(request, locals()))
 	@method_decorator(ajax_required)

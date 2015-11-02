@@ -5,6 +5,7 @@ from apps.fmfn.models import (
 	Type,
 	Theme,
 	Language,
+	SchoolGrade,
 	ActionLog
 )
 from django.shortcuts import render_to_response, redirect, RequestContext
@@ -15,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from apps.fmfn.forms import SearchForm
 from django.views.generic import View
 from django.db.models import Q, Avg
 
@@ -30,7 +32,10 @@ class SearchView(View):
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('parent'))
-	def get(self, request): return render_to_response('home.html', context = RequestContext(request, locals()))
+	def get(self, request):
+
+		form = SearchForm()
+		return render_to_response('home.html', context = RequestContext(request, locals()))
 	@method_decorator(login_required)
 	@method_decorator(ajax_required)
 	@method_decorator(role_required('parent'))

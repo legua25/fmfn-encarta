@@ -1,0 +1,35 @@
+.profile {
+  padding-top: 20px;
+}
+
+.heading-profile {
+  @extend h3;
+  text-align: center;
+  padding-bottom: 15px;
+  font-weight: $bold;
+  color: $main-black;
+}
+
+.picture {
+  @include grid-column(5);
+  img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    @include border-top-radius(50%);
+    @include border-right-radius(50%);
+    @include border-bottom-radius(50%);
+    @include border-left-radius(50%);
+  }
+}
+
+.info {
+  @include grid-column(7);
+}
+
+.action-profile{
+  width: 100%;
+  .anchor-to-button{
+    width: 100%;
+  }
+}

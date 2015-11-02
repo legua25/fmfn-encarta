@@ -1,11 +1,77 @@
 {% extends 'base/base-2cols.html' %}
 {% load i18n %}
+{% block title %}{% trans 'Portfolio' %}{% endblock %}
+{% block favoritos-active %}active{% endblock %}
+{% block canvas %}
+    <div class="ninenty">
+        <div class="material-list">
+            <div class="items-count"> {% trans 'showing items: ' %}{{ items.start_index }} -
+                {{ items.end_index }}{% trans ' of ' %}{{ items.paginator.count }}</div>
+            {% if not items %}
+                <div class="message">
+                    <i class="fa fa-frown-o"></i>
+                    <br>
+                    {% trans "You don't have any favorite yet" %}
+                </div>
+            {% endif %}
+            {% for item in items %}
+                {% with item.material as material %}
+                    <div class="material-card">
+                        <a class="title" href="{% url 'content:view' material.id %}">{{ material.title }}</a>
 
-	{% block canvas %}
-		<section class="block-list">
-			<header>{% trans 'Portfolio' %}</header>
-			<ul>{% for item in items %}{% with item.material as material %}
-				<li><a href="{% url 'content:view' material.id %}">{{ material.title }}</a></li>{% endwith %}{% endfor %}
-			</ul>
-		</section>
-	{% endblock %}
+                        <div class="description">{{ material.description|truncatechars:240 }}</div>
+
+                        <div class="tags-container">
+                            {% with material.themes.active  as themes %}
+                                {% for theme in themes %}
+                                    <span class="material-tags">{{ theme.name }}</span>
+                                {% endfor %}
+                            {% endwith %}
+
+                            {% with material.types.active as  types %}
+                                {% for type in types %}
+                                    <span class="material-tags">{{ type.name }}</span>
+                                {% endfor %}
+                            {% endwith %}
+
+                            {% with material.suggested_ages.active as ages %}
+                                {% for age in ages %}
+                                    <span class="material-tags">{{ age.name }}</span>
+                                {% endfor %}
+                            {% endwith %}
+
+                            {% with material.languages.active as languages %}
+                                {% for language in languages %}
+                                    <span class="material-tags">{{ language.name }}</span>
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+
+        <div class="navigation-pages">
+
+            {% if items.has_previous %}
+                <a href="?page={{ items.previous_page_number }}" class="navigate">
+                    <i class="fa fa-chevron-left"></i>
+                    {% trans 'Previous' %}
+                </a>
+
+            {% endif %}
+
+            <span class="current">
+            {% trans 'page ' %} {{ items.number }} {% trans ' of ' %} {{ items.paginator.num_pages }}
+            </span>
+
+            {% if items.has_next %}
+                <a href="?page={{ items.next_page_number }}" class="navigate">
+                    {% trans ' Next ' %}
+                    <i class="fa fa-chevron-right"></i>
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}
