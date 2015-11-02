@@ -35,7 +35,7 @@ urlpatterns = [
 
 	 		url(r'^$',views.materials.view, name = 'view'),  # GET, POST
 	 		url(r'^edit/$', views.materials.edit, name = 'edit'),  # GET, POST, DELETE
-		    url(r'^download/$', views.materials.download, name = 'download')  # GET
+		    url(r'^download/$', views.materials.download, name = 'download'),  # GET
 
 	 	]))
 
@@ -92,16 +92,15 @@ urlpatterns = [
 	url(r'^manage/', include([
 
 	# 	url(r'^statistics/', None, name = 'stats'),  # GET
-	# 	url(r'^reports/', include([
+		url(r'^reports/', include([
 
-	# 		url(r'^$', None, name = 'list'),  # GET
-	# 		url(r'^create/$', None, name = 'create'),  # PUT
-	# 		url(R'^(?P<report_id>[\d]+)/$', None, name = 'manage')  # PATCH
+			url(r'^$', views.reports.reports, name = 'list'),  # GET
+			url(r'^create/(?P<content_id>[\d]+)/$', views.reports.reports, name = 'create'),  # POST
+			url(r'^(?P<report_id>[\d]+)/$', views.reports.reports, name = 'manage')  # PATCH, DELETE
 
-	# 	])),
-	# 	url(r'^log/$', None, name = 'logging')
+		]))
 
 	], namespace = 'management', app_name = 'apps.fmfn')),
-	url(r'^manage/advanced/$', include(admin.site.urls))
+	url(r'^manage/advanced/', include(admin.site.urls))
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
