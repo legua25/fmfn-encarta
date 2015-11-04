@@ -62,7 +62,7 @@ class SearchView(View):
 		query = query.annotate(rating = Avg('comments__rating_value'))
 
 		# Paginate the results and serialize the response
-		paginator = Paginator(query, request.GET.get('page_size', 25))
+		paginator = Paginator(query, request.GET.get('page_size', 10))
 		page = request.GET.get('page', 1)
 
 		try: materials = paginator.page(page)
@@ -73,6 +73,14 @@ class SearchView(View):
 		return JsonResponse({
 			'version': '1.0.0',
 			'status': 302,
+			'pages': {
+				'prev': materials.previous_page_number() if materials.has_previous() else None,
+				'next': materials.next_page_number() if materials.has_next() else None,
+				'current': page,
+				'total': paginator.num_pages,
+				'count': query.count(),
+				'page_size': paginator.per_page
+			},
 			'results': [ {
 				'id': m.id,
 				'title': m.title,
@@ -81,7 +89,8 @@ class SearchView(View):
 				'tags': {
 					'types': [ t.name for t in m.types.filter(active = True) ],
 					'themes': [ t.name for t in m.themes.filter(active = True) ],
-					'languages': [ t.name for t in m.languages.filter(active = True) ]
+					'languages': [ t.name for t in m.languages.filter(active = True) ],
+					'ages': [t.name for t in m.suggested_ages.filter(active=True)]
 				}
 			} for m in materials ]
 		})

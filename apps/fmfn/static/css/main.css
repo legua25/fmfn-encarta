@@ -12386,15 +12386,43 @@ button {
   width: 66.66%;
   min-height: 100%;
   overflow-y: scroll;
+  max-height: 100%;
 }
 /* line 49, ../sass/pages/_search.scss */
+#canvas #results #results-content .material-card {
+  padding-top: 15px;
+  border-bottom: solid 1px #EBEBEB;
+}
+/* line 52, ../sass/pages/_search.scss */
+#canvas #results #results-content .material-card .title {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 700;
+}
+/* line 57, ../sass/pages/_search.scss */
+#canvas #results #results-content .material-card .description {
+  font-size: 15px;
+  font-weight: 400;
+  color: #777777;
+}
+/* line 62, ../sass/pages/_search.scss */
+#canvas #results #results-content .material-card .material-tags {
+  margin-right: 3px;
+  margin-top: 3px;
+  display: inline-block;
+}
+/* line 67, ../sass/pages/_search.scss */
+#canvas #results #results-content .material-card .stars {
+  display: block;
+}
+/* line 74, ../sass/pages/_search.scss */
 #canvas #make-search {
   padding-top: 70px;
   font-size: 70px;
   text-align: center;
   color: #cdcdcd;
 }
-/* line 54, ../sass/pages/_search.scss */
+/* line 79, ../sass/pages/_search.scss */
 #canvas #make-search .text {
   text-align: center;
   vertical-align: middle;
