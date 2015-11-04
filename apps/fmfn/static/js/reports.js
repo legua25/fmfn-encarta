@@ -13,7 +13,7 @@ $(document).on('click', '#insert-report', function () {
         success: function (response) {
             $('#report-content').val('');
             $('#success-report').foundation('reveal', 'open');
-            $('#report-material').foundation('reveal', 'close');
+            $('#report-material').foundation('reveal', 'close')
         },
         error: function (xhr, textStatus, thrownError) {
             alert('Error:' + xhr.statusText);
