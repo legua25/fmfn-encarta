@@ -95,7 +95,7 @@ urlpatterns = [
 
 			url(r'^$', lambda request: HttpResponse(), name = 'reporting'),  # GET
 			url(r'^content/$', views.reporting.materials, name = 'content'),  # GET
-			url(r'^users/$', lambda request: HttpResponse(), name = 'users'),  # GET
+			url(r'^users/$', views.reporting.users, name = 'users'),  # GET
 			url(r'^comments/$', lambda request: HttpResponse(), name = 'comments')  # GET
 
 		])),

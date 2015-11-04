@@ -11,10 +11,12 @@ class Download(Model):
 
 	user = ForeignKey(settings.AUTH_USER_MODEL,
 		related_name = '+',
+		related_query_name = 'downloads',
 		verbose_name = _('user')
 	)
 	material = ForeignKey('fmfn.Material',
 		related_name = '+',
+		related_query_name = 'downloads',
 		verbose_name = _('material')
 	)
 	date = DateTimeField(

@@ -7,98 +7,147 @@ from apps.fmfn.models import (
 	Download,
 	Portfolio
 )
-from django.shortcuts import redirect, render_to_response, RequestContext
 from django.template.loader import render_to_string as render
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.contrib.auth import get_user_model
 from apps.fmfn.decorators import role_required
+from django.shortcuts import RequestContext
 from django.db.transaction import atomic
 from django.views.generic import View
 from django.utils.timezone import now
 from django.http import HttpResponse
 from django.db.models import *
-from datetime import timedelta
+from math import ceil
 import os
 
 __all__ = [
-	'materials'
+	'materials',
+	'users'
 ]
+User = get_user_model()
 
 class ReportView(View):
 
-	report_type = ''
+	report_name = ''
+	report_class = None
 	template = ''
-	store_report = True
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('administrator'))
+	@method_decorator(cache_page(1200))
 	def get(self, request):
 
-		# Get the temporality parameter for the report
-		today = now()
-		target_time = (today - timedelta(days = request.GET.get('time', 1)))
+		# Record starting time
+		start = now()
+
+		# Perform basic filters based on time range (if set)
+		query = self.report_class.objects.active()
 
 		# Extract information within a transaction
 		with atomic():
-			report = self._generate_report(target_time)
+			data = self.generate_report(query)
 
 		# Render the report
+		name = self.report_name
 		report_doc = render(
 			template_name = self.template,
 			context = RequestContext(request, locals()),
 			request = request
 		).encode('utf-8')
 
+		# Count the elapsed time
+		time = (now() - start).total_seconds()
+
 		# Create the report output (save it if required to)
-		filename = 'reports/report_%s.html' % today
-		if ReportView.store_report:
+		filename = 'report_%s.html' % start
+		with open('reports/%s' % filename, 'w') as f:
+			f.write(report_doc)
 
-			with open(filename, 'w') as f:
-				f.write(report_doc)
-
-			file_size = os.path.getsize(filename)
-
-		else: file_size = len(report_doc)
+		file_size = os.path.getsize(filename)
 
 		# Send file as attachment
-		ActionLog.objects.log_reports('Generated report (%s)' % self.report_type, user = request.user)
+		ActionLog.objects.log_reports('Generated report (name: %s) in %s seconds' % ( self.report_name, time ), user = request.user)
 		response = HttpResponse(report_doc, content_type = 'text/html')
 
-		response['Content-Disposition'] = "attachment; filename=report_%s.html" % today
+		response['Content-Disposition'] = "attachment; filename=%s" % filename
 		response['Content-Length'] = file_size
 
 		return response
 
-	def _generate_report(self, target_time): raise NotImplementedError()
+	def generate_report(self, query): raise NotImplementedError()
 
 
-class MaterialUsageReport(ReportView):
+class MaterialReport(ReportView):
 
-	report_type = 'material usage report'
-	template = 'reports/materials.html'
+	report_name = _('Reporte de Uso de Material')
+	report_class = Download
+	template = ''
 
-	def _generate_report(self, target_time):
+	def generate_report(self, query):
 
-		usage_ratio = (Material.objects.active().count() / Material.objects.count())
-		downloads = Download.objects.active().filter(date__gte = target_time).select_related('material', 'user')
+		month = now().month
 
-		# Most downloaded and least downloaded materials
-		most_downloaded = downloads.values('material').annotate(count = Count('date', distinct = True)).order_by('-count', 'material')[:10]
-		least_downloaded = downloads.values('material').annotate(count = Count('date', distinct = True)).order_by('count', 'material')[:10]
+		# Determine the month range
+		if 1 <= month <= 3: start, end = 1, 3
+		elif 3 <= month <= 5: start, end = 3, 5
+		elif 5 <= month <= 7: start, end = 5, 7
+		elif 7 <= month <= 9: start, end = 7, 9
+		elif 9 <= month <= 11: start, end = 9, 11
+		else: start, end = 11, 1
 
-		# Apply data transformations to extract actual materials, not IDs
-		with atomic():
+		# Select materials based on total count
+		count = int(ceil(Material.objects.active().count() * 0.10))
+		temp = (query.filter(Q(date__month__gte = start) | Q(date__month__lte = end))
+					  .select_related('material')
+					  .values('material')
+					  .annotate(count = Count('material')))[:count]
 
-			most_downloaded = [ Material.objects.annotate(count = Value(d['count'], output_field = IntegerField())).get(id = d['material']) for d in most_downloaded ]
-			least_downloaded = [ Material.objects.annotate(count = Value(d['count'], output_field = IntegerField())).get(id = d['material']) for d in least_downloaded ]
+		# Save the two queries temporarily - we must change IDs for material data
+		max, min = temp.order_by('-count', 'date'), temp.order_by('count', 'date')
 
+		# Return the two queries
 		return {
-			'usage': usage_ratio,
-			'data': downloads,
-			'queries': {
-				'most': most_downloaded,
-				'least': least_downloaded
-			}
+			'max': max.values_list('material__id', 'material__title', 'material__types__name', 'count'),
+			'min': min.values_list('material__id', 'material__title', 'material__types__name', 'count')
 		}
 
-materials = MaterialUsageReport.as_view()
+materials = MaterialReport.as_view()
+
+class UserReport(ReportView):
+
+	report_name = _('Reporte de Usuarios')
+	report_class = User
+	template = ''
+
+	def generate_report(self, query):
+
+		return {
+			'never_logged_in': query.filter(last_login__isnull = False).values('id', 'first_name', 'father_family_name', 'mother_family_name', 'email_address', 'date_joined'),
+			'never_downloaded': query.filter(downloads = None).values('id', 'first_name', 'father_family_name', 'mother_family_name', 'email_address', 'date_joined')
+		}
+
+users = UserReport.as_view()
+
+class CommentsReport(ReportView):
+
+	report_name = _('Reporte de Comentarios')
+	report_class = Download
+	template = ''
+
+	def generate_report(self, query):
+
+		today = now()
+		if today.month < 7: period = Q(date__month__gte = 12, date__year = (today.year - 1)) | Q(date__month__lte = 7, date__year = today.year)
+		else: period = Q(date__month__gte = 7, date__year = today.year) | Q(date__month__lte = 12, date__year = today.year)
+
+		return (query.filter(period)
+		             .select_related('material')
+					 .values('material')
+					 .annotate(count = Count('material'))
+		             .filter(material__comments = None)
+		             .values_list('material__id', 'material__title', 'material__types__name', 'count'))
+
+comments = CommentsReport.as_view()

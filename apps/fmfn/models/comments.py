@@ -23,7 +23,7 @@ class Comment(Model):
     content = CharField(
         max_length = 500,
         verbose_name = _('comment content'),
-        blank=False
+        blank = False
     )
     date_created = DateTimeField(
         auto_now_add = True,
