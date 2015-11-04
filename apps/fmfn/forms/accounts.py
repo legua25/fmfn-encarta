@@ -22,12 +22,12 @@ class LoginForm(Form):
 	email_address = EmailField(
 		max_length = 255,
 		required = True,
-		widget = EmailInput(attrs = { 'placeholder': _('Email address') })
+		widget = EmailInput(attrs = { 'placeholder': _('Correo electrónico') })
 	)
 	password = CharField(
 		max_length = 128,
 		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Password') })
+		widget = PasswordInput(attrs = { 'placeholder': _('Contraseña') })
 	)
 	user = AnonymousUser()
 
@@ -48,17 +48,17 @@ class RecoveryForm(Form):
 	email_address = EmailField(
 		max_length = 255,
 		required = True,
-		widget = EmailInput(attrs = { 'placeholder': _('Email address') })
+		widget = EmailInput(attrs = { 'placeholder': _('Correo electrónico') })
 	)
 	password = CharField(
 		max_length = 128,
 		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('New password') })
+		widget = PasswordInput(attrs = { 'placeholder': _('Nueva Contraseña') })
 	)
 	repeat = CharField(
 		max_length = 128,
 		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
+		widget = PasswordInput(attrs = { 'placeholder': _('Repetir Contraseña') })
 	)
 
 	user = AnonymousUser()

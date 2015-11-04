@@ -9,16 +9,16 @@
             {% endfor %}
         {% endif %}
         <div class="title"> ¿Olvidaste tu contraseña?</div>
-        <div class="description"> Ingresa aqui el correo con el que normalmente ingresas al sistema
-            y nosotros te enviaremos un correo con el procedimiento para que definas una nueva contraseña
+        <div class="description"> {% trans 'Ingresa aqui el correo con el que normalmente ingresas al sistema y nosotros te enviaremos un correo con el procedimiento para que definas una nueva contraseña' %}
         </div>
         <div class="content">
             <form action="{% url 'accounts:recover' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">{{ form.email_address | add_class:'form-control' | attr:'required' }}</div>
-                <button class="btn btn-primary" type="submit">Recuperar contraseña</button>
+                <button class="btn btn-primary" type="submit"> {% trans 'Recuperar contraseña' %} </button>
             </form>
         </div>
-        <a href="{% url 'accounts:login' %}">Regresar al login</a>
+        <a href="{% url 'accounts:login' %}"> {% trans 'Regresar al login'%}</a>
     </div>
 {% endblock %}
+
