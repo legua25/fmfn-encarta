@@ -4,3 +4,4 @@ from materials import *
 from accounts import *
 from users import *
 from comments import *
+from search import *

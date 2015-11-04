@@ -9,7 +9,7 @@ html, body {
 
 #header {
   @include grid-column(12);
-  padding-top: 5px;
+  padding-top: 2px;
   padding-bottom: 15px;
   background-color: #FEC200;
   color: #78131C;
@@ -84,6 +84,7 @@ html, body {
   box-shadow: 0px 3px 5px #888888;
   min-height: 100%;
 }
+
 
 .tag {
   display: inline-block;
@@ -194,4 +195,25 @@ html, body {
 
 select[multiple]{
   height: 0;
+}
+
+.anchor-to-button{
+  padding: 10px 50px 10px 50px;
+  text-align: center;
+  background-color: $sky-blue;
+  @include border-top-radius(3px);
+  @include border-right-radius(3px);
+  @include border-bottom-radius(3px);
+  @include border-left-radius(3px);
+  color: white;
+  &:hover{
+    color: white;
+  }
+}
+
+.message{
+  font-weight: $bold;
+  color: $wet-cement;
+  font-size: 50px;
+  text-align: center;
 }

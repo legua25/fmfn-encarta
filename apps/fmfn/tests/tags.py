@@ -12,6 +12,8 @@ from apps.fmfn.models import (
 	ActionLog
 )
 
+import json
+
 __all__ = [
 	'TypeTagTest',
 	'ThemeTagTest',

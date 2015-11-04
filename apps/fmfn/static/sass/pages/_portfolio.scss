@@ -1,0 +1,38 @@
+.navigation-pages {
+  padding-top: 10px;
+  text-align: center;
+  .current {
+    width: 100%;
+    color: darken($wet-cement, 30%);
+    font-size: 15px;
+  }
+  .navigate{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+.items-count {
+  width: 100%;
+  text-align: right;
+  color: darken($wet-cement, 30%);
+  font-size: 14px;
+  padding-top: 5px;
+}
+
+.material-list {
+  .material-card {
+    padding-top: 15px;
+    border-bottom: solid 1px $wet-cement;
+    .title {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: $bold;
+    }
+    .description {
+      font-size: 15px;
+      font-weight: $normal;
+      color: lighten($main-black, 20%);
+    }
+  }
+}

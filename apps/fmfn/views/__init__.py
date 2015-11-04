@@ -7,3 +7,4 @@ import portfolio
 import users
 import tags
 import downloads
+import reports

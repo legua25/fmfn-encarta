@@ -10,7 +10,7 @@
             {% endfor %}
         {% endif %}
 
-        <div class="title"> Sistema Encarta</div>
+        <div class="title">Sistema FpN</div>
         <div class="content">
             <form action="{% url 'accounts:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" method="post">{% csrf_token %}
                 <div class="form-group">{{ form.email_address | attr:'required' }}</div>
