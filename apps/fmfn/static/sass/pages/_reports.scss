@@ -1,0 +1,50 @@
+.report-card {
+  background-color: white;
+  @include border-top-radius(3px);
+  @include border-right-radius(3px);
+  @include border-bottom-radius(3px);
+  @include border-left-radius(3px);
+  margin: 5px 10px 10px 10px;
+  box-shadow: 0px 3px 5px #888888;
+  .header {
+    background-color: $pumpkin-latte;
+    color: white;
+    padding: 10px 5px 5px 10px;
+    @include border-top-radius(3px);
+    font-weight: $bold;
+    font-size: 16px;
+    i{
+      right-margin: 3px;
+    }
+    a, a:active{
+      color: white;
+    }
+  }
+  .body {
+    padding: 10px 10px 10px 10px;
+    color: $main-black;
+    p{
+      margin-bottom: 10px;
+    }
+    .report-emphasis{
+      font-weight: $bold;
+      color: lighten($main-black,10%);
+    }
+    .report-description-head{
+      @extend  .report-emphasis;
+    }
+
+    .actions{
+      button{
+        color: white;
+        width: 49%;
+      }
+      .solve-report{
+        background-color: $celtic-green;
+      }
+      .reject-report{
+        background-color: $red-blood;
+      }
+    }
+  }
+}

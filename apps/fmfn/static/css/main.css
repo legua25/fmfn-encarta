@@ -12125,7 +12125,15 @@ html, body {
   min-height: 100%;
 }
 
-/* line 89, ../sass/helpers/_base.scss */
+/* line 88, ../sass/helpers/_base.scss */
+.ninenty-no-bg {
+  width: 95%;
+  padding: 20px 20px 20px 20px;
+  margin-left: 2.5%;
+  min-height: 100%;
+}
+
+/* line 96, ../sass/helpers/_base.scss */
 .tag {
   display: inline-block;
   background-color: #0078a0;
@@ -12146,20 +12154,20 @@ html, body {
   margin: 3px 3px 3px 3px;
 }
 
-/* line 109, ../sass/helpers/_base.scss */
+/* line 116, ../sass/helpers/_base.scss */
 .description {
   color: #5e5e5e;
   font-weight: 300;
 }
 
-/* line 115, ../sass/helpers/_base.scss */
+/* line 122, ../sass/helpers/_base.scss */
 .emphasis {
   font-weight: 700;
   padding-top: 15px;
   padding-bottom: 5px;
 }
 
-/* line 121, ../sass/helpers/_base.scss */
+/* line 128, ../sass/helpers/_base.scss */
 .sub-heading {
   font-size: 20px;
   font-weight: 300;
@@ -12169,47 +12177,47 @@ html, body {
   padding-top: 30px;
 }
 
-/* line 130, ../sass/helpers/_base.scss */
+/* line 137, ../sass/helpers/_base.scss */
 .display-in-line {
   display: inline-block;
 }
 
-/* line 134, ../sass/helpers/_base.scss */
+/* line 141, ../sass/helpers/_base.scss */
 .sub-heading-helper {
   width: 50%;
 }
 
-/* line 140, ../sass/helpers/_base.scss */
+/* line 147, ../sass/helpers/_base.scss */
 .form {
   width: 100%;
 }
-/* line 142, ../sass/helpers/_base.scss */
+/* line 149, ../sass/helpers/_base.scss */
 .form .three-elements {
   width: 33%;
   display: inline-block;
   padding-right: 5px;
 }
-/* line 147, ../sass/helpers/_base.scss */
+/* line 154, ../sass/helpers/_base.scss */
 .form .element-in-block {
   width: 33%;
   display: block;
   margin-bottom: 10px;
 }
-/* line 153, ../sass/helpers/_base.scss */
+/* line 160, ../sass/helpers/_base.scss */
 .form .two-elements {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
   width: 41.66667%;
   float: left;
 }
-/* line 157, ../sass/helpers/_base.scss */
+/* line 164, ../sass/helpers/_base.scss */
 .form .two-elements-exact {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
   width: 50%;
   float: left;
 }
-/* line 161, ../sass/helpers/_base.scss */
+/* line 168, ../sass/helpers/_base.scss */
 .form .middle-element {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
@@ -12217,32 +12225,32 @@ html, body {
   float: left;
   text-align: center;
 }
-/* line 166, ../sass/helpers/_base.scss */
+/* line 173, ../sass/helpers/_base.scss */
 .form button {
   margin-top: 20px;
   width: 100%;
   color: white;
 }
-/* line 172, ../sass/helpers/_base.scss */
+/* line 179, ../sass/helpers/_base.scss */
 .form .two-buttons {
   width: 100%;
   display: block;
   text-align: center;
   margin-top: 20px;
 }
-/* line 177, ../sass/helpers/_base.scss */
+/* line 184, ../sass/helpers/_base.scss */
 .form .two-buttons button {
   display: inline-block;
   width: 47%;
   margin-right: 2%;
   color: white;
 }
-/* line 182, ../sass/helpers/_base.scss */
+/* line 189, ../sass/helpers/_base.scss */
 .form .two-buttons button.delete {
   background-color: #b30000;
 }
 
-/* line 189, ../sass/helpers/_base.scss */
+/* line 196, ../sass/helpers/_base.scss */
 .error {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
@@ -12254,12 +12262,12 @@ html, body {
   border-top-left-radius: 3px;
 }
 
-/* line 196, ../sass/helpers/_base.scss */
+/* line 203, ../sass/helpers/_base.scss */
 select[multiple] {
   height: 0;
 }
 
-/* line 200, ../sass/helpers/_base.scss */
+/* line 207, ../sass/helpers/_base.scss */
 .anchor-to-button {
   padding: 10px 50px 10px 50px;
   text-align: center;
@@ -12274,12 +12282,12 @@ select[multiple] {
   border-top-left-radius: 3px;
   color: white;
 }
-/* line 209, ../sass/helpers/_base.scss */
+/* line 216, ../sass/helpers/_base.scss */
 .anchor-to-button:hover {
   color: white;
 }
 
-/* line 214, ../sass/helpers/_base.scss */
+/* line 221, ../sass/helpers/_base.scss */
 .message {
   font-weight: 700;
   color: #EBEBEB;
@@ -12948,4 +12956,64 @@ button {
 /* line 32, ../sass/pages/_profile.scss */
 .action-profile .anchor-to-button {
   width: 100%;
+}
+
+/* line 1, ../sass/pages/_reports.scss */
+.report-card {
+  background-color: white;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  margin: 5px 10px 10px 10px;
+  box-shadow: 0px 3px 5px #888888;
+}
+/* line 9, ../sass/pages/_reports.scss */
+.report-card .header {
+  background-color: #D35400;
+  color: white;
+  padding: 10px 5px 5px 10px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  font-weight: 700;
+  font-size: 16px;
+}
+/* line 16, ../sass/pages/_reports.scss */
+.report-card .header i {
+  right-margin: 3px;
+}
+/* line 19, ../sass/pages/_reports.scss */
+.report-card .header a, .report-card .header a:active {
+  color: white;
+}
+/* line 23, ../sass/pages/_reports.scss */
+.report-card .body {
+  padding: 10px 10px 10px 10px;
+  color: #444444;
+}
+/* line 26, ../sass/pages/_reports.scss */
+.report-card .body p {
+  margin-bottom: 10px;
+}
+/* line 29, ../sass/pages/_reports.scss */
+.report-card .body .report-emphasis, .report-card .body .report-description-head {
+  font-weight: 700;
+  color: #5e5e5e;
+}
+/* line 38, ../sass/pages/_reports.scss */
+.report-card .body .actions button {
+  color: white;
+  width: 49%;
+}
+/* line 42, ../sass/pages/_reports.scss */
+.report-card .body .actions .solve-report {
+  background-color: #229955;
+}
+/* line 45, ../sass/pages/_reports.scss */
+.report-card .body .actions .reject-report {
+  background-color: #C0392B;
 }

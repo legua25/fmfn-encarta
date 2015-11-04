@@ -1,10 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends 'base/base-2cols.html' %}
+{% load static i18n widget_tweaks %}
+{% block errores-active %}active{% endblock errores-active %}
+{% block title %}{% trans 'Reporte de errores' %}{% endblock title %}
+{% block canvas %}
+    {% if not reports %}
+        <div class="ninenty">
+            <div class="message">
+                <i class="fa fa-smile-o"></i>
+                <br>
+                {% trans "No hay errores reportados, todo parece en orden" %}
+            </div>
+        </div>
+    {% else %}
+        <div class="ninenty-no-bg">
+            <div id="reports-notifications">
+            </div>
+            {% for report in reports %}
+                <div class="report-card" id="report-card-{{ report.id }}">
+                    <div class="header">
+                        <a href="{% url 'content:view' report.material.id %}">
+                            <i class="fa fa-exclamation-circle"></i>
+                            {{ report.material }}
+                        </a>
+                    </div>
+                    <div class="body">
+                        <p>
+                        <span class="report-emphasis">
+                        <i class="fa fa-check-circle"></i>
+                            {% trans 'Reportado por: ' %}</span>{{ report.user }}
+                        </p>
 
-</body>
-</html>
+                        <p>
+                        <span class="report-emphasis"><i class="fa fa-check-circle"></i>
+                            {% trans 'El día: ' %}</span>{{ report.date_created }}
+                        </p>
+
+                        <p>
+                        <span class="report-description-head">
+                        <i class="fa fa-check-circle"></i>
+                        {% trans 'Descripcion del error:' %}
+                        </span>
+                            <br>
+                            <span>{{ report.description }}</span>
+                        </p>
+                        <a href="{% url 'content:view' report.material.id %}">
+                            <i class="fa fa-external-link"></i>
+                            {% trans 'Llevame al material' %}
+                        </a>
+                        <hr>
+                        <div class="actions">
+                            {% csrf_token %}
+                            <button class="solve-report" id="solve_report_{{ report.id }}"
+                                    data-value="{{ report.id }}">{% trans 'Marcar como resuelto' %}</button>
+                            <button class="reject-report" id="reject_report_{{ report.id }}"
+                                    data-value="{{ report.id }}">{% trans 'Rechazar problema' %}</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock canvas %}
+
+{% block  js_footer %}
+    <script src="{% static 'js/reports.js' %}"></script>
+{% endblock js_footer %}
