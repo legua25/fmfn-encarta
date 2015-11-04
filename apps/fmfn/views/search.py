@@ -44,17 +44,29 @@ class SearchView(View):
 
 		# Filter material based on query
 		query = Material.objects.active()
-		filters = request.POST.get('filter', None)
+		#filters = request.POST.get('filter', None)
 
-		if bool(filters) is not False:
+		form = SearchForm(request.POST)
+		data = form.clean()
 
-			# Preload related elements and perform matching queries against every one of them
-			params = Q(title__icontains = filters) | Q(description__icontains = filters)
+		params = Q(title__icontains = data['search']) \
+		         | Q(description__icontains = data['search']) \
+		         | Q(suggested_ages__in = data['grades'])\
+		         | Q(types__in = data['type'])\
+		         | Q(languages__in = data['language']) \
+		         | Q(themes__in = data['theme'])
 
-			for tag_type in [ 'types', 'themes', 'languages' ]:
-				params = params | Q(**{'%s__name__icontains' % tag_type: filters })
+		query = query.filter(params)
 
-			query = query.filter(params)
+		# if bool(filters) is not False:
+		#
+		# 	# Preload related elements and perform matching queries against every one of them
+		# 	params = Q(title__icontains = filters) | Q(description__icontains = filters)
+		#
+		# 	for tag_type in [ 'types', 'themes', 'languages' ]:
+		# 		params = params | Q(**{'%s__name__icontains' % tag_type: filters })
+		#
+		# 	query = query.filter(params)
 
 		# Annotate the results with rating average
 		query = query.annotate(rating = Avg('comments__rating_value'))
@@ -67,7 +79,7 @@ class SearchView(View):
 		except EmptyPage: materials = paginator.page(paginator.num_pages)
 		except PageNotAnInteger: materials = paginator.page(1)
 
-		ActionLog.objects.log_content('Queried for materials (filters: %s)' % filters, user = request.user, status = 302)
+		ActionLog.objects.log_content('Queried for materials (filters: %s)' % data, user = request.user, status = 302)
 		return JsonResponse({
 			'version': '1.0.0',
 			'status': 302,

@@ -89,26 +89,22 @@
 
 {% block js-inline %}
     $(document).ready(function(){
-    $("form").submit(function(e) {
-    e.preventDefault();
-    formData = {
-    filter: $("#title").val(),
-    csrfmiddlewaretoken:'{{ csrf_token }}'
-    };
 
-    console.log(JSON.stringify(formData));
-    URL = $(this).attr("action");
+	    $("form").submit(function(e) {
+	        e.preventDefault();
 
-    $.ajax(URL, {
-    method: 'POST',
-    data: formData,
-    success: function (data, textStatus, jqXHR) {
-    console.log(JSON.stringify(data));
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-    console.log("fail");
-    }
-    });
-    });
+		    URL = $(this).attr("action");
+			console.log($(this).serialize());
+		    $.ajax(URL, {
+			    method: 'POST',
+			    data: $(this).serialize(),
+			    success: function (data, textStatus, jqXHR) {
+			    	console.log(JSON.stringify(data));
+			    },
+			    error: function (jqXHR, textStatus, errorThrown) {
+			    	console.log(errorThrown);
+			    }
+		    });
+	    });
     });
 {% endblock %}
