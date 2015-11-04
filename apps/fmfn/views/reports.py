@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.shortcuts import redirect, render_to_response, RequestContext
 from apps.fmfn.decorators import role_required, ajax_required
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
@@ -50,7 +51,6 @@ class ReportsView(View):
 		"""
 
 	@method_decorator(login_required)
-	@method_decorator(ajax_required)
 	@method_decorator(role_required('content manager'))
 	def get(self, request):
 		"""
@@ -61,13 +61,11 @@ class ReportsView(View):
 		# Query reports in progress
 		reports = Report.objects.active().filter(status = 1)
 
-		# Return tags list JSON
+		# Write action log
 		ActionLog.objects.log_reports('Listed reports', user = request.user)
-		return JsonResponse({
-			'version': '1.0.0',
-			'status': 200,
-			'data': [ { 'description': report.description, 'material': report.material, 'user': report.user } for report in reports ]
-		})
+
+		# Send response
+		return render_to_response('reports/view.html', context = RequestContext(request, locals()))
 
 	@method_decorator(login_required)
 	@method_decorator(ajax_required)
