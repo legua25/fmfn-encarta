@@ -6,12 +6,15 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
-from apps.fmfn.decorators import role_required
+from apps.fmfn.decorators import role_required, ajax_required
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseForbidden
 from apps.fmfn.models import ActionLog
+from django.views.decorators.cache import cache_page
 from django.views.generic import View
 from django.http import JsonResponse
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Q
 
 __all__ = [
 	'create',
@@ -165,3 +168,37 @@ class ViewUserView(View):
 
 view = ViewUserView.as_view()
 
+class SearchView(View):
+	@method_decorator(login_required)
+	@method_decorator(role_required('parent'))
+	def get(self, request): return render_to_response('users/list.html', context = RequestContext(request, locals()))
+
+	# @method_decorator(login_required)
+	# @method_decorator(ajax_required)
+	# @method_decorator(role_required('parent'))
+	# @method_decorator(cache_page(300))
+	# def post(self, request):
+	#
+	# 	# Filter material based on query
+	# 	query = User.objects.active()
+	# 	filters = request.POST.get('filter', None)
+	#
+	# 	if bool(filters) is not False:
+	#
+	# 		# Preload related elements and perform matching queries against every one of them
+	# 		params = Q(first_name__icontains = filters) | Q(father_family_name__icontains = filters) | Q(mother_family_name_icontains = filters)
+	#
+	# 		query = query.filter(params)
+	#
+	#
+	# 	# Paginate the results and serialize the response
+	# 	paginator = Paginator(query, request.GET.get('page_size', 25))
+	# 	page = request.GET.get('page', 1)
+	#
+	# 	try: users = paginator.page(page)
+	# 	except EmptyPage: users = paginator.page(paginator.num_pages)
+	# 	except PageNotAnInteger: users = paginator.page(1)
+	#
+	# 	ActionLog.objects.log_content('Queried for users (filters: %s)' % filters, user = request.user, status = 302)
+
+search = SearchView.as_view()
