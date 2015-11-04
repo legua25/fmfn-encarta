@@ -55,11 +55,9 @@
                     <a class="remove-favorites" id="remove-portfolio"><i
                             class="fa fa-heart"></i>{% trans 'remove from favorites' %}</a>
                 {% endif %}
-
-
             </div>
 
-            <a href="#" class="error-report"><i class="fa fa-exclamation"></i>{% trans 'report error' %}</a>
+            <a href="#" class="error-report" id="show-report-material"><i class="fa fa-exclamation"></i>{% trans 'report error' %}</a>
 
             {% if user|has_role:'content manager' %}
                 <a href="{% url 'content:edit' content_id %}" class="link-visit"><i
@@ -172,4 +170,9 @@
 {% block js_footer %}
     <script src="{% static 'js/rating.js' %}"></script>
     <script src="{% static 'js/portfolio.js' %}"></script>
-{% endblock %}
+    <script src="{% static 'js/reports.js' %}"></script>
+{% endblock js_footer %}
+
+{% block modals %}
+    {% include "modals/reportsModals.html" %}
+{% endblock modals %}
