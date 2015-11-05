@@ -126,7 +126,7 @@ class UserReport(ReportView):
 	def generate_report(self, query):
 
 		return {
-			'never_logged_in': query.filter(last_login__isnull = False).values('id', 'first_name', 'father_family_name', 'mother_family_name', 'email_address', 'date_joined'),
+			'never_logged_in': query.filter(last_login__isnull = True).values('id', 'first_name', 'father_family_name', 'mother_family_name', 'email_address', 'date_joined'),
 			'never_downloaded': query.filter(downloads = None).values('id', 'first_name', 'father_family_name', 'mother_family_name', 'email_address', 'date_joined')
 		}
 
