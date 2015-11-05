@@ -9,6 +9,7 @@ from django.shortcuts import render_to_response, redirect, RequestContext
 from django.contrib.auth.tokens import default_token_generator as tokens
 from django.utils.http import urlsafe_base64_decode as base64_decode
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import update_last_login
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from apps.fmfn.forms import LoginForm, RecoveryForm
@@ -66,6 +67,7 @@ class LoginView(View):
 			user = form.user
 			ActionLog.objects.log_account('User logged in to site (current permissions: %s)' % user.groups, user = user, status = 200)
 			login_to_site(request, user)
+			update_last_login(None, user = user)
 
 			return redirect(redirect_url)
 
