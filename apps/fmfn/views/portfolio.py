@@ -14,6 +14,12 @@ from django.http import JsonResponse
 __all__ = [ 'manage' ]
 
 class PortfolioView(View):
+	""" This view handles the portfolio (favorite items). The provided views, except for the GET route which
+		displays the portfolio for the current user, are all AJAX-based and called directly through the interface.
+		The interface provided by the GET route is updated by the execution of the other methods. This view allows
+		the user to: add an existing material to his/her portfolio (if it has not already been added) and remove
+		a material from his/her portfolio (if it exists in the portfolio currently).
+	"""
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('teacher'))
