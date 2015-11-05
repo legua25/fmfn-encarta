@@ -20,16 +20,23 @@ from django.views.generic import View
 from django.utils.timezone import now
 from django.http import HttpResponse
 from django.db.models import *
+from datetime import datetime
 from math import ceil
 import os, calendar
 
 __all__ = [
 	'materials',
-	'users'
+	'users',
+	'comments'
 ]
 User = get_user_model()
 
 class ReportView(View):
+	""" Represents a generic report view which compiles a report within a transaction to speed
+		up report generation. The report is compiled once and stored in the server for history
+		purposes. The report is compiled as an HTML which presents the collected data in a simple
+		way. This reports may only be created by an administrator.
+	"""
 
 	report_name = ''
 	report_class = None
@@ -89,6 +96,7 @@ class MaterialReport(ReportView):
 	def generate_report(self, query):
 
 		month = now().month
+		year = now().year
 
 		# Determine the month range
 		if 1 <= month <= 3: start, end = 1, 3
@@ -100,7 +108,7 @@ class MaterialReport(ReportView):
 
 		# Select materials based on total count
 		count = int(ceil(Material.objects.active().count() * 0.10))
-		temp = (query.filter(Q(date__month__gte = start) | Q(date__month__lte = end))
+		temp = (query.filter(date__range = [ datetime(year = year, month = start, day = 1), datetime(year = year, month = end, day = 1) ])
 					  .select_related('material')
 					  .values('material')
 					  .annotate(count = Count('material')))[:count]
@@ -139,9 +147,11 @@ class CommentsReport(ReportView):
 
 	def generate_report(self, query):
 
+		# date__range = [ datetime(year = year, month = start, day = 1), datetime(year = year, month = end, day = 1) ]
+
 		today = now()
-		if today.month < 7: period = Q(date__month__gte = 12, date__year = (today.year - 1)) | Q(date__month__lte = 7, date__year = today.year)
-		else: period = Q(date__month__gte = 7, date__year = today.year) | Q(date__month__lte = 12, date__year = today.year)
+		if today.month < 7: period = Q(date__range = [ datetime(year = (today.year - 1), month = 12, day = 15), datetime(year = today.year, month = 7, day = 16) ])
+		else: period = Q(date__range = [ datetime(year = today.year, month = 7, day = 16), datetime(year = today.year, month = 12, day = 15) ])
 
 		return (query.filter(period)
 		             .select_related('material')

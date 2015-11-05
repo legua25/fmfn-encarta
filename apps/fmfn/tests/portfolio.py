@@ -16,6 +16,11 @@ __all__ = [ 'PortfolioTest' ]
 User = get_user_model()
 
 class PortfolioTest(TestCase):
+	""" This test relates to the portfolio handling views. The view tests the addition and removal
+		functionality provided by the portfolio AJAX handlers only (since view displaying is already
+		tested by the framework). The view must add materials only if these have not been added already,
+		and remove them only if they are added.
+	"""
 
 	fixtures = [ 'roles', 'campus', 'languages' ]
 
@@ -48,6 +53,9 @@ class PortfolioTest(TestCase):
 		)
 
 	def test_material_added(self):
+		""" Tests whether a given material is added to the portfolio if it hasn't been added before. In
+			this scenario, the material is added and the action is logged.
+		"""
 
 		log_size = ActionLog.objects.active().count()
 
@@ -74,6 +82,9 @@ class PortfolioTest(TestCase):
 		self.assertEqual(log.category, 2)
 		self.assertEqual(log.status, 201)
 	def test_repeated_material(self):
+		""" Tests whether a given material can be added once it has already been added. In this alternate
+			route, the material is rejected and the action is logged.
+		"""
 
 		log_size = ActionLog.objects.active().count()
 
@@ -90,6 +101,10 @@ class PortfolioTest(TestCase):
 		self.assertEqual(log.category, 2)
 		self.assertEqual(log.status, 403)
 	def test_removed_material(self):
+		""" Tests whether a given material contained in the user's portfolio can be removed. In this
+			scenario, the material is marked as inactive, excluded from the showcase and the action is
+			logged.
+		"""
 
 		log_size = ActionLog.objects.active().count()
 
@@ -114,6 +129,10 @@ class PortfolioTest(TestCase):
 		self.assertEqual(log.category, 2)
 		self.assertEqual(log.status, 200)
 	def test_removed_twice(self):
+		""" Tests whether a given material which used to be contained or was never contained in the
+			user's portfolio can be removed. In this scenario, the action is rejected and the action is
+			logged.
+		"""
 
 		log_size = ActionLog.objects.active().count()
 
