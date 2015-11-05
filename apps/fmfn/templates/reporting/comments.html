@@ -10,6 +10,23 @@
         </a>
         <hr>
         <div class="heading">{{ name }}</div>
-        {{ data }}
+        <div class="sub-heading">{% trans 'Materiales descargados sin comentario' %}</div>
+        <table class="report-table">
+            <tr>
+                <th>{% trans '#' %}</th>
+                <th>{% trans 'Nombre' %}</th>
+                <th>{% trans 'Nº Descargas' %}</th>
+            </tr>
+            {% if not data%}
+                <td colspan="3">{% trans 'todos los materiales descargados cuentan con comentarios' %}</td>
+            {% endif %}
+            {% for material in data %}
+                <tr>
+                    <td>{{ material.0 }}</td>
+                    <td><a href="{% url 'content:view' material.0 %}">{{ material.1 }}</a></td>
+                    <td>{{ material.2 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
 {% endblock canvas %}

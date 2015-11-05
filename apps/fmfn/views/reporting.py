@@ -104,8 +104,7 @@ class MaterialReport(ReportView):
 		count = int(ceil(Material.objects.active().count() * 0.10))
 
 		filters = Q(downloads__date__range = [ datetime(year = year, month = start, day = 1), datetime(year = year, month = end, day = 1) ]) | Q(downloads__isnull = True)
-		temp = (query.filter(filters)
-					  .annotate(count = Count('downloads')))
+		temp = query.filter(link = '').filter(filters).annotate(count = Count('downloads'))
 
 		# Save the two queries temporarily - we must change IDs for material data
 		max, min = temp.order_by('-count', 'downloads__date'), temp.order_by('count', 'downloads__date')
@@ -152,7 +151,7 @@ class CommentsReport(ReportView):
 					 .values('material')
 					 .annotate(count = Count('material'))
 		             .filter(material__comments = None)
-		             .values_list('material__id', 'material__title', 'material__types__name', 'count'))
+		             .values_list('material__id', 'material__title', 'count'))
 
 comments = CommentsReport.as_view()
 
