@@ -73,16 +73,9 @@ class ReportView(View):
 		with open('reports/%s' % filename, 'w') as f:
 			f.write(report_doc)
 
-		file_size = os.path.getsize('reports/%s' % filename)
-
 		# Send file as attachment
 		ActionLog.objects.log_reports('Generated report (name: %s) in %s seconds' % ( self.report_name, time ), user = request.user)
-		response = HttpResponse(report_doc, content_type = 'text/html')
-
-		response['Content-Disposition'] = "attachment; filename=%s" % filename
-		response['Content-Length'] = file_size
-
-		return response
+		return HttpResponse(report_doc, content_type = 'text/html')
 
 	def generate_report(self, query): raise NotImplementedError()
 
