@@ -102,6 +102,9 @@ urlpatterns = [
 	# 	url(r'^log/$', None, name = 'logging')
 
 	], namespace = 'management', app_name = 'apps.fmfn')),
-	url(r'^manage/advanced/', include(admin.site.urls))
+
+	# Added here as they seem to require their own namespace
+	url(r'^manage/advanced/', include(admin.site.urls)),
+	url(r'^grappelli/', include('grappelli.urls'))
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
