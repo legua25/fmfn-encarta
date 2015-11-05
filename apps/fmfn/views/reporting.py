@@ -44,7 +44,7 @@ class ReportView(View):
 
 	@method_decorator(login_required)
 	@method_decorator(role_required('administrator'))
-	@method_decorator(cache_page(1200))
+	# @method_decorator(cache_page(1200))
 	def get(self, request):
 
 		# Record starting time
@@ -75,7 +75,7 @@ class ReportView(View):
 
 		# Send file as attachment
 		ActionLog.objects.log_reports('Generated report (name: %s) in %s seconds' % ( self.report_name, time ), user = request.user)
-		return HttpResponse(report_doc, content_type = 'text/html')
+		return HttpResponse(report_doc)
 
 	def generate_report(self, query): raise NotImplementedError()
 
@@ -83,7 +83,7 @@ class ReportView(View):
 class MaterialReport(ReportView):
 
 	report_name = _('Reporte de Uso de Material')
-	report_class = Download
+	report_class = Material
 	template = 'reporting/material.html'
 
 	def generate_report(self, query):
@@ -101,18 +101,18 @@ class MaterialReport(ReportView):
 
 		# Select materials based on total count
 		count = int(ceil(Material.objects.active().count() * 0.10))
-		temp = (query.filter(date__range = [ datetime(year = year, month = start, day = 1), datetime(year = year, month = end, day = 1) ])
-					  .select_related('material')
-					  .values('material')
-					  .annotate(count = Count('material')))
+
+		filters = Q(downloads__date__range = [ datetime(year = year, month = start, day = 1), datetime(year = year, month = end, day = 1) ]) | Q(downloads__isnull = True)
+		temp = (query.filter(filters)
+					  .annotate(count = Count('downloads')))
 
 		# Save the two queries temporarily - we must change IDs for material data
-		max, min = temp.order_by('-count', 'date'), temp.order_by('count', 'date')
+		max, min = temp.order_by('-count', 'downloads__date'), temp.order_by('count', 'downloads__date')
 
 		# Return the two queries
 		return {
-			'max': max.values_list('material__id', 'material__title', 'material__types__name', 'count')[:count],
-			'min': min.values_list('material__id', 'material__title', 'material__types__name', 'count')[:count]
+			'max': max.values_list('id', 'title', 'types__name', 'count')[:count],
+			'min': min.values_list('id', 'title', 'types__name', 'count')[:count]
 		}
 
 materials = MaterialReport.as_view()
