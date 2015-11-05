@@ -1,0 +1,22 @@
+{% extends 'base/base-2cols.html' %}
+{% load static i18n widget_tweaks %}
+{% block estadisticas-active %}active{% endblock estadisticas-active %}
+{% block title %}{% trans 'Estadisticas' %}{% endblock title %}
+{% block canvas %}
+    <div class="ninenty">
+        <div class="heading">{% trans 'Selecciona el reporte a consultar' %}</div>
+        <hr>
+        <a href="{% url 'management:content' %}" class="report-button">
+            <i class="fa fa-download"></i>
+            {% trans 'Materiales más y menos descargados' %}
+        </a>
+        <a href="{% url 'management:users' %}" class="report-button">
+            <i class="fa fa-users"></i>
+            {% trans 'Usuarios sin loggear y sin descargas' %}
+        </a>
+        <a href="{% url 'management:comments' %}" class="report-button">
+            <i class="fa fa-comments"></i>
+            {% trans 'Reporte de materiales descargados sin comentar' %}
+        </a>
+    </div>
+{% endblock canvas %}

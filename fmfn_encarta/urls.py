@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.shortcuts import render_to_response, RequestContext
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import RedirectView
 from django.conf.urls.static import static
@@ -93,7 +94,7 @@ urlpatterns = [
 
 		url(r'^statistics/', include([
 
-			url(r'^$', lambda request: HttpResponse(), name = 'reporting'),  # GET
+			url(r'^$', views.reporting.select, name = 'reporting'),  # GET
 			url(r'^content/$', views.reporting.materials, name = 'content'),  # GET
 			url(r'^users/$', views.reporting.users, name = 'users'),  # GET
 			url(r'^comments/$', views.reporting.comments, name = 'comments')  # GET

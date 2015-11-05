@@ -7,6 +7,7 @@ from apps.fmfn.models import (
 	Download,
 	Portfolio
 )
+from django.shortcuts import RequestContext, render_to_response
 from django.template.loader import render_to_string as render
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
@@ -14,7 +15,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.contrib.auth import get_user_model
 from apps.fmfn.decorators import role_required
-from django.shortcuts import RequestContext
 from django.db.transaction import atomic
 from django.views.generic import View
 from django.utils.timezone import now
@@ -27,7 +27,8 @@ import os, calendar
 __all__ = [
 	'materials',
 	'users',
-	'comments'
+	'comments',
+	'select'
 ]
 User = get_user_model()
 
@@ -136,7 +137,7 @@ class CommentsReport(ReportView):
 
 	report_name = _('Reporte de Comentarios')
 	report_class = Download
-	template = ''
+	template = 'reporting/comments.html'
 
 	def generate_report(self, query):
 
@@ -154,3 +155,13 @@ class CommentsReport(ReportView):
 		             .values_list('material__id', 'material__title', 'material__types__name', 'count'))
 
 comments = CommentsReport.as_view()
+
+class SelectReportView(View):
+
+
+	@method_decorator(login_required)
+	@method_decorator(role_required('administrator'))
+	def get(self, request):
+		return render_to_response('reporting/select-report.html', context = RequestContext(request, locals()))
+
+select = SelectReportView.as_view()

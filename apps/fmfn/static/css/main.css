@@ -12949,3 +12949,43 @@ button {
 .action-profile .anchor-to-button {
   width: 100%;
 }
+
+/* line 1, ../sass/pages/_statistics.scss */
+.report-button {
+  text-align: center;
+  display: block;
+  width: 100%;
+  padding: 20px 20px 20px 20px;
+  background-color: #2980B9;
+  color: white;
+  margin: 3px 3px 3px 3px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+}
+/* line 13, ../sass/pages/_statistics.scss */
+.report-button i {
+  padding-right: 5px;
+}
+/* line 16, ../sass/pages/_statistics.scss */
+.report-button:hover {
+  color: white;
+}
+/* line 19, ../sass/pages/_statistics.scss */
+.report-button:active {
+  color: white;
+}
+/* line 22, ../sass/pages/_statistics.scss */
+.report-button:visited {
+  color: white;
+}
+
+/* line 27, ../sass/pages/_statistics.scss */
+.report-table {
+  width: 100%;
+}

@@ -1,2 +1,61 @@
-{{ name }}
-{{ data }}
+{% extends 'base/base-2cols.html' %}
+{% load static i18n widget_tweaks %}
+{% block estadisticas-active %}active{% endblock estadisticas-active %}
+{% block title %}{% trans 'Usuarios' %}{% endblock title %}
+{% block canvas %}
+    <div class="ninenty">
+        <a href="{% url 'management:reporting' %}">
+            <i class="fa fa-caret-left"></i>
+            {% trans '  Regresa al menu de reportes' %}
+        </a>
+        <hr>
+        <div class="heading">{{ name }}</div>
+
+        <div class="sub-heading">{% trans 'usuarios que nunca han iniciado sesion' %}</div>
+        <table class="report-table">
+            <tr>
+                <th>{% trans 'Nombre' %}</th>
+                <th>{% trans 'Correo electronico' %}</th>
+                <th>{% trans 'Fecha de registro' %}</th>
+            </tr>
+            {% if not data.never_logged_in %}
+                <td colspan="3">{% trans 'Todos tus usuarios han iniciado sesion al menos una ocasion' %}</td>
+            {% endif %}
+            {% for user in data.never_logged_in %}
+                <tr>
+                    <td><a href="{% url 'users:view' user.id %}">
+                        {{ user.first_name }}
+                        {{ user.mother_family_name }}
+                        {{ user.father_family_name }}
+                    </a></td>
+                    <td>{{ user.email_address }}</td>
+                    <td>{{ user.date_joined }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <div class="sub-heading">{% trans 'usuarios que nunca han descargado material' %}</div>
+        <table class="report-table">
+            <tr>
+                <th>{% trans 'Nombre' %}</th>
+                <th>{% trans 'Correo electronico' %}</th>
+                <th>{% trans 'Fecha de registro' %}</th>
+            </tr>
+            {% if not data.never_logged_in %}
+                <td colspan="3">{% trans 'Todos tus usuarios han descargado al menos un material' %}</td>
+            {% endif %}
+            {% for user in data.never_downloaded %}
+                <tr>
+                    <td><a href="{% url 'users:view' user.id %}">
+                        {{ user.first_name }}
+                        {{ user.mother_family_name }}
+                        {{ user.father_family_name }}
+                    </a></td>
+                    <td>{{ user.email_address }}</td>
+                    <td>{{ user.date_joined }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock canvas %}
+

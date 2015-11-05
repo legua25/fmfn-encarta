@@ -1,2 +1,55 @@
-{{ name }}
-{{ data }}
+{% extends 'base/base-2cols.html' %}
+{% load static i18n widget_tweaks %}
+{% block estadisticas-active %}active{% endblock estadisticas-active %}
+{% block title %}{% trans 'Materiales' %}{% endblock title %}
+{% block canvas %}
+    <div class="ninenty">
+        <a href="{% url 'management:reporting' %}">
+            <i class="fa fa-caret-left"></i>
+            {% trans '  Regresa al menu de reportes' %}
+        </a>
+        <hr>
+        <div class="heading">{{ name }}</div>
+
+        <div class="sub-heading">{% trans 'Materiales más descargados' %}</div>
+        <table class="report-table">
+            <tr>
+                <th>{% trans 'Nombre' %}</th>
+                <th>{% trans 'Tipo de material' %}</th>
+                <th>{% trans 'Nº descargas' %}</th>
+            </tr>
+            {% for material in data.max %}
+                <tr>
+                    <td>
+                        <a href="{% url 'content:view' material.0 %}">
+                            {{ material.1 }}
+                        </a>
+                    </td>
+                    <td>{{ material.2 }}</td>
+                    <td>{{ material.3 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <div class="sub-heading">{% trans 'Materiales menos descargados' %}</div>
+        <table class="report-table">
+            <tr>
+                <th>{% trans 'Nombre' %}</th>
+                <th>{% trans 'Tipo de material' %}</th>
+                <th>{% trans 'Nº descargas' %}</th>
+            </tr>
+            {% for material in data.min %}
+                <tr>
+                    <td>
+                        <a href="{% url 'content:view' material.0 %}">
+                            {{ material.1 }}
+                        </a>
+                    </td>
+                    <td>{{ material.2 }}</td>
+                    <td>{{ material.3 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+{% endblock canvas %}

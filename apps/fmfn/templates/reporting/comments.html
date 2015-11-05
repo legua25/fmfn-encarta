@@ -1,0 +1,15 @@
+{% extends 'base/base-2cols.html' %}
+{% load static i18n widget_tweaks %}
+{% block estadisticas-active %}active{% endblock estadisticas-active %}
+{% block title %}{% trans 'Comentarios' %}{% endblock title %}
+{% block canvas %}
+    <div class="ninenty">
+        <a href="{% url 'management:reporting' %}">
+            <i class="fa fa-caret-left"></i>
+            {% trans '  Regresa al menu de reportes' %}
+        </a>
+        <hr>
+        <div class="heading">{{ name }}</div>
+        {{ data }}
+    </div>
+{% endblock canvas %}
