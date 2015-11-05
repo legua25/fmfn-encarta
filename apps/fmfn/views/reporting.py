@@ -111,15 +111,15 @@ class MaterialReport(ReportView):
 		temp = (query.filter(date__range = [ datetime(year = year, month = start, day = 1), datetime(year = year, month = end, day = 1) ])
 					  .select_related('material')
 					  .values('material')
-					  .annotate(count = Count('material')))[:count]
+					  .annotate(count = Count('material')))
 
 		# Save the two queries temporarily - we must change IDs for material data
 		max, min = temp.order_by('-count', 'date'), temp.order_by('count', 'date')
 
 		# Return the two queries
 		return {
-			'max': max.values_list('material__id', 'material__title', 'material__types__name', 'count'),
-			'min': min.values_list('material__id', 'material__title', 'material__types__name', 'count')
+			'max': max.values_list('material__id', 'material__title', 'material__types__name', 'count')[:count],
+			'min': min.values_list('material__id', 'material__title', 'material__types__name', 'count')[:count]
 		}
 
 materials = MaterialReport.as_view()
