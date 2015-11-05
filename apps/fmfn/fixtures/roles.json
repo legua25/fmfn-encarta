@@ -1,57 +1,62 @@
 [
 	{
-		"pk": 1,
-		"model": "fmfn.Role",
 		"fields": {
-			"active": true,
 			"base_permissions": [],
-			"base": null,
 			"name": "parent",
+			"base": null,
+			"spanish_name": "padre",
+			"active": true,
 			"description": ""
-		}
+		},
+		"model": "fmfn.role",
+		"pk": 1
 	},
 	{
-		"pk": 2,
-		"model": "fmfn.Role",
 		"fields": {
-			"active": true,
 			"base_permissions": [],
-			"base": 1,
 			"name": "teacher",
+			"base": 1,
+			"spanish_name": "maestro",
+			"active": true,
 			"description": ""
-		}
+		},
+		"model": "fmfn.role",
+		"pk": 2
 	},
 	{
-		"pk": 3,
-		"model": "fmfn.Role",
 		"fields": {
-			"active": true,
 			"base_permissions": [],
-			"base": 2,
 			"name": "user manager",
+			"base": 2,
+			"spanish_name": "admin. de usuarios",
+			"active": true,
 			"description": ""
-		}
+		},
+		"model": "fmfn.role",
+		"pk": 3
 	},
 	{
-		"pk": 4,
-		"model": "fmfn.Role",
 		"fields": {
-			"active": true,
 			"base_permissions": [],
-			"base": 3,
 			"name": "content manager",
+			"base": 3,
+			"spanish_name": "admin. de contenido",
+			"active": true,
 			"description": ""
-		}
+		},
+		"model": "fmfn.role",
+		"pk": 4
 	},
 	{
-		"pk": 5,
-		"model": "fmfn.Role",
 		"fields": {
-			"active": true,
 			"base_permissions": [],
-			"base": 4,
 			"name": "administrator",
+			"base": 4,
+			"spanish_name": "administrador general",
+			"active": true,
 			"description": ""
-		}
+		},
+		"model": "fmfn.role",
+		"pk": 5
 	}
 ]

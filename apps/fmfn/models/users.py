@@ -139,6 +139,12 @@ class Role(Model):
 		blank = False,
 		verbose_name = _('role name')
 	)
+	spanish_name = CharField(
+		max_length = 64,
+		null = False,
+		blank = False,
+		verbose_name = _('spanish role name')
+	)
 	description = CharField(
 		max_length = 512,
 		null = False,
@@ -169,7 +175,7 @@ class Role(Model):
 
 		return query
 
-	def __str__(self): return self.name
+	def __str__(self): return self.spanish_name
 
 	class Meta(object):
 
