@@ -21,7 +21,7 @@ from django.utils.timezone import now
 from django.http import HttpResponse
 from django.db.models import *
 from math import ceil
-import os
+import os, calendar
 
 __all__ = [
 	'materials',
@@ -62,11 +62,11 @@ class ReportView(View):
 		time = (now() - start).total_seconds()
 
 		# Create the report output (save it if required to)
-		filename = 'report_%s.html' % start
+		filename = 'report_%s.html' % calendar.timegm(start.timetuple())
 		with open('reports/%s' % filename, 'w') as f:
 			f.write(report_doc)
 
-		file_size = os.path.getsize(filename)
+		file_size = os.path.getsize('reports/%s' % filename)
 
 		# Send file as attachment
 		ActionLog.objects.log_reports('Generated report (name: %s) in %s seconds' % ( self.report_name, time ), user = request.user)
@@ -84,7 +84,7 @@ class MaterialReport(ReportView):
 
 	report_name = _('Reporte de Uso de Material')
 	report_class = Download
-	template = ''
+	template = 'reporting/material.html'
 
 	def generate_report(self, query):
 
@@ -120,7 +120,7 @@ class UserReport(ReportView):
 
 	report_name = _('Reporte de Usuarios')
 	report_class = User
-	template = ''
+	template = 'reporting/users.html'
 
 	def generate_report(self, query):
 
