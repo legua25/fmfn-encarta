@@ -50,13 +50,17 @@ class SearchView(View):
 		data = form.cleaned_data
 
 		params = (Q(title__icontains = data['search'])
-		         | Q(description__icontains = data['search'])
-		         | Q(suggested_ages__in = data['grades'])
+		         | Q(description__icontains = data['search']))
+
+
+		query = query.filter(params)
+
+		params2 = (Q(suggested_ages__in = data['grades'])
 		         | Q(types__in = data['type'])
 		         | Q(languages__in = data['language'])
 		         | Q(themes__in = data['theme']))
 
-		query = query.filter(params)
+		query = query.filter(params2)
 
 		# Annotate the results with rating average
 		query = query.annotate(rating = Avg('comments__rating_value'))

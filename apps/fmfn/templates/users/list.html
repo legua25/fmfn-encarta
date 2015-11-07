@@ -1,10 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title></title>
-</head>
-<body>
+{% extends 'base/base-2cols.html' %}
+{% load i18n %}
+{% block cuenta-active %}active{% endblock cuenta-active %}
+{% block title %}{% trans 'View User' %}{% endblock title %}
+{% block canvas %}
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.9/css/dataTables.foundation.min.css">
 
-</body>
-</html>
+	<h2>Usuarios</h2>
+
+	<table class="display" id="users-table" cellspacing="0" width="100%">
+		<thead>
+			<tr>
+				<th>Nombre</th>
+				<th>Apellido Paterno</th>
+				<th>Apellido Materno</th>
+				<th>Email</th>
+				<th>Campus</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for u in users %}
+				<tr>
+					<td>{{ u.first_name }} </td>
+					<td>{{ u.father_family_name }} </td>
+					<td>{{ u.mother_family_name }} </td>
+					<td>{{ u.email_address }} </td>
+					<td>{{ u.campus }} </td>
+				</tr>
+
+			{% endfor %}
+		</tbody>
+	</table>
+
+
+
+{% endblock canvas %}
+
+{% block js-inline %}
+		$(document).ready(function() {
+		    $('#users-table').DataTable();
+		} );
+{% endblock js-inline %}

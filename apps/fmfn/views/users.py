@@ -171,7 +171,9 @@ view = ViewUserView.as_view()
 class SearchView(View):
 	@method_decorator(login_required)
 	@method_decorator(role_required('parent'))
-	def get(self, request): return render_to_response('users/list.html', context = RequestContext(request, locals()))
+	def get(self, request):
+		users = User.objects.all()
+		return render_to_response('users/list.html', context = RequestContext(request, locals()))
 
 	# @method_decorator(login_required)
 	# @method_decorator(ajax_required)
@@ -200,5 +202,25 @@ class SearchView(View):
 	# 	except PageNotAnInteger: users = paginator.page(1)
 	#
 	# 	ActionLog.objects.log_content('Queried for users (filters: %s)' % filters, user = request.user, status = 302)
+	# 	return JsonResponse({
+	# 		'version': '1.0.0',
+	# 		'status': 302,
+	# 		'pages': {
+	# 			'prev': users.previous_page_number() if users.has_previous() else None,
+	# 			'next': users.next_page_number() if users.has_next() else None,
+	# 			'current': page,
+	# 			'total': paginator.num_pages,
+	# 			'count': query.count(),
+	# 			'page_size': paginator.per_page
+	# 		},
+	# 		'results': [ {
+	# 			'id': u.id,
+	# 			'name': u.name,
+	# 			'father_family_name': u.father_family_name,
+	# 			'mother_family_name': u.mother_family_name,
+	# 			'email': u.email,
+	# 			'campus': u.campus
+	# 		} for u in users ]
+	# 	})
 
 search = SearchView.as_view()
