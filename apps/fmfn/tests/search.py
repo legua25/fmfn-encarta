@@ -65,7 +65,7 @@ class MaterialTest(TestCase):
 
 		log_count = len(ActionLog.objects.active())
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.get(reverse_lazy('search:filter', data = { 'filter': 'ciencia' }, follow = True))
+		response = self.client.get(reverse_lazy('search:filter', data = { 'search': 'ciencia' }, follow = True))
 
 		# Check status code
 		self.assertEqual(response.status_code, 204)
@@ -105,7 +105,7 @@ class MaterialTest(TestCase):
 
 		log_count = len(ActionLog.objects.active())
 		self.client.login(email_address = 'test1@example.com', password = 'asdfgh')
-		response = self.client.get(reverse_lazy('search:filter', data = { 'filter': 'material' }, follow = True))
+		response = self.client.get(reverse_lazy('search:filter', data = { 'search': 'material' }, follow = True))
 
 		# Check status code
 		self.assertEqual(response.status_code, 200)
