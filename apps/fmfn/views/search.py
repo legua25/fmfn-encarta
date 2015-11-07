@@ -19,6 +19,7 @@ from django.views.decorators.cache import cache_page
 from apps.fmfn.forms import SearchForm
 from django.views.generic import View
 from django.db.models import Q, Avg
+import operator
 
 __all__ = [ 'search' ]
 
@@ -52,15 +53,25 @@ class SearchView(View):
 		params = (Q(title__icontains = data['search'])
 		         | Q(description__icontains = data['search']))
 
-
 		query = query.filter(params)
 
-		params2 = (Q(suggested_ages__in = data['grades'])
-		         | Q(types__in = data['type'])
-		         | Q(languages__in = data['language'])
-		         | Q(themes__in = data['theme']))
+		params_list = []
 
-		query = query.filter(params2)
+		if(len(data['grades']) > 0):
+			params_list.append(('suggested_ages__in', data['grades']))
+
+		if(len(data['type']) > 0):
+			params_list.append(('types__in', data['type']))
+
+		if(len(data['language']) > 0):
+			params_list.append(('languages__in', data['language']))
+
+		if(len(data['theme']) > 0):
+			params_list.append(('themes__in', data['theme']))
+
+		if len(params_list) > 0 :
+			params2 = [Q(x) for x in params_list]
+			query = query.filter(reduce(operator.or_, params2))
 
 		# Annotate the results with rating average
 		query = query.annotate(rating = Avg('comments__rating_value'))
