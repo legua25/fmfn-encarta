@@ -44,7 +44,6 @@ class SearchView(View):
 
 		# Filter material based on query
 		query = Material.objects.active()
-		#filters = request.POST.get('filter', None)
 
 		form = SearchForm(request.POST)
 		data = form.clean()
@@ -57,16 +56,6 @@ class SearchView(View):
 		         | Q(themes__in = data['theme'])
 
 		query = query.filter(params)
-
-		# if bool(filters) is not False:
-		#
-		# 	# Preload related elements and perform matching queries against every one of them
-		# 	params = Q(title__icontains = filters) | Q(description__icontains = filters)
-		#
-		# 	for tag_type in [ 'types', 'themes', 'languages' ]:
-		# 		params = params | Q(**{'%s__name__icontains' % tag_type: filters })
-		#
-		# 	query = query.filter(params)
 
 		# Annotate the results with rating average
 		query = query.annotate(rating = Avg('comments__rating_value'))
