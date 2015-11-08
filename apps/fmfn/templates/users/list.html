@@ -1,39 +1,52 @@
 {% extends 'base/base-2cols.html' %}
 {% load static i18n %}
+{% load roles %}
 {% block usuarios-active %}active{% endblock usuarios-active %}
 {% block title %}{% trans 'Usuarios' %}{% endblock title %}
 {% block canvas %}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.9/css/dataTables.foundation.min.css">
     <div class="ninenty">
-        <div class="sub-heading">{% trans 'Lista de usuarios' %}</div>
+        {% if user|has_role:'administrator' %}
+            <div class="heading">{% trans 'Vista solo disponible para administrador de usuarios' %}</div>
+        {% elif user|has_role:'content manager' %}
+            <div class="heading">{% trans 'Vista solo disponible para administrador de usuarios' %}</div>
+        {% elif user|has_role:'user manager' %}
+            <hr>
+            <a href="{% url 'users:create' %}" class="anchor-to-button">{% trans 'Crear nuevo usuario' %}</a>
+            <hr>
+            <div class="sub-heading">{% trans 'Lista de usuarios' %}</div>
 
-        <table class="display" id="users-table" cellspacing="0" width="100%">
-            <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Apellido Paterno</th>
-                <th>Apellido Materno</th>
-                <th>Email</th>
-                <th>Campus</th>
-                <th>Rol</th>
-                <th>Perfil</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for u in users %}
+            <table class="display" id="users-table" cellspacing="0" width="100%">
+                <thead>
                 <tr>
-                    <td>{{ u.first_name }} </td>
-                    <td>{{ u.father_family_name }} </td>
-                    <td>{{ u.mother_family_name }} </td>
-                    <td>{{ u.email_address }} </td>
-                    <td>{{ u.campus }} </td>
-                    <td>{{ u.role }}</td>
-                    <td style="text-align: center"><a href="{% url 'users:view' u.id %}"><i class="fa fa-eye"></i></a></td>
+                    <th>Nombre</th>
+                    <th>Apellido Paterno</th>
+                    <th>Apellido Materno</th>
+                    <th>Email</th>
+                    <th>Campus</th>
+                    <th>Rol</th>
+                    <th>Editar</th>
                 </tr>
+                </thead>
+                <tbody>
+                {% for u in users %}
+                    <tr>
+                        <td>{{ u.first_name }} </td>
+                        <td>{{ u.father_family_name }} </td>
+                        <td>{{ u.mother_family_name }} </td>
+                        <td>{{ u.email_address }} </td>
+                        <td>{{ u.campus }} </td>
+                        <td>{{ u.role }}</td>
+                        <td style="text-align: center"><a href="{% url 'users:edit' u.id %}"><i
+                                class="fa fa-pencil"></i></a></td>
+                    </tr>
 
-            {% endfor %}
-            </tbody>
-        </table>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="heading">{% trans 'Vista solo disponible para administrador de usuarios' %}</div>
+        {% endif %}
     </div>
 {% endblock canvas %}
 
