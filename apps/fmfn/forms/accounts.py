@@ -39,9 +39,9 @@ class LoginForm(Form):
 		if user is not None:
 
 			if user.is_active: self.user = user
-			else: raise ValidationError(_('Requested user is no longer active on this site'))
+			else: raise ValidationError(_('El usuario no se encuentra activo en el sistema'))
 
-		else: raise ValidationError(_('Email address and/or password did not match.'))
+		else: raise ValidationError(_('Correo electronico/contraseña erronea'))
 
 class RecoveryForm(Form):
 
@@ -75,7 +75,7 @@ class RecoveryForm(Form):
 
 			del self.fields['password']
 			del self.fields['repeat']
-		else: raise ValueError('Invalid value for stage (expected: "recover" or "complete", received: %s)' % stage)
+		else: raise ValueError('Valor invalido (esperaba: "recover" or "complete", recibió: %s)' % stage)
 
 	def clean(self):
 
@@ -85,24 +85,24 @@ class RecoveryForm(Form):
 			email = self.cleaned_data['email_address']
 
 			try: user = User.objects.get(email_address = email)
-			except User.DoesNotExist: raise ValidationError(_('Provided email address does not exist in our records'))
+			except User.DoesNotExist: raise ValidationError(_('El correo que ingresaste no tiene registros en nuestro sitio'))
 			else:
 
 				if user.is_active: self.user = user
-				else: raise ValidationError(_('This user account was disabled. Please contact system administration to reactivate it'))
+				else: raise ValidationError(_('Esta cuenta de usuario ha sido desactivada. Por favor contacte a su administrador para más información.'))
 
 		elif self._stage == 'reset':
 
 			if self.user is None or isinstance(self.user, AnonymousUser):
-				raise ValueError('No matching user was provided')
+				raise ValueError('No se encontró un usuario que coincidiera')
 
 			# Validate passwords are equal and different from user's
 			password, repeat = [ self.cleaned_data['password'], self.cleaned_data['repeat'] ]
 
-			if not constant_time_compare(password, repeat): raise ValidationError('Input passwords must match')
-			elif self.user.check_password(password): raise ValidationError('Provided password is currently being used')
+			if not constant_time_compare(password, repeat): raise ValidationError('Las contraseñas no coinciden')
+			elif self.user.check_password(password): raise ValidationError('La nueva contraseña esta actualmente siendo usada')
 
-		else: raise ValidationError('Invalid stage in the process was encountered')
+		else: raise ValidationError('Instancia invalida')
 	def send_recovery_email(self, request, user, token):
 
 		# Get mailing information and next step data
@@ -116,7 +116,7 @@ class RecoveryForm(Form):
 		ActionLog.objects.log_account('Sending recovery email to user', user = user, status = 201)
 
 		mail = EmailMultiAlternatives(
-			subject = _('Password recovery - Next steps'),
+			subject = _('Recuperacion de contraseña - Sistema NWL'),
 			body = body,
 			to = [ user.email_address ]
 		)
