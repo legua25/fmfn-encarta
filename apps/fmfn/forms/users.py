@@ -22,12 +22,12 @@ class UserCreationForm(Form):
 	password = CharField(
 		max_length = 128,
 		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Password') })
+		widget = PasswordInput(attrs = { 'placeholder': _('Contraseña') })
 	)
 	repeat = CharField(
 		max_length = 128,
 		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
+		widget = PasswordInput(attrs = { 'placeholder': _('Repita contraseña') })
 	)
 	role = ModelChoiceField(Role.objects.active(),
 	    empty_label = None,
@@ -45,7 +45,7 @@ class UserCreationForm(Form):
 		Form.clean(self)
 
 		password, repeat = self.cleaned_data['password'], self.cleaned_data['repeat']
-		if not constant_time_compare(password, repeat): raise ValidationError('Passwords do not match')
+		if not constant_time_compare(password, repeat): raise ValidationError('Las contraseñas no coinciden')
 
 	class Meta(object):
 
@@ -61,10 +61,10 @@ class UserCreationForm(Form):
 			'role'
 		]
 		widgets = {
-			'email_address': EmailInput(attrs = { 'placeholder': _('Email address') }),
-			'first_name': TextInput(attrs = { 'placeholder': _('First name') }),
-			'father_family_name': TextInput(attrs = { 'placeholder': _('Father\'s family name') }),
-			'mother_family_name': TextInput(attrs = { 'placeholder': _('Mother\'s family name') }),
+			'email_address': EmailInput(attrs = { 'placeholder': _('Correo electrónico') }),
+			'first_name': TextInput(attrs = { 'placeholder': _('Nombre(s)') }),
+			'father_family_name': TextInput(attrs = { 'placeholder': _('Apellido paterno') }),
+			'mother_family_name': TextInput(attrs = { 'placeholder': _('Apellido Materno') }),
 			'grades': CheckboxSelectMultiple(),
 			'role': RadioSelect()
 		}
@@ -74,12 +74,12 @@ class UserEditForm(Form):
 	password = CharField(
 		max_length = 128,
 		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Password') })
+		widget = PasswordInput(attrs = { 'placeholder': _('Contraseña') })
 	)
 	repeat = CharField(
 		max_length = 128,
 		required = True,
-		widget = PasswordInput(attrs = { 'placeholder': _('Repeat password') })
+		widget = PasswordInput(attrs = { 'placeholder': _('Repite la contraseña') })
 	)
 
 	is_managed = False
@@ -89,7 +89,7 @@ class UserEditForm(Form):
 		Form.clean(self)
 
 		password, repeat = self.cleaned_data['password'], self.cleaned_data['repeat']
-		if not constant_time_compare(password, repeat): raise ValidationError('Passwords do not match')
+		if not constant_time_compare(password, repeat): raise ValidationError('Las contraseñas no coinciden')
 
 	class Meta(object):
 
@@ -129,10 +129,10 @@ class AdminEditForm(UserEditForm):
 			'grades'
 		]
 		widgets = {
-			'email_address': EmailInput(attrs = { 'placeholder': _('Email address') }),
-			'first_name': TextInput(attrs = { 'placeholder': _('First name') }),
-			'father_family_name': TextInput(attrs = { 'placeholder': _('Father\'s family name') }),
-			'mother_family_name': TextInput(attrs = { 'placeholder': _('Mother\'s family name') })
+			'email_address': EmailInput(attrs = { 'placeholder': _('Correo electrónico') }),
+			'first_name': TextInput(attrs = { 'placeholder': _('Nombre(s)') }),
+			'father_family_name': TextInput(attrs = { 'placeholder': _('Apellido Paterno') }),
+			'mother_family_name': TextInput(attrs = { 'placeholder': _('Apellido Materno') })
 		}
 
 class UserViewForm(Form):
@@ -163,8 +163,8 @@ class UserViewForm(Form):
 			'grades'
 		]
 		widgets = {
-			'email_address': EmailInput(attrs = { 'placeholder': _('Email address') }),
-			'first_name': TextInput(attrs = { 'placeholder': _('First name') }),
-			'father_family_name': TextInput(attrs = { 'placeholder': _('Father\'s family name') }),
-			'mother_family_name': TextInput(attrs = { 'placeholder': _('Mother\'s family name') })
+			'email_address': EmailInput(attrs = { 'placeholder': _('Correo electrónico') }),
+			'first_name': TextInput(attrs = { 'placeholder': _('Nombre(s)') }),
+			'father_family_name': TextInput(attrs = { 'placeholder': _('Apellido Paterno') }),
+			'mother_family_name': TextInput(attrs = { 'placeholder': _('Apellido Materno') })
 		}

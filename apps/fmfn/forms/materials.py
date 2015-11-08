@@ -17,8 +17,8 @@ class MaterialForm(Form):
 		content = cleaned_data.get('content')
 		link = cleaned_data.get('link')
 
-		if content and link: raise ValidationError({ 'content': _('Materials must have either a link or a document') })
-		if not content and not link: raise ValidationError({ 'content': _('Materials cannot have both a link and a document') })
+		if content and link: raise ValidationError({ 'content': _('El material debe tener al menos un link o documento, pero no ambos') })
+		if not content and not link: raise ValidationError({ 'content': _('El material debe tener al menos un link o documento, pero no ambos') })
 
 	class Meta(object):
 
@@ -35,10 +35,10 @@ class MaterialForm(Form):
 			'user'
 		]
 		widgets = {
-			'title': TextInput(attrs = { 'placeholder': _('Material title') }),
-			'description': Textarea(attrs = { 'placeholder': _('Brief description on this material'), 'rows': 6, 'style': 'resize: none;' }),
+			'title': TextInput(attrs = { 'placeholder': _('Título del material') }),
+			'description': Textarea(attrs = { 'placeholder': _('Breve descripción del material'), 'rows': 6, 'style': 'resize: none;' }),
 			'content': ClearableFileInput(attrs = { 'placeholder': _('Documentation') }),
-			'link': URLInput(attrs = { 'placeholder': _('Link to reference') }),
+			'link': URLInput(attrs = { 'placeholder': _('Link a referencia en formato http') }),
 			'suggested_ages': CheckboxSelectMultiple(),
 			'types': CheckboxSelectMultiple(),
 			'themes': Select2MultipleWidget(),

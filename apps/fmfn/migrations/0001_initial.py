@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(max_length=64, verbose_name='first name')),
                 ('father_family_name', models.CharField(default='', max_length=64, verbose_name="father's family name", blank=True)),
                 ('mother_family_name', models.CharField(default='', max_length=64, verbose_name="mother's family name", blank=True)),
-                ('photo', imagekit.models.fields.ProcessedImageField(default='users/default.png', upload_to=apps.fmfn.models.users.upload_photo, verbose_name='user photo', blank=True)),
+                ('photo', imagekit.models.fields.ProcessedImageField(default='users/default.jpg', upload_to=apps.fmfn.models.users.upload_photo, verbose_name='user photo', blank=True)),
             ],
             options={
                 'verbose_name': 'user',
@@ -83,8 +83,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
                 ('date', models.DateTimeField(auto_now_add=True, verbose_name='date')),
-                ('material', models.ForeignKey(related_name='+', verbose_name='material', to=settings.AUTH_USER_MODEL)),
-                ('user', models.ForeignKey(related_name='+', verbose_name='user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'download',
@@ -150,7 +148,7 @@ class Migration(migrations.Migration):
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
                 ('description', models.CharField(max_length=64, verbose_name='description')),
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='date created')),
-                ('status', models.PositiveSmallIntegerField(default=1, blank=True, verbose_name='report status', choices=[(1, 'in progress'), (2, 'resolved')])),
+                ('status', models.PositiveSmallIntegerField(default=1, blank=True, verbose_name='report status', choices=[(1, 'in progress'), (2, 'resolved'), (4, 'rejected')])),
                 ('material', models.ForeignKey(related_name='+', verbose_name='reported material', to='fmfn.Material')),
                 ('user', models.ForeignKey(related_name='reports', verbose_name='reporting author', to=settings.AUTH_USER_MODEL)),
             ],
@@ -241,6 +239,16 @@ class Migration(migrations.Migration):
             model_name='item',
             name='portfolio',
             field=models.ForeignKey(related_name='items', verbose_name='portfolio items', to='fmfn.Portfolio'),
+        ),
+        migrations.AddField(
+            model_name='download',
+            name='material',
+            field=models.ForeignKey(related_name='+', verbose_name='material', to='fmfn.Material'),
+        ),
+        migrations.AddField(
+            model_name='download',
+            name='user',
+            field=models.ForeignKey(related_name='+', verbose_name='user', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='comment',

@@ -10,7 +10,7 @@ $(document).on('click', '.remove-favorites', function () {
         },
         success: function (response) {
             $('.remove-favorites').hide();
-            var html = '<a class="add-favorites" id="add-portfolio"><i class="fa fa-heart-o"></i> add to favorites </a>';
+            var html = '<a class="add-favorites" id="add-portfolio"><i class="fa fa-heart-o"></i> agregar a favoritos </a>';
             $('#contain-portfolio').append(html);
         },
         error: function (xhr, textStatus, thrownError) {
@@ -35,7 +35,7 @@ $(document).on('click', '.add-favorites', function () {
         },
         success: function (response) {
             $('.add-favorites').hide();
-            var html = '<a class="remove-favorites" id="remove-portfolio"><i class="fa fa-heart"></i> remove from favorites </a>';
+            var html = '<a class="remove-favorites" id="remove-portfolio"><i class="fa fa-heart"></i> eliminar de favoritos </a>';
             $('#contain-portfolio').append(html);
         },
         error: function (xhr, textStatus, thrownError) {
