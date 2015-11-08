@@ -6,7 +6,7 @@
     <div class="ninenty">
 
         <div class="heading">
-            {% trans 'Register Material' %}
+            {% trans 'Registrar Material' %}
         </div>
 
         {% if form.non_field_errors %}
@@ -21,7 +21,7 @@
             <div id="general">
 
                 <!--Title section-->
-                <div class="sub-heading">{% trans '1)  Write the title for the material' %}</div>
+                <div class="sub-heading">{% trans '1)  Escriba el título del material' %}</div>
                 {{ form.title }}
                 {% if form.title.errors %}
                     {% for error in form.title.errors %}
