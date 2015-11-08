@@ -31,7 +31,7 @@
                 <!--Title section-->
 
                 <!--Description section-->
-                <div class="sub-heading">{% trans '2)  Write a little description of the material' %}</div>
+                <div class="sub-heading">{% trans '2)  Escriba una pequeña descripción del material' %}</div>
                 {{ form.description }}
                 {% if form.description.errors %}
                     {% for error in form.description.errors %}
@@ -41,7 +41,7 @@
                 <!--Description section-->
 
                 <!--Attach section-->
-                <div class="sub-heading">{% trans '3)  Attach a file or a link' %}</div>
+                <div class="sub-heading">{% trans '3)  Adjunte un archivo o un link' %}</div>
                 <div class="two-elements">
                     {{ form.content }}
                     {% if form.content.errors %}
@@ -51,7 +51,7 @@
                     {% endif %}
                 </div>
 
-                <p class="middle-element"><strong>{% trans 'or' %}</strong></p>
+                <p class="middle-element"><strong>{% trans 'o escribe el link:' %}</strong></p>
 
                 <div class="two-elements">
                     {{ form.link }}
@@ -67,7 +67,7 @@
             <div id="tags">
                 <!-- Age tags section-->
                 <div id="tags-ages">
-                    <div class="sub-heading">{% trans '4) Select the ages' %}</div>
+                    <div class="sub-heading">{% trans '4) Seleccione las edades a las que va el material' %}</div>
                     {% for age in form.fields.suggested_ages.choices %}
                         <input type="checkbox"
                                id="id_suggested_ages_{{ forloop.counter }}"
@@ -89,11 +89,11 @@
 
                 <!-- Type tags section -->
                 <div class="sub-heading display-in-line">
-                    {% trans '5) Select the type of the material' %}
+                    {% trans '5) Seleccione el tipo de material' %}
                 </div>
                 <div class="sub-heading-helper display-in-line">
                     <a href="#" data-reveal-id="types-modal"
-                       id="show-types">{% trans 'administrate types' %}</a>
+                       id="show-types">{% trans 'agregar o quitar tipos de material' %}</a>
                 </div>
                 <div id="tags-types">
                     {% for type in form.fields.types.choices %}
@@ -118,11 +118,11 @@
 
                 <!-- Languages tags section -->
                 <div class="sub-heading display-in-line">
-                    {% trans '6) Select the languages' %}
+                    {% trans '6) Seleccione los idiomas del material' %}
                 </div>
                 <div class="sub-heading-helper display-in-line">
                     <a href="#" data-reveal-id="languages-modal"
-                       id="show-languages">{% trans 'administrate languages' %}</a>
+                       id="show-languages">{% trans 'agregar o quitar idiomas' %}</a>
                 </div>
                 <div id="tags-languages">
                     {% for lang in form.fields.languages.choices %}
@@ -149,11 +149,11 @@
                 <!-- Themes tags section -->
                 <div id="tags-themes">
                     <div class="sub-heading display-in-line">
-                        {% trans '7) Select the themes & topics' %}
+                        {% trans '7) Escriba los temas del material ' %}
                     </div>
                     <div class="sub-heading-helper display-in-line">
                         <a href="#" data-reveal-id="themes-modal"
-                           id="show-themes">{% trans 'administrate themes & topics' %}</a>
+                           id="show-themes">{% trans 'agregar o quitar temas' %}</a>
                     </div>
                     {{ form.themes }}
 
@@ -168,7 +168,7 @@
             </div>
 
             <div class="actions">
-                <button type="submit">{% trans 'Submit' %}</button>
+                <button type="submit">{% trans 'Guardar material' %}</button>
             </div>
         </form>
     </div>

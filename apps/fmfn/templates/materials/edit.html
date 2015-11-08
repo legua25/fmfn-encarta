@@ -1,16 +1,15 @@
 {% extends 'base/base-2cols.html' %}
 {% load static i18n widget_tweaks %}
 
-{% block title %}{% trans 'Edit Material' %}{% endblock title %}
+{% block title %}{% trans 'Editar material' %}{% endblock title %}
 {% block canvas %}
     <div class="ninenty">
         <div class="heading">
             {% trans 'Edit Material' %}
         </div>
-
         <p class="description">
-            {% blocktrans with material.title as title %}Use this form to edit the contents of
-                material titled "{{ title }}" or delete it.{% endblocktrans %}
+
+            {% blocktrans with material.title as title %}Aquí puedes editar o borrar el material "{{ title }}".{% endblocktrans %}
         </p>
 
         {% comment %}
@@ -30,7 +29,7 @@
             <div id="general">
 
                 <!-- Title section -->
-                <div class="sub-heading">{% trans 'Title' %}</div>
+                <div class="sub-heading">{% trans 'Título del material' %}</div>
                 {{ form.title }}
                 {% if form.title.errors %}
                     {% for error in form.title.errors %}
@@ -40,7 +39,7 @@
                 <!-- Title section -->
 
                 <!--Description section-->
-                <div class="sub-heading">{% trans 'Description' %}</div>
+                <div class="sub-heading">{% trans 'Descripción del material' %}</div>
                 {{ form.description }}
                 {% if form.description.errors %}
                     {% for error in form.description.errors %}
@@ -51,7 +50,7 @@
 
                 <!--Attach section-->
                 <div class="form-group">
-                    <div class="sub-heading">{% trans 'File or link attached' %}</div>
+                    <div class="sub-heading">{% trans 'Archivo adjunto o link' %}</div>
                     <div class="two-elements">{{ form.content }}
                         {% if form.content.errors %}
                             {% for error in form.content.errors %}
@@ -60,7 +59,7 @@
                         {% endif %}
                     </div>
 
-                    <p class="middle-element"><strong>{% trans 'or' %}</strong></p>
+                    <p class="middle-element"><strong>{% trans 'o escribe el link:' %}</strong></p>
 
                     <div class="two-elements">
                         {{ form.link }}
@@ -77,7 +76,7 @@
 
             <!-- Age tags section-->
             <div id="tags-ages">
-                <div class="sub-heading">{% trans 'Suggested ages' %}</div>
+                <div class="sub-heading">{% trans 'Edades sugeridas' %}</div>
                 {% for age in form.fields.suggested_ages.choices %}
                     <input type="checkbox" id="id_suggested_ages_{{ forloop.counter }}"
                            name="suggested_ages" value="{{ age.0 }}"
@@ -98,11 +97,11 @@
 
             <!-- Type tags section -->
             <div class="sub-heading display-in-line">
-                {% trans 'Type of the material' %}
+                {% trans 'Tipo de material' %}
             </div>
             <div class="sub-heading-helper display-in-line">
                 <a href="#" data-reveal-id="types-modal"
-                   id="show-types">{% trans 'administrate types' %}</a>
+                   id="show-types">{% trans 'agregar o quitar tipos de material ' %}</a>
             </div>
             <div id="tags-types">
                 {% for type in form.fields.types.choices %}
@@ -125,11 +124,11 @@
 
             <!-- Languages tags section -->
             <div class="sub-heading display-in-line">
-                {% trans 'Languages of the material' %}
+                {% trans 'Idiomas del material' %}
             </div>
             <div class="sub-heading-helper display-in-line">
                 <a href="#" data-reveal-id="languages-modal"
-                   id="show-languages">{% trans 'administrate languages' %}</a>
+                   id="show-languages">{% trans 'agregar o quitar idiomas' %}</a>
             </div>
             <div id="tags-languages">
                 {% for lang in form.fields.languages.choices %}
@@ -154,10 +153,10 @@
             <!-- Themes tags section -->
             <div id="tags-themes" class="col-xs-12 navbar navbar-default form-group">
 
-                <div class="sub-heading display-in-line">{% trans 'Themes & Topics' %}</div>
+                <div class="sub-heading display-in-line">{% trans 'Temas del material' %}</div>
                 <div class="sub-heading-helper display-in-line">
                     <a href="#" data-reveal-id="themes-modal"
-                       id="show-themes">{% trans 'administrate themes & topics' %}</a>
+                       id="show-themes">{% trans 'agregar o quitar temas' %}</a>
                 </div>
                 {{ form.themes }}
 
@@ -170,9 +169,9 @@
             <!-- Themes tags section -->
 
             <div class="two-buttons">
-                <button type="submit">{% trans 'Submit' %}</button>
+                <button type="submit">{% trans 'Guardar cambios' %}</button>
                 <button class="delete" type="button" id="delete-this-material"
-                        data-reveal-id="delete-material-modal">{% trans 'Delete' %}</button>
+                        data-reveal-id="delete-material-modal">{% trans 'Eliminar material' %}</button>
             </div>
         </form>
     </div>

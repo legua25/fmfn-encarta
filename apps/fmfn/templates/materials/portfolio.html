@@ -1,17 +1,18 @@
 {% extends 'base/base-2cols.html' %}
 {% load i18n %}
-{% block title %}{% trans 'Portfolio' %}{% endblock %}
+{% block title %}{% trans 'Favoritos' %}{% endblock %}
 {% block favoritos-active %}active{% endblock %}
 {% block canvas %}
     <div class="ninenty">
         <div class="material-list">
-            <div class="items-count"> {% trans 'showing items: ' %}{{ items.start_index }} -
-                {{ items.end_index }}{% trans ' of ' %}{{ items.paginator.count }}</div>
+            <div class="items-count"> {% trans 'mostrando : ' %}{{ items.start_index }} -
+                {{ items.end_index }}{% trans ' de ' %}{{ items.paginator.count }}</div>
             {% if not items %}
                 <div class="message">
                     <i class="fa fa-frown-o"></i>
                     <br>
-                    {% trans "You don't have any favorite yet" %}
+                    {% trans "Aún no has agregado ningún material favorito" %}
+
                 </div>
             {% endif %}
             {% for item in items %}
@@ -62,7 +63,7 @@
             {% endif %}
 
             <span class="current">
-            {% trans 'page ' %} {{ items.number }} {% trans ' of ' %} {{ items.paginator.num_pages }}
+            {% trans 'página ' %} {{ items.number }} {% trans ' de ' %} {{ items.paginator.num_pages }}
             </span>
 
             {% if items.has_next %}
