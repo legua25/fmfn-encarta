@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<h3>{% trans 'Comments of the week' %}</h3>
+<p>
+	{% blocktrans %}The following materials were commented this week. Click on one of them to see more details.{% endblocktrans %}
+</p>
+<ul>
+    {% for material in materials %}
+        <li><a href="{% url 'content' material.material.content_id %}">{{ material.material.title }}</a></li>
+    {% endfor %}
+
+</ul>
