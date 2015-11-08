@@ -8,7 +8,7 @@
     <div id="insert-report-area" class="form">
         {% csrf_token %}
         <input type="hidden" value="{{ material.id }}" name="report-material-id">
-        <div id="theme-error" class="alert-box alert"
+        <div id="report-error" class="alert-box alert"
              style="display: none;">{% trans 'Asegurate de llenar los campos' %}</div>
         <textarea id="report-content" cols="40"
                   rows="4" maxlength="500" style="resize: none;"
