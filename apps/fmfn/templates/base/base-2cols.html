@@ -8,7 +8,7 @@
         <a href="{% url 'portfolio:view' %}"><div class="navigation-item {% block favoritos-active %}{% endblock favoritos-active %}"><i class="fa fa-star"></i>{% trans 'Mis favoritos' %}</div></a>
         <a href="#"><div class="navigation-item {% block usuarios-active %}{% endblock usuarios-active %}"><i class="fa fa-users"></i>{% trans 'Usuarios' %}</div></a>
         <a href="{% url 'management:list' %}"><div class="navigation-item {% block errores-active %}{% endblock errores-active %}"><i class="fa fa-exclamation-triangle"></i>{% trans 'Reportes de error' %}</div></a>
-        <a href="#"><div class="navigation-item {% block estadisticas-active %}{% endblock estadisticas-active %}"><i class="fa fa-list-ol"></i>{% trans 'Estadisticas' %}</div></a>
+        <a href="#"><div class="navigation-item {% block estadisticas-active %}{% endblock estadisticas-active %}"><i class="fa fa-list-ol"></i>{% trans 'Estadísticas' %}</div></a>
         <a href="{% url 'users:view' user.id %}"><div class="navigation-item {% block cuenta-active %}{% endblock cuenta-active %}"><i class="fa fa-user"></i>{% trans 'Mi cuenta' %}</div></a>
         <a href="{% url 'content:create' %}"><div class="navigation-item {% block subir-active %}{% endblock subir-active %}"><i class="fa fa-upload"></i>{% trans 'Subir material' %}</div></a>
         <a href="{% url 'accounts:logout' %}" class="logout-link"><div class="navigation-item last"><i class="fa fa-sign-out"></i>{% trans 'Salir'%}</div></a>

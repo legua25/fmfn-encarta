@@ -13,11 +13,11 @@
     <div id="search-bar">
         <form action="{% url 'filter' %}" method="post" class="form">
             {% csrf_token %}
-            <div class="sub-heading-search">{% trans 'Do you know the title?' %}</div>
+            <div class="sub-heading-search">{% trans 'Si conoces el título, escríbelo:' %}</div>
             {{ form.search }}
 
             <div id="tags-ages">
-                <div class="sub-heading-search">{% trans 'Suggested ages' %}</div>
+                <div class="sub-heading-search">{% trans 'Selecciona una edad' %}</div>
                 {% for age in form.fields.grades.choices %}
                     <input type="checkbox"
                            id="id_suggested_ages_{{ forloop.counter }}"
@@ -31,7 +31,7 @@
             </div>
 
             <div id="tags-types">
-                <div class="sub-heading-search">{% trans 'Types of material' %}</div>
+                <div class="sub-heading-search">{% trans 'Selecciona un tipo de material' %}</div>
                 {% for type in form.fields.type.choices %}
                     <input type="checkbox"
                            id="id_types_{{ forloop.counter }}"
@@ -46,7 +46,7 @@
             </div>
 
             <div id="tags-languages">
-                <div class="sub-heading-search">{% trans 'Languages' %}</div>
+                <div class="sub-heading-search">{% trans 'Selecciona un idioma' %}</div>
                 {% for lang in form.fields.language.choices %}
                     <input type="checkbox"
                            id="id_languages_{{ forloop.counter }}"
@@ -62,10 +62,10 @@
             </div>
 
             <div id="tags-themes">
-                <div class="sub-heading-search">{% trans 'Themes & topics' %}</div>
+                <div class="sub-heading-search">{% trans 'Escribe un tema' %}</div>
                 {{ form.theme }}
             </div>
-            <button id="busqueda-material" type="submit">Buscar</button>
+            <button id="busqueda-material" type="submit">{%  trans 'Buscar' %}</button>
         </form>
     </div>
 
@@ -81,8 +81,10 @@
         <i class="fa fa-search"></i>
 
         <p class="text">
-            {% trans 'please input a query' %}
+            {% trans 'Para buscar escribe el título del material o selecciona algún tema, idioma, tipo o edad ' %}
         </p>
+
+
     </div>
 
 {% endblock canvas %}

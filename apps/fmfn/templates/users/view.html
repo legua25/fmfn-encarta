@@ -1,7 +1,7 @@
 {% extends 'base/base-2cols.html' %}
 {% load i18n %}
 {% block cuenta-active %}active{% endblock cuenta-active %}
-{% block title %}{% trans 'View User' %}{% endblock title %}
+{% block title %}{% trans 'Perfil de usuario' %}{% endblock title %}
 {% block canvas %}
     <div class="ninenty">
 
@@ -14,15 +14,15 @@
 
             <div class="info">
                 <dl>
-                    <dt>{% trans 'Full name' %}</dt>
+                    <dt>{% trans 'Nombre:' %}</dt>
                     <dd class="form-static">{{ u.get_full_name }}</dd>
-                    <dt>{% trans 'Email address' %}</dt>
+                    <dt>{% trans 'Correo electrónico' %}</dt>
                     <dd class="form-static">{{ u.email_address }}</dd>
                     <dt>{% trans 'Campus' %}</dt>
                     <dd class="form-static">{{ u.campus }}</dd>
 
                     <!-- Teaching grades section-->
-                    <div class="description emphasis">{% trans 'Teaching grades' %}</div>
+                    <div class="description emphasis">{% trans 'Grados que imparte' %}</div>
                     <div id="user-grades">
                         <div id="id_grades">
                             {% for grade in u.grades.all %}
@@ -38,7 +38,7 @@
                         <!-- Teaching grades section-->
                 </dl>
                 <hr>
-                <div class="action-profile"><a href="{% url 'users:edit' u.id %}" class="anchor-to-button">{% trans 'Edit information' %}</a></div>
+                <div class="action-profile"><a href="{% url 'users:edit' u.id %}" class="anchor-to-button">{% trans 'Editar información' %}</a></div>
             </div>
         </div>
     </div>

@@ -1,13 +1,13 @@
 {% extends 'base/base-2cols.html' %}
 {% load i18n widget_tweaks %}
 
-{% block title %}{% trans 'Edit User' %}{% endblock title %}
+{% block title %}{% trans 'Editar usuario' %}{% endblock title %}
 
 {% block canvas %}
     <div class="ninenty">
-        <div class="heading">{% trans 'Edit User' %}</div>
+        <div class="heading">{% trans 'Editar usuario' %}</div>
         <div class="description">
-            {% blocktrans with u.email_address as email %}You are editing the account of
+            {% blocktrans with u.email_address as email %}Estás editando la cuenta:
                 <strong>{{ email }}</strong>{% endblocktrans %}
         </div>
 
@@ -27,11 +27,11 @@
 
 
                 <div id="user-photo" class="two-elements">
-                    <div class="description emphasis">{% trans 'Profile picture' %}</div>
+                    <div class="description emphasis">{% trans 'Foto de perfil' %}</div>
                     {{ form.photo | add_class:'form-control' }}
                 </div>
                 <div id="user-password" class="two-elements-exact">
-                    <div class="description emphasis">{% trans 'Password' %}</div>
+                    <div class="description emphasis">{% trans 'Contraseña' %}</div>
                     {{ form.password | attr:'required' }}<br/>
                     {{ form.repeat | attr:'required' }}
                 </div>
@@ -40,10 +40,10 @@
             {% if form.is_managed %}
                 <div id="advanced">
 
-                    <div class="sub-heading">{% trans 'Advanced Information' %}</div>
+                    <div class="sub-heading">{% trans 'Información avanzada' %}</div>
 
                     <!-- General info section -->
-                    <div class="description emphasis">{% trans 'General information' %}</div>
+                    <div class="description emphasis">{% trans 'Información General' %}</div>
                     <div id="user-name">
                         <div id="user-first-name"
                              class="three-elements">{{ form.first_name | add_class:'error' | attr:'required' }}</div>
@@ -52,19 +52,19 @@
                         <div id="user-mother-family-name"
                              class="three-elements">{{ form.mother_family_name | add_class:'error' }}</div>
                     </div>
-                    <div class="description emphasis">{% trans 'E-mail' %}</div>
+                    <div class="description emphasis">{% trans 'Correo electrónico' %}</div>
                     <div id="user-email" class="element-in-block">
                         {{ form.email_address | add_class:'form-control' }}
                     </div>
                     <!-- General info section -->
 
                     <!--Campus section-->
-                    <div class="description emphasis">{% trans 'Campus information' %}</div>
+                    <div class="description emphasis">{% trans 'Campus en el que imparte:' %}</div>
                     {{ form.campus | add_class:'form-control' | add_class:'element-in-block' }}
                     <!--Campus section-->
 
                     <!--Rol section-->
-                    <div class="description emphasis">{% trans 'Role information' %}</div>
+                    <div class="description emphasis">{% trans 'Rol del usuario' %}</div>
                     <div id="id_role">
                         {% for role in form.fields.role.choices %}
                             <input type="radio" id="id_role_{{ forloop.counter }}" name="role"
@@ -79,7 +79,7 @@
                     <!--Rol section-->
 
                     <!-- Teaching grades section-->
-                    <div class="description emphasis">{% trans 'Teaching grades' %}</div>
+                    <div class="description emphasis">{% trans 'Grados que imparte' %}</div>
                     <div id="user-grades">
                         <div id="id_grades">
                             {% for grade in form.fields.grades.choices %}
@@ -98,7 +98,7 @@
                 </div>
             {% endif %}
 
-            <button class="btn btn-primary" type="submit">{% trans 'Save' %}</button>
+            <button class="btn btn-primary" type="submit">{% trans 'Guardar' %}</button>
 
         </form>
     </div>
