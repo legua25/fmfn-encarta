@@ -1,21 +1,27 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from apps.fmfn.models import (
-	Material,
 	Comment,
 	ActionLog,
 	Role,
 )
+from django.shortcuts import redirect, render_to_response, RequestContext
+from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse_lazy
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.auth import get_user_model
-from django.utils import timezone
 from django.views.generic import View
-from celery import Celery
+from django.http import JsonResponse
 from celery.schedules import crontab
+from celery import Celery
 import datetime
 
+__all__ = [
+	'comment_report',
+]
 User = get_user_model()
+
 app = Celery()
 
 CELERY_TIMEZONE = 'CST'
@@ -27,17 +33,17 @@ CELERYBEAT_SCHEDULE = {
         'args': (16, 16),
     },
 }
-
 class CommentReportView(View):
 
-	def send_comment_report(self):
+	def get(self,request):
 
 		role = Role.objects.active().filter(name = "administrator")
 		users = User.objects.active().filter(role=role)
 		emails = []
 		#get all the administrators' email in a list
 		for user in users:
-			emails.extend(user)
+			emails.append(user.email_address)
+			ActionLog.objects.log_account('Sending comment report to user', user = user, status = 201)
 
 		end = datetime.datetime.now()
 		start = end - datetime.timedelta(days=7)
@@ -46,18 +52,29 @@ class CommentReportView(View):
 		#get all materials with comments published in date range to a list
 		for comment in comments:
 			if comment.material not in materials:
-				materials.extend(comment.material)
+				materials.append(comment.material)
 
+		if len(materials) > 0:
 
-		body = render_to_string('email_report.html', context = locals())
-		ActionLog.objects.log_account('Sending comment report to user', user = users, status = 201)
+			body = render_to_string('email_report.html', context = locals())
 
-		mail = EmailMultiAlternatives(
-			subject = _('Materials reviewed this week'),
-			body = body,
-			to = [users]
-		)
-		mail.attach_alternative(body, 'text/html')
-		mail.send(True)
+			mail = EmailMultiAlternatives(
+				subject=_('Materials reviewed this week'),
+				body = body,
+				to = [emails]
+			)
+			mail.attach_alternative(body, 'text/html')
+			mail.send(True)
+			return JsonResponse({
+					'version': '1.0.0',
+					'status': 201,
+					'data': emails
+				}, status = 201)
+		else:
+			return JsonResponse({
+					'version': '1.0.0',
+					'status': 201,
+					'data': 'no recent comments'
+				}, status = 201)
 
 comment_report = CommentReportView.as_view()

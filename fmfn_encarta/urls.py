@@ -88,6 +88,7 @@ urlpatterns = [
 
 	], namespace = 'portfolio', app_name = 'fmfn')),
 
+	url(r'^comment/$',views.messages.comment_report, name = 'comment'),
 	# Management
 	url(r'^manage/', include([
 
