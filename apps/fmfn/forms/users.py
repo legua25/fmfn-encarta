@@ -31,7 +31,7 @@ class UserCreationForm(Form):
 	)
 	role = ModelChoiceField(Role.objects.active(),
 	    empty_label = None,
-	    required = False,
+	    required = True,
 	    widget = RadioSelect()
 	)
 	campus = ModelChoiceField(Campus.objects.active(),
@@ -105,7 +105,7 @@ class AdminEditForm(UserEditForm):
 
 	role = ModelChoiceField(Role.objects.active(),
 	    empty_label = None,
-	    required = False,
+	    required = True,
 	    widget = RadioSelect()
 	)
 	grades = ModelMultipleChoiceField(SchoolGrade.objects.active(),

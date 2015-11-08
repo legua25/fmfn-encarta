@@ -57,10 +57,14 @@
                 <div class="sub-heading">{% trans 'Seleccione el rol del usuario ' %}</div>
                 <div id="user-roles">
                     <div id="id_role">
-                        {{ form.role.errors }}
+                        {% if form.role.errors %}
+                            {% for error in form.role.errors %}
+                                <div class="alert-box alert">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
                         {% for role in form.fields.role.choices %}
                             <input type="radio" id="id_role_{{ forloop.counter }}" name="role"
-                                   value="{{ role.0 }}" style="visibility: hidden;" required/>
+                                   value="{{ role.0 }}" style="visibility: hidden;"/>
                             <label for="id_role_{{ forloop.counter }}" class="checkbox">
                                 {% autoescape off %}{{ role.1 }}{% endautoescape %}
                             </label>
@@ -108,7 +112,8 @@
             <!-- User picture section -->
 
 
-            <button class="btn btn-primary" type="submit" style="margin-top: 30px;">{% trans 'Crear nuevo usuario' %}</button>
+            <button class="btn btn-primary" type="submit"
+                    style="margin-top: 30px;">{% trans 'Crear nuevo usuario' %}</button>
         </form>
     </div>
 {% endblock %}
