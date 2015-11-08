@@ -25,6 +25,7 @@
                     <th>Email</th>
                     <th>Campus</th>
                     <th>Rol</th>
+                    <th>Perfil</th>
                     <th>Editar</th>
                 </tr>
                 </thead>
@@ -37,6 +38,8 @@
                         <td>{{ u.email_address }} </td>
                         <td>{{ u.campus }} </td>
                         <td>{{ u.role }}</td>
+                        <td style="text-align: center"><a href="{% url 'users:view' u.id %}"><i
+                                class="fa fa-eye"></i></a></td>
                         <td style="text-align: center"><a href="{% url 'users:edit' u.id %}"><i
                                 class="fa fa-pencil"></i></a></td>
                     </tr>
