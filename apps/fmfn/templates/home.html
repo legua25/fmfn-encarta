@@ -21,7 +21,7 @@
                 {% for age in form.fields.grades.choices %}
                     <input type="checkbox"
                            id="id_suggested_ages_{{ forloop.counter }}"
-                           name="suggested_ages" value="{{ age.0 }}"
+                           name="grades" value="{{ age.0 }}"
                            style="display: none;"/>
                     <label for="id_suggested_ages_{{ forloop.counter }}" class="checkbox">
                         {% blocktrans with age.1|title as name %}
@@ -35,7 +35,7 @@
                 {% for type in form.fields.type.choices %}
                     <input type="checkbox"
                            id="id_types_{{ forloop.counter }}"
-                           name="types" value="{{ type.0 }}" style="display: none"/>
+                           name="type" value="{{ type.0 }}" style="display: none"/>
                     <label for="id_types_{{ forloop.counter }}"
                            class="checkbox">
                         {% blocktrans with type.1|title as name %}
@@ -50,7 +50,7 @@
                 {% for lang in form.fields.language.choices %}
                     <input type="checkbox"
                            id="id_languages_{{ forloop.counter }}"
-                           name="languages" value="{{ lang.0 }}"
+                           name="language" value="{{ lang.0 }}"
                            style="display: none"/>
                     <label for="id_languages_{{ forloop.counter }}"
                            class="checkbox">
@@ -67,11 +67,12 @@
             </div>
             <button id="busqueda-material" type="submit">Buscar</button>
         </form>
+        <input type="hidden" value="1" name="prefix-url">
     </div>
 
     <div id="results" style="display: none">
         {% block results %}
-            <div class="ninenty">
+            <div id="results-content" class="ninenty">
                 Ejemplo de material
             </div>
         {% endblock %}
@@ -87,28 +88,6 @@
 
 {% endblock canvas %}
 
-{% block js-inline %}
-    $(document).ready(function(){
-    $("form").submit(function(e) {
-    e.preventDefault();
-    formData = {
-    filter: $("#title").val(),
-    csrfmiddlewaretoken:'{{ csrf_token }}'
-    };
-
-    console.log(JSON.stringify(formData));
-    URL = $(this).attr("action");
-
-    $.ajax(URL, {
-    method: 'POST',
-    data: formData,
-    success: function (data, textStatus, jqXHR) {
-    console.log(JSON.stringify(data));
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-    console.log("fail");
-    }
-    });
-    });
-    });
-{% endblock %}
+{% block js_footer %}
+    <script src="{% static 'js/search.js' %}"></script>
+{% endblock js_footer %}

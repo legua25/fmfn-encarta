@@ -153,6 +153,47 @@ class _UserTest(TestCase):
 			self.assertEqual(log.category, 1)
 			self.assertIn(log.status, [401, 403])
 
+
+	# def test_list_users(self):
+	# 	"""
+	# 		Generates a get request to list all users
+	# 	"""
+	#
+	# 	log_count = len(ActionLog.objects.active())
+	# 	response = self.client.get(reverse_lazy('users:list'), follow = True)
+	#
+	# 	# Check status code
+	# 	self.assertEqual(response.status_code, 200)
+	#
+	# 	# Check the action log
+	# 	# self.assertEqual(len(ActionLog.objects.active()), (log_count + 1))
+	# 	# self.assertEqual(ActionLog.objects.latest('action_date').category, 1)
+	# 	# self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+	#
+	# def test_filter_users(self):
+	#
+	# 	User.objects.create_user(
+	# 		first_name = 'John',
+	# 		email_address = 'test@example.com',
+	# 		password = 'asdfg',
+	# 		role = Role.objects.get(id = 2),
+	# 		campus = Campus.objects.get(id = 1)
+	# 	)
+	#
+	# 	log_count = len(ActionLog.objects.active())
+	# 	response = self.client.get(reverse_lazy('users:api', data = { 'filter': 'john' }, follow = True))
+	#
+	# 	# Check status code
+	# 	self.assertEqual(response.status_code, 200)
+	#
+	# 	# Check action log
+	# 	# Check the action log
+	# 	# self.assertTrue(bool(ActionLog.objects.active()))
+	# 	# self.assertEqual(len(ActionLog.objects.active()), (log_count + 1))
+	# 	# self.assertEqual(ActionLog.objects.latest('action_date').category, 4)
+	# 	# self.assertEqual(ActionLog.objects.latest('action_date').status, 200)
+
+
 class AdminUserTest(_UserTest):
 	"""
 		Represents the basic data of the user to be tested:

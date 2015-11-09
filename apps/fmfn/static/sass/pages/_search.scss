@@ -24,7 +24,7 @@
       padding-bottom: 7px;
     }
 
-    label{
+    label {
       width: 40%;
       margin: 5px 5px 5px 5px;
       text-align: center;
@@ -44,6 +44,31 @@
     width: 66.66%;
     min-height: 100%;
     overflow-y: scroll;
+    max-height: 100%;
+    #results-content {
+      .material-card {
+        padding-top: 15px;
+        border-bottom: solid 1px $wet-cement;
+        .title {
+          margin-top: 20px;
+          font-size: 18px;
+          font-weight: $bold;
+        }
+        .description {
+          font-size: 15px;
+          font-weight: $normal;
+          color: lighten($main-black, 20%);
+        }
+        .material-tags{
+          margin-right: 3px;
+          margin-top: 3px;
+          display: inline-block;
+        }
+        .stars{
+          display: block;
+        }
+      }
+    }
   }
 
   #make-search {

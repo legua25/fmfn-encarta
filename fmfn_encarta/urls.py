@@ -69,8 +69,8 @@ urlpatterns = [
 	# User management
 	url(r'^users/', include([
 
-	# 	url(r'^$', None, name = 'list'),  # GET
-	# 	url(r'^api/$', None, name = 'filter'),  # POST
+	 	url(r'^$', views.users.search, name = 'list'),  # GET
+	 	url(r'^api/$', views.users.search, name = 'filter'),  # POST
 		url(r'^create/$', views.users.create, name = 'create'),  # GET, POST
 	 	url(r'^(?P<user_id>[\d]+)/', include([
 

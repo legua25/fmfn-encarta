@@ -4,7 +4,7 @@
     <div id="navigation">
         <a href="{% url 'search' %}"><div class="navigation-item {% block busqueda-active %}{% endblock %}"><i class="fa fa-search"></i>  Busqueda</div></a>
         <a href="{% url 'portfolio:view' %}"><div class="navigation-item {% block favoritos-active %}{% endblock %}"><i class="fa fa-star"></i> Mis favoritos</div></a>
-        <a href="#"><div class="navigation-item {% block usuarios-active %}{% endblock %}"><i class="fa fa-users"></i> Usuarios</div></a>
+        <a href="{% url 'users:list' %}"><div class="navigation-item {% block usuarios-active %}{% endblock %}"><i class="fa fa-users"></i> Usuarios</div></a>
         <a href="#"><div class="navigation-item {% block estadisticas-active %}{% endblock %}"><i class="fa fa-list-ol"></i> Estadisticas</div></a>
         <a href="{% url 'users:view' user.id %}"><div class="navigation-item {% block cuenta-active %}{% endblock %}"><i class="fa fa-user"></i> Mi cuenta</div></a>
         <a href="{% url 'content:create' %}"><div class="navigation-item {% block subir-active %}{% endblock %}"><i class="fa fa-upload"></i> Subir material</div></a>
