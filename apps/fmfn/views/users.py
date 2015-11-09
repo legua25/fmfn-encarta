@@ -183,8 +183,9 @@ class SearchView(View):
 	@method_decorator(login_required)
 	@method_decorator(role_required('parent'))
 	def get(self, request):
-		users = User.objects.all()
+		users = User.objects.active()
 		return render_to_response('users/list.html', context = RequestContext(request, locals()))
+
 
 	# @method_decorator(login_required)
 	# @method_decorator(ajax_required)
