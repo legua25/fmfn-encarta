@@ -2,7 +2,7 @@
     {
         "fields": {
             "active": true,
-            "name": "Didactic"
+            "name": "Didáctico"
         },
         "model": "fmfn.Type",
         "pk": 1
@@ -10,7 +10,7 @@
     {
         "fields": {
             "active": true,
-            "name": "Book"
+            "name": "Libro"
         },
         "model": "fmfn.Type",
         "pk": 2

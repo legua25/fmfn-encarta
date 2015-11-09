@@ -2,7 +2,7 @@
 	{
 		"fields": {
 			"active": true,
-			"name": "Calculus"
+			"name": "Matemáticas"
 		},
 		"model": "fmfn.Theme",
 		"pk": 1
@@ -10,7 +10,7 @@
 	{
 		"fields": {
 			"active": true,
-			"name": "Cuisine"
+			"name": "Filosofía"
 		},
 		"model": "fmfn.Theme",
 		"pk": 2

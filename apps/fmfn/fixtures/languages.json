@@ -2,13 +2,13 @@
 	{
 		"pk": 1,
 		"model": "fmfn.Language",
-		"fields": { "name": "english" }
+		"fields": { "name": "Inglés" }
 	},
 	{
 		"pk": 2,
 		"model": "fmfn.Language",
 		"fields": {
-			"name": "spanish"
+			"name": "Español"
 		}
 	}
 ]
