@@ -38,13 +38,5 @@
 			"min_age": 0,
 			"max_age": 0
 		}
-	},
-	{
-		"model": "fmfn.SchoolGrade", "pk": 6,
-		"fields": {
-			"name": "Preparatoria",
-			"min_age": 0,
-			"max_age": 0
-		}
 	}
 ]
