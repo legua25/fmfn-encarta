@@ -37,6 +37,12 @@ class CreateUserView(View):
 
 			# Retrieve the user, set the password, and create him/her
 			user, password = form.instance, form.cleaned_data['password']
+			user.save()
+
+			user.refresh_from_db()
+			grades = form.cleaned_data['grades']
+
+			user.grades = grades
 			user.set_password(password)
 			user.save()
 
