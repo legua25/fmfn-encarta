@@ -11,9 +11,8 @@
             {% endfor %}
         {% endif %}
 
-        <div class="title"> Cambia tu contraseña</div>
-        <div class="message"> A continuacion agrega tu nueva contraseña.
-            Ten en cuenta las medidas de seguridad y recomencaciones de password.
+        <div class="title"> {% trans 'Cambia tu contraseña' %}</div>
+        <div class="heading" style="color: white;"> {% trans 'A continuacion agrega tu nueva contraseña. Ten en cuenta las medidas de seguridad y recomendaciones de password.' %}
         </div>
         <form action="{% url 'accounts:reset' user_id token %}" method="post">
             {% csrf_token %}
@@ -21,7 +20,7 @@
             <div class="form-group">{{ form.repeat | add_class:'form-control' | attr:'required' }}</div>
             <hr/>
             <div class="col-xs-offset-5">
-                <button class="btn btn-primary" type="submit">{% trans 'Reset' %}</button>
+                <button class="btn btn-primary" type="submit">{% trans 'Cambiar' %}</button>
             </div>
         </form>
     </div>

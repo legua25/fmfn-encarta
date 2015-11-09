@@ -34,12 +34,12 @@
             {% if material.content %}
                 <a href="{% url 'content:download' content_id %}" class="link-visit" target="_blank"><i
                         class="fa fa-floppy-o"></i>
-                    {% trans 'download content' %}</a>
+                    {% trans 'descargar material' %}</a>
             {% endif %}
 
             {% if material.link %}
                 <a href="{{ material.link }}" class="link-visit" target="_blank"><i class="fa fa-external-link"></i>
-                    {% trans 'visit the link' %}</a>
+                    {% trans 'ingresar al link del material' %}</a>
             {% endif %}
 
             <input type="hidden" value="{% url 'portfolio:edit' content_id %}" name="put-tag">
@@ -48,22 +48,20 @@
                 {% csrf_token %}
                 {% if not in_portfolio %}
                     <a class="add-favorites" id="add-portfolio"><i
-                            class="fa fa-heart-o"></i>{% trans 'add to favorites' %}</a>
+                            class="fa fa-heart-o"></i>{% trans 'agregar a favoritos' %}</a>
                 {% endif %}
 
                 {% if in_portfolio %}
                     <a class="remove-favorites" id="remove-portfolio"><i
-                            class="fa fa-heart"></i>{% trans 'remove from favorites' %}</a>
+                            class="fa fa-heart"></i>{% trans 'eliminar de favoritos ' %}</a>
                 {% endif %}
-
-
             </div>
 
-            <a href="#" class="error-report"><i class="fa fa-exclamation"></i>{% trans 'report error' %}</a>
+            <a href="#" class="error-report" id="show-report-material"><i class="fa fa-exclamation"></i>{% trans 'reportar error' %}</a>
 
             {% if user|has_role:'content manager' %}
                 <a href="{% url 'content:edit' content_id %}" class="link-visit"><i
-                        class="fa fa-pencil"></i>{% trans 'edit material' %}</a>
+                        class="fa fa-pencil"></i>{% trans 'editar material' %}</a>
             {% endif %}
 
             <hr>
@@ -82,7 +80,7 @@
             {% if not has_commented %}
                 {% if user|has_role:'teacher' %}
                     <div class="form">
-                        <button id="leave-comment">{% trans 'leave a comment' %}</button>
+                        <button id="leave-comment">{% trans 'escribe un comentario' %}</button>
                     </div>
                 {% endif %}
             {% endif %}
@@ -95,16 +93,16 @@
                 <input type="hidden" id="count">
 
                 <div class="row lead rating">
-                    <span>{% trans 'star rating:' %}</span>
+                    <span>{% trans 'Selecciona la calificación:' %}</span>
 
                     <div id="stars" class="starrr"></div>
                 </div>
                 <div id="comment-error" class="alert-box alert"
-                     style="display: none;">{% trans 'Please be sure to fill the field' %}</div>
+                     style="display: none;">{% trans 'Por favor, asegúrate de completar todos los campos' %}</div>
                     <textarea id="comment-content" cols="40"
                               rows="4" maxlength="500" style="resize: none;"
-                              placeholder="{% trans 'Tell us about this material' %}"></textarea>
-                <button id="send-comment">{% trans 'Comment' %}</button>
+                              placeholder="{% trans 'Cuéntanos de este material' %}"></textarea>
+                <button id="send-comment">{% trans 'Guardar Comentario' %}</button>
                 <hr>
             </div>
             <div>
@@ -160,8 +158,8 @@
                     </div>
                 {% else %}
                     <div id="material-comments">
-                        <div class="sub-heading">Comments</div>
-                        <div class="no-comments">{% trans 'This material has no comments yet' %}</div>
+                        <div class="sub-heading">{%  trans 'Comentarios' %}</div>
+                        <div class="no-comments">{% trans 'Este material aún no tiene comentarios' %}</div>
                     </div>
                 {% endif %}
             </div>
@@ -172,4 +170,9 @@
 {% block js_footer %}
     <script src="{% static 'js/rating.js' %}"></script>
     <script src="{% static 'js/portfolio.js' %}"></script>
-{% endblock %}
+    <script src="{% static 'js/reports.js' %}"></script>
+{% endblock js_footer %}
+
+{% block modals %}
+    {% include "modals/reportsModals.html" %}
+{% endblock modals %}

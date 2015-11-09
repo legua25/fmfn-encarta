@@ -8,7 +8,7 @@
 {% block canvas %}
     <div class="ninenty">
         <div class="heading">
-            {% trans 'Create User Account' %}
+            {% trans 'Nueva cuenta de usuario' %}
         </div>
 
         {% if form.non_field_errors %}
@@ -21,7 +21,7 @@
             {% csrf_token %}
             <!-- General info section -->
             <div id="general">
-                <div class="sub-heading">{% trans 'General Information' %}</div>
+                <div class="sub-heading">{% trans 'Información general' %}</div>
                 <div id="user-first-name"
                      class="three-elements">{{ form.first_name | add_class:'error' | attr:'required' }}</div>
                 <div id="user-father-family-name"
@@ -31,7 +31,7 @@
                 <!-- General info section -->
 
                 <!--Password section-->
-                <div class="sub-heading">{% trans 'Password' %}</div>
+                <div class="sub-heading">{% trans 'Contraseña' %}</div>
                 <div id="user-password">
                     {{ form.password | add_class:'error element-in-block' | attr:'required' }}
                     {{ form.repeat | add_class:'error element-in-block' | attr:'required' }}
@@ -39,14 +39,14 @@
                 <!--Password section-->
 
                 <!--User-mail section-->
-                <div class="sub-heading">{% trans 'Email' %}</div>
+                <div class="sub-heading">{% trans 'Correo electrónico' %}</div>
                 <div id="user-email" class="none">
                     {{ form.email_address.errors }}{{ form.email_address | add_class:'error element-in-block' | attr:'required' }}
                 </div>
                 <!--User-mail section-->
 
                 <!--Campus section-->
-                <div class="sub-heading">{% trans 'Select the campus of the user' %}</div>
+                <div class="sub-heading">{% trans 'Seleccione el campus del usuario' %}</div>
                 <div id="user-campus">
                     {{ form.campus.errors }}
                     {{ form.campus | add_class:'error element-in-block' | attr:'required' }}
@@ -54,13 +54,17 @@
                 <!--Campus section-->
 
                 <!--Rol section-->
-                <div class="sub-heading">{% trans 'Select the role of user' %}</div>
+                <div class="sub-heading">{% trans 'Seleccione el rol del usuario ' %}</div>
                 <div id="user-roles">
                     <div id="id_role">
-                        {{ form.role.errors }}
+                        {% if form.role.errors %}
+                            {% for error in form.role.errors %}
+                                <div class="alert-box alert">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
                         {% for role in form.fields.role.choices %}
                             <input type="radio" id="id_role_{{ forloop.counter }}" name="role"
-                                   value="{{ role.0 }}" style="visibility: hidden;" required/>
+                                   value="{{ role.0 }}" style="visibility: hidden;"/>
                             <label for="id_role_{{ forloop.counter }}" class="checkbox">
                                 {% autoescape off %}{{ role.1 }}{% endautoescape %}
                             </label>
@@ -71,7 +75,7 @@
             </div>
 
             <!-- Teaching grades section-->
-            <div class="sub-heading">{% trans 'Select the teaching grades of user' %}</div>
+            <div class="sub-heading">{% trans 'Seleccione los grados que imparte' %}</div>
             <div id="user-grades">
                 <div id="id_grades">
                     {% if form.grades.errors %}
@@ -96,7 +100,7 @@
             <!-- Teaching grades section -->
 
             <!-- User picture section -->
-            <div class="sub-heading">{% trans 'Select the picture of user' %}</div>
+            <div class="sub-heading">{% trans 'Seleccione la foto del usuario' %}</div>
             <div id="user-profile-photo" class="col-xs-12 form-group">
                 {% if form.photo.errors %}
                     {% for error in form.photo.errors %}
@@ -108,7 +112,8 @@
             <!-- User picture section -->
 
 
-            <button class="btn btn-primary" type="submit" style="margin-top: 30px;">{% trans 'Create user' %}</button>
+            <button class="btn btn-primary" type="submit"
+                    style="margin-top: 30px;">{% trans 'Crear nuevo usuario' %}</button>
         </form>
     </div>
 {% endblock %}

@@ -1,9 +1,15 @@
 .login {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 35%;
+  //top: 50%;
+  //left: 50%;
+  //transform: translate(-50%, -50%);position:absolute; /*it can be fixed too*/
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 400px;
+  height: 400px;
   @include border-top-radius(3px);
   @include border-right-radius(3px);
   @include border-bottom-radius(3px);
@@ -41,7 +47,7 @@
     @include border-left-radius(3px);
   }
 
-  .description{
+  .description {
     color: white;
     font-weight: $light;
     width: 94%;
@@ -50,13 +56,11 @@
   }
 
   input[type="text"],
-  input[type="password"]
-  {
+  input[type="password"] {
     border: none;
   }
 
-  .message
-  {
+  .message {
     color: white;
     font-weight: $light;
     padding: 20px 20px 20px 20px;
@@ -67,7 +71,7 @@
     border-top: solid white 2px;
   }
 
-  a{
+  a {
     margin-left: 5%;
   }
 }

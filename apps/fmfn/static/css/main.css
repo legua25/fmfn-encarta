@@ -12125,7 +12125,15 @@ html, body {
   min-height: 100%;
 }
 
-/* line 89, ../sass/helpers/_base.scss */
+/* line 88, ../sass/helpers/_base.scss */
+.ninenty-no-bg {
+  width: 95%;
+  padding: 20px 20px 20px 20px;
+  margin-left: 2.5%;
+  min-height: 100%;
+}
+
+/* line 95, ../sass/helpers/_base.scss */
 .tag {
   display: inline-block;
   background-color: #0078a0;
@@ -12146,20 +12154,20 @@ html, body {
   margin: 3px 3px 3px 3px;
 }
 
-/* line 109, ../sass/helpers/_base.scss */
+/* line 115, ../sass/helpers/_base.scss */
 .description {
   color: #5e5e5e;
   font-weight: 300;
 }
 
-/* line 115, ../sass/helpers/_base.scss */
+/* line 121, ../sass/helpers/_base.scss */
 .emphasis {
   font-weight: 700;
   padding-top: 15px;
   padding-bottom: 5px;
 }
 
-/* line 121, ../sass/helpers/_base.scss */
+/* line 127, ../sass/helpers/_base.scss */
 .sub-heading {
   font-size: 20px;
   font-weight: 300;
@@ -12169,47 +12177,47 @@ html, body {
   padding-top: 30px;
 }
 
-/* line 130, ../sass/helpers/_base.scss */
+/* line 136, ../sass/helpers/_base.scss */
 .display-in-line {
   display: inline-block;
 }
 
-/* line 134, ../sass/helpers/_base.scss */
+/* line 140, ../sass/helpers/_base.scss */
 .sub-heading-helper {
   width: 50%;
 }
 
-/* line 140, ../sass/helpers/_base.scss */
+/* line 146, ../sass/helpers/_base.scss */
 .form {
   width: 100%;
 }
-/* line 142, ../sass/helpers/_base.scss */
+/* line 148, ../sass/helpers/_base.scss */
 .form .three-elements {
   width: 33%;
   display: inline-block;
   padding-right: 5px;
 }
-/* line 147, ../sass/helpers/_base.scss */
+/* line 153, ../sass/helpers/_base.scss */
 .form .element-in-block {
   width: 33%;
   display: block;
   margin-bottom: 10px;
 }
-/* line 153, ../sass/helpers/_base.scss */
+/* line 159, ../sass/helpers/_base.scss */
 .form .two-elements {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
   width: 41.66667%;
   float: left;
 }
-/* line 157, ../sass/helpers/_base.scss */
+/* line 163, ../sass/helpers/_base.scss */
 .form .two-elements-exact {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
   width: 50%;
   float: left;
 }
-/* line 161, ../sass/helpers/_base.scss */
+/* line 167, ../sass/helpers/_base.scss */
 .form .middle-element {
   padding-left: 0.9375rem;
   padding-right: 0.9375rem;
@@ -12217,32 +12225,32 @@ html, body {
   float: left;
   text-align: center;
 }
-/* line 166, ../sass/helpers/_base.scss */
+/* line 172, ../sass/helpers/_base.scss */
 .form button {
   margin-top: 20px;
   width: 100%;
   color: white;
 }
-/* line 172, ../sass/helpers/_base.scss */
+/* line 178, ../sass/helpers/_base.scss */
 .form .two-buttons {
   width: 100%;
   display: block;
   text-align: center;
   margin-top: 20px;
 }
-/* line 177, ../sass/helpers/_base.scss */
+/* line 183, ../sass/helpers/_base.scss */
 .form .two-buttons button {
   display: inline-block;
   width: 47%;
   margin-right: 2%;
   color: white;
 }
-/* line 182, ../sass/helpers/_base.scss */
+/* line 188, ../sass/helpers/_base.scss */
 .form .two-buttons button.delete {
   background-color: #b30000;
 }
 
-/* line 189, ../sass/helpers/_base.scss */
+/* line 195, ../sass/helpers/_base.scss */
 .error {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
@@ -12254,12 +12262,12 @@ html, body {
   border-top-left-radius: 3px;
 }
 
-/* line 196, ../sass/helpers/_base.scss */
+/* line 202, ../sass/helpers/_base.scss */
 select[multiple] {
   height: 0;
 }
 
-/* line 200, ../sass/helpers/_base.scss */
+/* line 206, ../sass/helpers/_base.scss */
 .anchor-to-button {
   padding: 10px 50px 10px 50px;
   text-align: center;
@@ -12274,17 +12282,38 @@ select[multiple] {
   border-top-left-radius: 3px;
   color: white;
 }
-/* line 209, ../sass/helpers/_base.scss */
+/* line 215, ../sass/helpers/_base.scss */
 .anchor-to-button:hover {
   color: white;
 }
 
-/* line 214, ../sass/helpers/_base.scss */
+/* line 220, ../sass/helpers/_base.scss */
 .message {
   font-weight: 700;
   color: #EBEBEB;
   font-size: 50px;
   text-align: center;
+}
+
+/* line 228, ../sass/helpers/_base.scss */
+.error-safari input[type="text"],
+.error-safari input[type="password"],
+.error-safari input[type="date"],
+.error-safari input[type="datetime"],
+.error-safari input[type="datetime-local"],
+.error-safari input[type="month"],
+.error-safari input[type="week"],
+.error-safari input[type="email"],
+.error-safari input[type="number"],
+.error-safari input[type="search"],
+.error-safari input[type="tel"],
+.error-safari input[type="time"],
+.error-safari input[type="url"],
+.error-safari input[type="color"],
+.error-safari textarea {
+  border-color: #DF2828;
+  background-color: rgba(223, 40, 40, 0.4);
+  color: white;
 }
 
 /* line 1, ../sass/helpers/_forms.scss */
@@ -12386,43 +12415,15 @@ button {
   width: 66.66%;
   min-height: 100%;
   overflow-y: scroll;
-  max-height: 100%;
 }
 /* line 49, ../sass/pages/_search.scss */
-#canvas #results #results-content .material-card {
-  padding-top: 15px;
-  border-bottom: solid 1px #EBEBEB;
-}
-/* line 52, ../sass/pages/_search.scss */
-#canvas #results #results-content .material-card .title {
-  margin-top: 20px;
-  font-size: 18px;
-  font-weight: 700;
-}
-/* line 57, ../sass/pages/_search.scss */
-#canvas #results #results-content .material-card .description {
-  font-size: 15px;
-  font-weight: 400;
-  color: #777777;
-}
-/* line 62, ../sass/pages/_search.scss */
-#canvas #results #results-content .material-card .material-tags {
-  margin-right: 3px;
-  margin-top: 3px;
-  display: inline-block;
-}
-/* line 67, ../sass/pages/_search.scss */
-#canvas #results #results-content .material-card .stars {
-  display: block;
-}
-/* line 74, ../sass/pages/_search.scss */
 #canvas #make-search {
   padding-top: 70px;
   font-size: 70px;
   text-align: center;
   color: #cdcdcd;
 }
-/* line 79, ../sass/pages/_search.scss */
+/* line 54, ../sass/pages/_search.scss */
 #canvas #make-search .text {
   text-align: center;
   vertical-align: middle;
@@ -12433,10 +12434,13 @@ button {
 /* line 1, ../sass/pages/_login.scss */
 .login {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 35%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 400px;
+  height: 400px;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
@@ -12446,7 +12450,7 @@ button {
   border-bottom-left-radius: 3px;
   border-top-left-radius: 3px;
 }
-/* line 12, ../sass/pages/_login.scss */
+/* line 18, ../sass/pages/_login.scss */
 .login .title {
   text-align: center;
   text-transform: uppercase;
@@ -12458,18 +12462,18 @@ button {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
 }
-/* line 24, ../sass/pages/_login.scss */
+/* line 30, ../sass/pages/_login.scss */
 .login .content {
   padding: 15px 15px 15px 15px;
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
 }
-/* line 30, ../sass/pages/_login.scss */
+/* line 36, ../sass/pages/_login.scss */
 .login button {
   width: 100%;
   color: white;
 }
-/* line 35, ../sass/pages/_login.scss */
+/* line 41, ../sass/pages/_login.scss */
 .login .alert-box {
   margin-bottom: 10px;
   margin-top: 10px;
@@ -12482,7 +12486,7 @@ button {
   border-bottom-left-radius: 3px;
   border-top-left-radius: 3px;
 }
-/* line 44, ../sass/pages/_login.scss */
+/* line 50, ../sass/pages/_login.scss */
 .login .description {
   color: white;
   font-weight: 300;
@@ -12490,12 +12494,12 @@ button {
   margin-right: 6%;
   padding: 10px 10px 10px 10px;
 }
-/* line 52, ../sass/pages/_login.scss */
+/* line 58, ../sass/pages/_login.scss */
 .login input[type="text"],
 .login input[type="password"] {
   border: none;
 }
-/* line 58, ../sass/pages/_login.scss */
+/* line 63, ../sass/pages/_login.scss */
 .login .message {
   color: white;
   font-weight: 300;
@@ -12510,7 +12514,7 @@ button {
   border-top-left-radius: 3px;
   border-top: solid white 2px;
 }
-/* line 70, ../sass/pages/_login.scss */
+/* line 74, ../sass/pages/_login.scss */
 .login a {
   margin-left: 5%;
 }
@@ -12978,15 +12982,9 @@ button {
   width: 100%;
 }
 
-/* line 1, ../sass/pages/_statistics.scss */
-.report-button {
-  text-align: center;
-  display: block;
-  width: 100%;
-  padding: 20px 20px 20px 20px;
-  background-color: #2980B9;
-  color: white;
-  margin: 3px 3px 3px 3px;
+/* line 1, ../sass/pages/_reports.scss */
+.report-card {
+  background-color: white;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
@@ -12995,25 +12993,51 @@ button {
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
   border-top-left-radius: 3px;
+  margin: 5px 10px 10px 10px;
+  box-shadow: 0px 3px 5px #888888;
 }
-/* line 13, ../sass/pages/_statistics.scss */
-.report-button i {
-  padding-right: 5px;
+/* line 9, ../sass/pages/_reports.scss */
+.report-card .header {
+  background-color: #D35400;
+  color: white;
+  padding: 10px 5px 5px 10px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  font-weight: 700;
+  font-size: 16px;
 }
-/* line 16, ../sass/pages/_statistics.scss */
-.report-button:hover {
+/* line 16, ../sass/pages/_reports.scss */
+.report-card .header i {
+  right-margin: 3px;
+}
+/* line 19, ../sass/pages/_reports.scss */
+.report-card .header a, .report-card .header a:active {
   color: white;
 }
-/* line 19, ../sass/pages/_statistics.scss */
-.report-button:active {
-  color: white;
+/* line 23, ../sass/pages/_reports.scss */
+.report-card .body {
+  padding: 10px 10px 10px 10px;
+  color: #444444;
 }
-/* line 22, ../sass/pages/_statistics.scss */
-.report-button:visited {
-  color: white;
+/* line 26, ../sass/pages/_reports.scss */
+.report-card .body p {
+  margin-bottom: 10px;
 }
-
-/* line 27, ../sass/pages/_statistics.scss */
-.report-table {
-  width: 100%;
+/* line 29, ../sass/pages/_reports.scss */
+.report-card .body .report-emphasis, .report-card .body .report-description-head {
+  font-weight: 700;
+  color: #5e5e5e;
+}
+/* line 38, ../sass/pages/_reports.scss */
+.report-card .body .actions button {
+  color: white;
+  width: 49%;
+}
+/* line 42, ../sass/pages/_reports.scss */
+.report-card .body .actions .solve-report {
+  background-color: #229955;
+}
+/* line 45, ../sass/pages/_reports.scss */
+.report-card .body .actions .reject-report {
+  background-color: #C0392B;
 }

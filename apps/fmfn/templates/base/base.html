@@ -54,6 +54,24 @@
         $('.reveal-modal').css('max-height', $('html').height() - 110 + 'px');
     });
     $('select').select2();
+    $("form").submit(function (e) {
+
+        var ref = $(this).find("[required]");
+
+        $(ref).each(function () {
+            if ($(this).val() == '') {
+                alert("Llena todos los campos requeridos");
+                $(this).parent().removeClass("error-safari").addClass("error-safari");
+                $(this).focus();
+                e.preventDefault();
+                return false;
+            }
+            else {
+                $(this).parent().removeClass("error-safari");
+            }
+        });
+        return true;
+    });
     {% block js-inline %}{% endblock %}
 </script>
 {% block js_footer %}{% endblock %}

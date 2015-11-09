@@ -85,6 +85,12 @@ html, body {
   min-height: 100%;
 }
 
+.ninenty-no-bg {
+  width: 95%;
+  padding: 20px 20px 20px 20px;
+  margin-left: 2.5%;
+  min-height: 100%;
+}
 
 .tag {
   display: inline-block;
@@ -106,13 +112,13 @@ html, body {
   @extend h3;
 }
 
-.description{
+.description {
   @extend h5;
-  color: lighten($main-black,10%);
+  color: lighten($main-black, 10%);
   font-weight: $light;
 }
 
-.emphasis{
+.emphasis {
   font-weight: $bold;
   padding-top: 15px;
   padding-bottom: 5px;
@@ -127,11 +133,11 @@ html, body {
   padding-top: 30px;
 }
 
-.display-in-line{
+.display-in-line {
   display: inline-block;
 }
 
-.sub-heading-helper{
+.sub-heading-helper {
   width: 50%;
 }
 
@@ -144,7 +150,7 @@ html, body {
     display: inline-block;
     padding-right: 5px;
   }
-  .element-in-block{
+  .element-in-block {
     width: 33%;
     display: block;
     margin-bottom: 10px;
@@ -154,50 +160,50 @@ html, body {
     @include grid-column(5);
   }
 
-  .two-elements-exact{
+  .two-elements-exact {
     @include grid-column(6);
   }
 
-  .middle-element{
+  .middle-element {
     @include grid-column(2);
     text-align: center;
   }
 
-  button{
+  button {
     margin-top: 20px;
     width: 100%;
     color: white;
   }
 
-  .two-buttons{
+  .two-buttons {
     width: 100%;
     display: block;
     text-align: center;
     margin-top: 20px;
-    button{
+    button {
       display: inline-block;
       width: 47%;
       margin-right: 2%;
       color: white;
-      &.delete{
-        background-color: darken(red,15%);
+      &.delete {
+        background-color: darken(red, 15%);
       }
     }
   }
 }
 
-.error{
+.error {
   @include border-top-radius(3px);
   @include border-right-radius(3px);
   @include border-bottom-radius(3px);
   @include border-left-radius(3px);
 }
 
-select[multiple]{
+select[multiple] {
   height: 0;
 }
 
-.anchor-to-button{
+.anchor-to-button {
   padding: 10px 50px 10px 50px;
   text-align: center;
   background-color: $sky-blue;
@@ -206,14 +212,36 @@ select[multiple]{
   @include border-bottom-radius(3px);
   @include border-left-radius(3px);
   color: white;
-  &:hover{
+  &:hover {
     color: white;
   }
 }
 
-.message{
+.message {
   font-weight: $bold;
   color: $wet-cement;
   font-size: 50px;
   text-align: center;
+}
+
+.error-safari {
+  input[type="text"],
+  input[type="password"],
+  input[type="date"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="week"],
+  input[type="email"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="time"],
+  input[type="url"],
+  input[type="color"],
+  textarea {
+    border-color: $red-hearth;
+    background-color: rgba($red-hearth,0.4);
+    color: white;
+  }
 }

@@ -110,12 +110,12 @@ $(document).ready(function () {
 
                     //display notification
                     displaySucessNotification(
-                        'The tag ' + newTag.name + ' has been added successfully',
+                        'El tema ' + newTag.name + ' ha sido creado exitosamente',
                         'themes-notifications');
                 },
                 error: function (xhr, textStatus, thrownError) {
                     if (xhr.statusText == 'FOUND') {
-                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                        alert('Error: Estas tratando de dar de alta un tema ya existente');
                     }
                 }
             });
@@ -174,13 +174,13 @@ $(document).ready(function () {
 
                     //Display notification
                     displaySucessNotification(
-                        'The tag ' + newTag.name + ' has been successfully added',
+                        'El tipo ' + newTag.name + ' ha sido creado exitosamente',
                         'types-notifications'
                     );
                 },
                 error: function (xhr, textStatus, thrownError) {
                     if (xhr.statusText == 'FOUND') {
-                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                        alert('Error: Estas tratando de dar de alta un tipo ya existente');
                     }
                 }
             });
@@ -239,13 +239,13 @@ $(document).ready(function () {
 
                     //Display notification
                     displaySucessNotification(
-                        'The tag ' + newTag.name + ' has been successfully added',
+                        'El idioma ' + newTag.name + ' ha sido creado exitosamente',
                         'languages-notifications'
                     );
                 },
                 error: function (xhr, textStatus, thrownError) {
                     if (xhr.statusText == 'FOUND') {
-                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                        alert('Error: Estas tratando de crear un idioma ya existente');
                     }
                 }
             });
@@ -318,12 +318,12 @@ $(document).ready(function () {
                     $('#edit-themes-modal').foundation('reveal', 'close');
 
                     //display Notification
-                    displaySucessNotification('The tag ' + theme + ' has been edited', 'themes-notifications');
+                    displaySucessNotification('El tema ' + theme + ' ha sido editado', 'themes-notifications');
                 },
                 error: function (xhr, textStatus, thrownError) {
                     //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
-                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                        alert('Error: Es el mismo nombre. Elige otro.');
                     }
                 }
             });
@@ -397,7 +397,7 @@ $(document).ready(function () {
 
                     //Display notification
                     displaySucessNotification(
-                        'The tag ' + newTag.name + ' has been successfully edited',
+                        'El tipo ' + newTag.name + ' se ha editado exitosamente',
                         'types-notifications'
                     );
 
@@ -405,7 +405,7 @@ $(document).ready(function () {
                 error: function (xhr, textStatus, thrownError) {
                     //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
-                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                        alert('Error: El nombre es el mismo. Elige otro');
                     }
                 }
             });
@@ -480,7 +480,7 @@ $(document).ready(function () {
 
                     //Display notification
                     displaySucessNotification(
-                        'The tag ' + newTag.name + ' has been successfully edited',
+                        'El idioma ' + newTag.name + ' ha sido editado exitosamente',
                         'languages-notifications'
                     );
 
@@ -488,7 +488,7 @@ $(document).ready(function () {
                 error: function (xhr, textStatus, thrownError) {
                     //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
-                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                        alert('Error: Es el misno nombre. Elige otro');
                     }
                 }
             });
@@ -536,12 +536,12 @@ $(document).ready(function () {
                     $('#delete-tag-modal').foundation('reveal', 'close');
 
                     //display Notification
-                    displaySucessNotification('The tag has been deleted', 'themes-notifications');
+                    displaySucessNotification('Se ha eliminado con éxito', 'themes-notifications');
                 },
                 error: function (xhr, textStatus, thrownError) {
                     //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
-                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                        alert('Error: Error');
                     }
                 }
             });
@@ -573,7 +573,7 @@ $(document).ready(function () {
 
                     //Display notification
                     displaySucessNotification(
-                        'The tag has been successfully deleted',
+                        'Se ha eliminado con éxito',
                         'types-notifications'
                     );
 
@@ -581,7 +581,7 @@ $(document).ready(function () {
                 error: function (xhr, textStatus, thrownError) {
                     //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
-                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                        alert('Error: Error');
                     }
                 }
             });
@@ -615,7 +615,7 @@ $(document).ready(function () {
 
                     //Display notification
                     displaySucessNotification(
-                        'The tag has been successfully deleted',
+                        'Se ha eliminado con éxito',
                         'languages-notifications'
                     );
 
@@ -623,7 +623,7 @@ $(document).ready(function () {
                 error: function (xhr, textStatus, thrownError) {
                     //console.log(xhr.statusText);
                     if (xhr.statusText == 'FOUND') {
-                        alert('Error: Estas tratando de dar de alta una etiqueta ya existente');
+                        alert('Error: Error');
                     }
                 }
             });
