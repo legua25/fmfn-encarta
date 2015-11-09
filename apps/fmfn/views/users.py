@@ -180,6 +180,12 @@ class ViewUserView(View):
 view = ViewUserView.as_view()
 
 class SearchView(View):
+	"""
+		Class responsible to handle list users functions:
+			Receives the logged user request containing the target user profile id to display.
+				It evaluates if the user according to its role should be allowed or denied access to the target user profile
+			Get all active users and display them in the template. The search is handled by a js component in the template
+	"""
 	@method_decorator(login_required)
 	@method_decorator(role_required('parent'))
 	def get(self, request):

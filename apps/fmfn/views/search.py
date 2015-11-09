@@ -48,15 +48,20 @@ class SearchView(View):
 
 		form = SearchForm(request.POST)
 		form.is_valid()
+		#get the data from the form
 		data = form.cleaned_data
 
+
+		#First filer by title and description
 		params = (Q(title__icontains = data['search'])
 		         | Q(description__icontains = data['search']))
 
 		query = query.filter(params)
 
+		#Declare the list of parameters for the second filter
 		params_list = []
 
+		#if the input has something, append the filter to the list
 		if(len(data['grades']) > 0):
 			params_list.append(('suggested_ages__in', data['grades']))
 
@@ -69,6 +74,7 @@ class SearchView(View):
 		if(len(data['theme']) > 0):
 			params_list.append(('themes__in', data['theme']))
 
+		#if the list has at least on filter, set each filter to a Q object and apply the filter
 		if len(params_list) > 0 :
 			params2 = [Q(x) for x in params_list]
 			query = query.filter(reduce(operator.or_, params2))
