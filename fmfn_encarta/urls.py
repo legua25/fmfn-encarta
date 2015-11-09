@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render_to_response, RequestContext
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import RedirectView
+from grappelli import urls as grapelli_urls
 from django.conf.urls.static import static
 from django.conf.urls import include, url
 from django.conf import settings
@@ -112,6 +113,6 @@ urlpatterns = [
 
 	# Added here as they seem to require their own namespace
 	url(r'^manage/advanced/', include(admin.site.urls)),
-	url(r'^grappelli/', include('grappelli.urls'))
+	url(r'^manage/grappelli/', include(grapelli_urls))
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

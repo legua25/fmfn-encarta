@@ -137,7 +137,7 @@ $(document).ready(function () {
                     console.log(response);
                     var comment = response.data;
                     var missingRating = 5 - comment.rating;
-                    var user = '<div class="author display-in-line">By:' + userEmail + '</div>';
+                    var user = '<div class="author display-in-line">Por: ' + userEmail + '</div>';
                     var content = '<p class="content">' + comment.content + '</p>';
                     var rating = '<div class="rating display-in-line">';
                     console.log(comment.rating);

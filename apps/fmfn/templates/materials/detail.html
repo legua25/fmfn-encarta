@@ -118,7 +118,7 @@
                         <div class="sub-heading">Comments</div>
                         {% for comment in comments %}
                             <div class="ind-comment">
-                                <div class="author display-in-line">By: {{ comment.user }}</div>
+                                <div class="author display-in-line">Por: {{ comment.user }}</div>
                                 <div class="rating display-in-line">
                                     {% with range=comment.rating_value %}
                                         {% if range == 5 %}
