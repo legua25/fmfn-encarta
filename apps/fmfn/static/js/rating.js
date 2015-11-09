@@ -115,6 +115,7 @@ $(document).ready(function () {
         var url = $("input[name=url-material]").val();
         var userId = $("input[name=id-user]").val();
         var contentId = $("input[name=id-content]").val();
+        var userEmail = $("input[name=id-user-email]").val();
         var rating = $("#count").val();
         var content = $('#comment-content').val();
         var contentTest = content.replace(/\s+/g, '');
@@ -136,7 +137,7 @@ $(document).ready(function () {
                     console.log(response);
                     var comment = response.data;
                     var missingRating = 5 - comment.rating;
-                    var user = '<div class="author display-in-line">By:' + comment.user + '</div>';
+                    var user = '<div class="author display-in-line">By:' + userEmail + '</div>';
                     var content = '<p class="content">' + comment.content + '</p>';
                     var rating = '<div class="rating display-in-line">';
                     console.log(comment.rating);

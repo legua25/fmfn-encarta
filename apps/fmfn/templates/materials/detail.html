@@ -2,7 +2,7 @@
 {% load i18n widget_tweaks static %}
 {% load roles %}
 {% block title %}{{ material.title }}{% endblock %}
-{% block busqueda-active %}active{% endblock busqueda-active%}
+{% block busqueda-active %}active{% endblock busqueda-active %}
 {% block canvas %}
     <div class="ninenty">
         <div class="heading-material">
@@ -44,20 +44,26 @@
 
             <input type="hidden" value="{% url 'portfolio:edit' content_id %}" name="put-tag">
 
-            <div id="contain-portfolio" style="display: inline-block;">
-                {% csrf_token %}
-                {% if not in_portfolio %}
-                    <a class="add-favorites" id="add-portfolio"><i
-                            class="fa fa-heart-o"></i>{% trans 'agregar a favoritos' %}</a>
-                {% endif %}
+            {% if user|has_role:'teacher' %}
+                <div id="contain-portfolio" style="display: inline-block;">
+                    {% csrf_token %}
+                    {% if not in_portfolio %}
+                        <a class="add-favorites" id="add-portfolio"><i
+                                class="fa fa-heart-o"></i>{% trans 'agregar a favoritos' %}</a>
+                    {% endif %}
 
-                {% if in_portfolio %}
-                    <a class="remove-favorites" id="remove-portfolio"><i
-                            class="fa fa-heart"></i>{% trans 'eliminar de favoritos ' %}</a>
-                {% endif %}
-            </div>
+                    {% if in_portfolio %}
+                        <a class="remove-favorites" id="remove-portfolio"><i
+                                class="fa fa-heart"></i>{% trans 'eliminar de favoritos ' %}</a>
+                    {% endif %}
+                </div>
+            {% endif %}
 
-            <a href="#" class="error-report" id="show-report-material"><i class="fa fa-exclamation"></i>{% trans 'reportar error' %}</a>
+
+            {% if user|has_role:'teacher' %}
+                <a href="#" class="error-report" id="show-report-material"><i
+                        class="fa fa-exclamation"></i>{% trans 'reportar error' %}</a>
+            {% endif %}
 
             {% if user|has_role:'content manager' %}
                 <a href="{% url 'content:edit' content_id %}" class="link-visit"><i
@@ -89,6 +95,7 @@
                 {% csrf_token %}
                 <input type="hidden" value="{{ user.id }}" name="id-user">
                 <input type="hidden" value="{{ content_id }}" name="id-content">
+                <input type="hidden" value="{{ user.email_address }}" name="id-user-email">
                 <input type="hidden" value="{% url 'content:view' content_id %}" name="url-material">
                 <input type="hidden" id="count">
 
@@ -158,7 +165,7 @@
                     </div>
                 {% else %}
                     <div id="material-comments">
-                        <div class="sub-heading">{%  trans 'Comentarios' %}</div>
+                        <div class="sub-heading">{% trans 'Comentarios' %}</div>
                         <div class="no-comments">{% trans 'Este material aún no tiene comentarios' %}</div>
                     </div>
                 {% endif %}
