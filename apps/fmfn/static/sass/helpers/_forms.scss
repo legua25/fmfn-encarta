@@ -13,7 +13,7 @@ input[type="time"],
 input[type="url"],
 input[type="color"],
 textarea {
-  background-color: lighten(#f1f1f1,3%);
+  background-color: lighten(#f1f1f1, 3%);
   @include border-top-radius(3px);
   @include border-right-radius(3px);
   @include border-bottom-radius(3px);
@@ -29,4 +29,15 @@ button {
   @include border-right-radius(3px);
   @include border-bottom-radius(3px);
   @include border-left-radius(3px);
+}
+
+.delete-user-button {
+  display: block;
+  width: 100%;
+  color: white;
+  background-color: darken(red, 15%);
+  &:hover {
+    color: white;
+    background-color: darken(red, 15%);
+  }
 }

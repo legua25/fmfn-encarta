@@ -1,0 +1,16 @@
+{% load static i18n widget_tweaks %}
+<!-- Delete user modal -->
+<div id="delete-user-modal" class="reveal-modal edition-modal" aria-hidden="true" role="dialog" data-reveal>
+    <p class="lead">{% blocktrans %}
+        Borrar un usuario es una acción permanente
+    {% endblocktrans %}</p>
+    <p class="lead"><strong>{% trans '¿Estás seguro que quieres borrar al usuario?' %}</strong></p>
+    <div class="form">
+        {% csrf_token %}
+        <div class="two-buttons">
+            <button id="send-delete-user" data-value="{{ u.id }}">{% trans 'Borrar' %}</button>
+            <button class="delete abort-delete-user">{% trans 'Cancelar' %}</button>
+        </div>
+    </div>
+</div>
+<!-- Delete user modal -->

@@ -1,5 +1,6 @@
 {% extends 'base/base-2cols.html' %}
-{% load i18n widget_tweaks %}
+{% load i18n widget_tweaks static %}
+{% load roles %}
 
 {% block title %}{% trans 'Editar usuario' %}{% endblock title %}
 
@@ -85,8 +86,8 @@
                             {% for grade in form.fields.grades.choices %}
                                 <input type="checkbox" id="id_grades_{{ forloop.counter }}" name="grades"
                                        value="{{ grade.0 }}"{% if grade.0 in form.grades.value %}
-                                       checked{% endif %} 
-                                        style="visibility: hidden;"/>
+                                       checked{% endif %}
+                                       style="visibility: hidden;"/>
                                 <label for="id_grades_{{ forloop.counter }}" class="checkbox">
                                     {% blocktrans with grade.1|title as name %}{{ name }}{% endblocktrans %}
                                 </label>
@@ -97,9 +98,23 @@
 
                 </div>
             {% endif %}
-
             <button class="btn btn-primary" type="submit">{% trans 'Guardar' %}</button>
 
         </form>
+        {% if user|has_role:'administrator' %}
+        {% elif user|has_role:'content manager' %}
+        {% elif user|has_role:'user manager' %}
+            {% if user.id != u.id %}
+                <div class="form">
+                    <button class="delete-user-button" id="remove-user">{% trans 'Borrar usuario' %}</button>
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
 {% endblock canvas %}
+{% block js_footer %}
+    <script src="{% static 'js/users.js' %}"></script>
+{% endblock js_footer %}
+{% block modals %}
+    {% include "modals/user-edit.html" %}
+{% endblock modals %}

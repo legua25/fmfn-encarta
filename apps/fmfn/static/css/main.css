@@ -12359,6 +12359,19 @@ button {
   border-top-left-radius: 3px;
 }
 
+/* line 34, ../sass/helpers/_forms.scss */
+.delete-user-button {
+  display: block;
+  width: 100%;
+  color: white;
+  background-color: #b30000;
+}
+/* line 39, ../sass/helpers/_forms.scss */
+.delete-user-button:hover {
+  color: white;
+  background-color: #b30000;
+}
+
 /* line 1, ../sass/pages/_search.scss */
 #canvas {
   padding-right: 0;
