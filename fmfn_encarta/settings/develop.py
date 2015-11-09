@@ -10,7 +10,7 @@ class Development(Settings):
 	DATABASES = {
 		'default': {
 			'ENGINE': 'django.db.backends.mysql',
-			'HOST': '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock',
+			'HOST': 'localhost',
 			'NAME': 'fmfn',
 			'USER': 'fmfn_user',
 			'PASSWORD': 'VHSBLnRquEFyPAbZ'
