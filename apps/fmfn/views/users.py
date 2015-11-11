@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from apps.fmfn.forms import UserCreationForm, BasicEditForm, AdminEditForm, UserViewForm
 from django.shortcuts import render_to_response, redirect, RequestContext
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import is_password_usable
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
@@ -115,8 +116,16 @@ class EditUserView(View):
 		if form.is_valid():
 
 			user = form.instance
+
 			ActionLog.objects.log_account('Edited user profile information (email address: %s)' % user.email_address, user = request.user)
 			form.save(commit = True)
+
+			password = form.cleaned_data['password']
+
+			if password is not None:
+				if password is not '' or is_password_usable(password) and not user.check_password(password):
+					user.set_password(password)
+					user.save()
 
 			return redirect(reverse_lazy('users:view', kwargs = { 'user_id': user.id }))
 
@@ -180,9 +189,11 @@ class ViewUserView(View):
 view = ViewUserView.as_view()
 
 class SearchView(View):
+
 	@method_decorator(login_required)
 	@method_decorator(role_required('parent'))
 	def get(self, request):
+
 		users = User.objects.active()
 		return render_to_response('users/list.html', context = RequestContext(request, locals()))
 

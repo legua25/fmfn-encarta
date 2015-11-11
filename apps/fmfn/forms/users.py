@@ -73,12 +73,12 @@ class UserEditForm(Form):
 
 	password = CharField(
 		max_length = 128,
-		required = True,
+		required = False,
 		widget = PasswordInput(attrs = { 'placeholder': _('Contraseña') })
 	)
 	repeat = CharField(
 		max_length = 128,
-		required = True,
+		required = False,
 		widget = PasswordInput(attrs = { 'placeholder': _('Repite la contraseña') })
 	)
 
@@ -89,7 +89,9 @@ class UserEditForm(Form):
 		Form.clean(self)
 
 		password, repeat = self.cleaned_data['password'], self.cleaned_data['repeat']
-		if not constant_time_compare(password, repeat): raise ValidationError('Las contraseñas no coinciden')
+
+		if password is not None or password is not '':
+			if not constant_time_compare(password, repeat): raise ValidationError('Las contraseñas no coinciden')
 
 	class Meta(object):
 

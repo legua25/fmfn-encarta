@@ -6,11 +6,7 @@
 {% block canvas %}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.9/css/dataTables.foundation.min.css">
     <div class="ninenty">
-        {% if user|has_role:'administrator' %}
-            <div class="heading">{% trans 'Vista solo disponible para administrador de usuarios' %}</div>
-        {% elif user|has_role:'content manager' %}
-            <div class="heading">{% trans 'Vista solo disponible para administrador de usuarios' %}</div>
-        {% elif user|has_role:'user manager' %}
+        {% if user|has_role:'user manager' and user.role.name != 'content manager' %}
             <hr>
             <a href="{% url 'users:create' %}" class="anchor-to-button">{% trans 'Crear nuevo usuario' %}</a>
             <hr>
