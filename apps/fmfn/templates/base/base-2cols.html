@@ -15,9 +15,7 @@
                         class="fa fa-star"></i>{% trans 'Mis favoritos' %}</div>
             </a>
         {% endif %}
-        {% if user|has_role:'content manager' %}
-        {% elif user|has_role:'administrator' %}
-        {% elif user|has_role:'user manager' %}
+        {% if user|has_role:'user manager' and user.role.name != 'content manager' %}
             <a href="{% url 'users:list' %}">
                 <div class="navigation-item {% block usuarios-active %}{% endblock usuarios-active %}"><i
                         class="fa fa-users"></i>{% trans 'Usuarios' %}</div>
