@@ -2,11 +2,11 @@
 
 <h3>{% trans 'Comments of the week' %}</h3>
 <p>
-	{% blocktrans %}The following materials were commented this week. Click on one of them to see more details.{% endblocktrans %}
+	{% blocktrans %}Los siguientes  materiales fueron comentados en la semana. Haz click en el título para ver los detalles{% endblocktrans %}
 </p>
 <ul>
-    {% for material in materials %}
-        <li><a href="{% url 'content:view' material.material.id %}">{{ material.material.title }}</a></li>
+    {% for material in recently_commented %}
+        <li><a href="{% url 'content:view' material.id %}">{{ material.title }}</a></li>
     {% endfor %}
 
 </ul>
