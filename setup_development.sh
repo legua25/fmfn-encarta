@@ -6,6 +6,7 @@ echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
 source ~/.bashrc
 mkvirtualenv fmfn_encarta
 workon fmfn_encarta
+sudo apt-get install libjpeg-dev
 pip install -r requirements.txt
 pip install git+https://github.com/jezdez/django-configurations.git
 mysql -u root -p
