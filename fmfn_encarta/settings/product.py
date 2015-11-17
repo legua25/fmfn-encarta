@@ -6,11 +6,13 @@ from os.path import join
 
 class Production(Settings):
 
-	SECRET_KEY = SecretValue(environ_name = 'SECRET')
-
+	#SECRET_KEY = SecretValue(environ_name = 'SECRET')
+	SECRET_KEY = 'mj-j+vnfbvzdhn8cg5dvj@h9aeu&p$(3c3@%t2+lw7v+uv8a4l'
 	DEBUG = False
 	ALLOWED_HOSTS = [  # TODO: Set this up on the server
-		'localhost'
+		'*'
+		#'localhost',
+		#'159.203.251.186'
 	]
 	ADMINS = []  # TODO: Set this up on the server
 	MANAGERS = ADMINS
@@ -20,26 +22,30 @@ class Production(Settings):
 		'default': {
 			'ENGINE': 'django.db.backends.mysql',
 			'HOST': 'localhost',
-			'NAME': SecretValue(environ_name = 'DATABASE_NAME'),
-			'USER': SecretValue(environ_name = 'DATABASE_USER'),
-			'PASSWORD': SecretValue(environ_name = 'DATABASE_PASSWD')
+			#'NAME': SecretValue(environ_name = 'DATABASE_NAME'),
+			'NAME': 'fmfn',
+			#'USER': SecretValue(environ_name = 'DATABASE_USER'),
+			'USER': 'fmfn_user',
+			#'PASSWORD': SecretValue(environ_name = 'DATABASE_PASSWD')
+			'PASSWORD': 'VHSBLnRquEFyPAbZ'
 		}
 	}
 
 	CACHES = {
 		'default': {
-			'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+			#'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+			'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
 			'TIMEOUT': 500,
 			'BINARY': True,
 			'OPTIONS': { 'tcp_nodelay': True }
 		}
 	}
 
-	EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-	EMAIL_HOST = ''  # TODO: Set this up on the server
-	EMAIL_PORT = ''  # TODO: Set this up on the server
-	EMAIL_HOST_USER = SecretValue(environ_name = 'MAILING_USER')
-	EMAIL_HOST_PASSWORD = SecretValue(environ_name = 'MAILING_PASSWD')
+	#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+	#EMAIL_HOST = ''  # TODO: Set this up on the server
+	#EMAIL_PORT = ''  # TODO: Set this up on the server
+	#EMAIL_HOST_USER = SecretValue(environ_name = 'MAILING_USER')
+	#EMAIL_HOST_PASSWORD = SecretValue(environ_name = 'MAILING_PASSWD')
 
 	FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
 
@@ -62,4 +68,7 @@ class Production(Settings):
 		},
 	}
 
-	STATIC_ROOT = ''  # TODO: Set this up on the server
+	MEDIA_ROOT = '/var/www/media/'
+	MEDIA_URL = '/media/'
+	STATIC_ROOT = '/var/www/static/'
+	STATIC_URL = '/static/'

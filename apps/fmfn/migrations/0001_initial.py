@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 import apps.fmfn.models.users
 from django.conf import settings
 import imagekit.models.fields
@@ -163,6 +163,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True, verbose_name='is active')),
                 ('name', models.CharField(max_length=64, verbose_name='role name')),
+                ('spanish_name', models.CharField(max_length=64, verbose_name='spanish role name')),
                 ('description', models.CharField(default='', max_length=512, verbose_name='role description')),
                 ('base', models.ForeignKey(related_name='subroles', verbose_name='base role', to='fmfn.Role', null=True)),
                 ('base_permissions', models.ManyToManyField(related_query_name='role', related_name='roles', verbose_name='permissions', to='auth.Permission')),
@@ -243,12 +244,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='download',
             name='material',
-            field=models.ForeignKey(related_name='+', verbose_name='material', to='fmfn.Material'),
+            field=models.ForeignKey(related_query_name='downloads', related_name='+', verbose_name='material', to='fmfn.Material'),
         ),
         migrations.AddField(
             model_name='download',
             name='user',
-            field=models.ForeignKey(related_name='+', verbose_name='user', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_query_name='downloads', related_name='+', verbose_name='user', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='comment',

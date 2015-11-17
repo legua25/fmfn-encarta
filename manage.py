@@ -5,8 +5,8 @@ import os, sys
 
 if __name__ == '__main__':
 
-	os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fmfn_encarta.settings.develop')
-	os.environ.setdefault('DJANGO_CONFIGURATION', 'Development')
+	os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fmfn_encarta.settings.prod')
+	os.environ.setdefault('DJANGO_CONFIGURATION', 'Production')
 
 	from configurations import importer
 	importer.install()
