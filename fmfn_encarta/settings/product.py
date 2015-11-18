@@ -68,6 +68,13 @@ class Production(Settings):
 		},
 	}
 
+	SESSION_COOKIE_SECURE = True
+	SECURE_BROWSER_XSS_FILTER = True
+	SECURE_CONTENT_TYPE_NOSNIFF = True
+	CSRF_COOKIE_SECURE = True
+	X_FRAME_OPTIONS = 'DENY'
+	CSRF_COOKIE_HTTPONLY = True
+	
 	MEDIA_ROOT = '/var/www/media/'
 	MEDIA_URL = '/media/'
 	STATIC_ROOT = '/var/www/static/'

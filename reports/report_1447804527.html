@@ -1,0 +1,183 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en-us" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Materiales</title>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Language" content="es"/>
+
+    <!-- CSS -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'/>
+    <link href="" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/main.css" rel="stylesheet"/>
+    
+
+    <!-- JS -->
+    <script type="text/javascript" src="/static/js/foundation/vendor/modernizr.js"></script>
+    
+
+</head>
+<body>
+
+    <div id="header">Modelo NWL</div>
+    <div id="navigation">
+        <a href="/search/">
+            <div class="navigation-item "><i
+                    class="fa fa-search"></i>Busqueda</div>
+        </a>
+        
+            <a href="/portfolio/">
+                <div class="navigation-item "><i
+                        class="fa fa-star"></i>Mis favoritos</div>
+            </a>
+        
+        
+            <a href="/users/">
+                <div class="navigation-item "><i
+                        class="fa fa-users"></i>Usuarios</div>
+            </a>
+        
+        
+            <a href="/manage/reports/">
+                <div class="navigation-item "><i
+                        class="fa fa-exclamation-triangle"></i>Reportes de error</div>
+            </a>
+        
+        
+            <a href="/manage/statistics/">
+                <div class="navigation-item active"><i
+                        class="fa fa-list-ol"></i>Estadísticas</div>
+            </a>
+        
+        
+            <a href="/users/2/">
+                <div class="navigation-item "><i
+                        class="fa fa-user"></i>Mi cuenta</div>
+            </a>
+        
+        
+            <a href="/content/create/">
+                <div class="navigation-item "><i
+                        class="fa fa-upload"></i>Subir material</div>
+            </a>
+        
+        <a href="/accounts/logout/" class="logout-link">
+            <div class="navigation-item last"><i class="fa fa-sign-out"></i>Salir</div>
+        </a>
+        <!--data-reveal-id="myModal"-->
+    </div>
+    <div id="canvas">
+        
+    <div class="ninenty">
+        <a href="/manage/statistics/">
+            <i class="fa fa-caret-left"></i>
+              Regresa al menu de reportes
+        </a>
+        <hr>
+        <div class="heading">Reporte de Uso de Material</div>
+
+        <div class="sub-heading">Materiales más descargados</div>
+        <table class="report-table">
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Tipo de material</th>
+                <th>Nº descargas</th>
+            </tr>
+            
+        </table>
+
+        <div class="sub-heading">Materiales menos descargados</div>
+        <table class="report-table">
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Tipo de material</th>
+                <th>Nº descargas</th>
+            </tr>
+            
+        </table>
+
+    </div>
+
+    </div>
+    
+        <div id="myModal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true"
+             role="dialog">
+            <h2 id="modalTitle">Awesome. I have it.</h2>
+
+            <p class="lead">Your couch. It is mine.</p>
+
+            <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+    
+
+
+<div class="modals">
+    
+        <div id="myModal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true"
+             role="dialog">
+            <h2 id="modalTitle">Awesome. I have it.</h2>
+
+            <p class="lead">Your couch. It is mine.</p>
+
+            <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+    
+</div>
+
+<!-- JS -->
+<script src="/static/js/foundation/vendor/jquery.js"></script>
+<script src="/static/js/foundation/vendor/fastclick.js"></script>
+<script type="text/javascript" src="/static/js/foundation/foundation.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.9/js/dataTables.foundation.min.js"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+<script>
+    $(document).foundation({
+        reveal: {
+            multiple_opened: true,
+            close_on_background_click: false,
+            close_on_esc: false
+        }
+    });
+    $(document).ready(function () {
+        $('.reveal-modal').css('max-height', $('html').height() - 110 + 'px'); // 100 +10px to keep modal effect visible
+
+
+    });
+    // Reset max-height after window resize
+    $(window).resize(function () {
+        $('.reveal-modal').css('max-height', $('html').height() - 110 + 'px');
+    });
+    $('select').select2();
+    $("form").submit(function (e) {
+
+        var ref = $(this).find("[required]");
+
+        $(ref).each(function () {
+            if ($(this).val() == '') {
+                alert("Llena todos los campos requeridos");
+                $(this).parent().removeClass("error-safari").addClass("error-safari");
+                $(this).focus();
+                e.preventDefault();
+                return false;
+            }
+            else {
+                $(this).parent().removeClass("error-safari");
+            }
+        });
+        return true;
+    });
+    
+</script>
+
+</body>
+</html>
