@@ -6,7 +6,6 @@ from os.path import join
 
 class Production(Settings):
 
-	#SECRET_KEY = SecretValue(environ_name = 'SECRET')
 	SECRET_KEY = 'mj-j+vnfbvzdhn8cg5dvj@h9aeu&p$(3c3@%t2+lw7v+uv8a4l'
 	DEBUG = False
 	ALLOWED_HOSTS = [  # TODO: Set this up on the server
@@ -22,30 +21,20 @@ class Production(Settings):
 		'default': {
 			'ENGINE': 'django.db.backends.mysql',
 			'HOST': 'localhost',
-			#'NAME': SecretValue(environ_name = 'DATABASE_NAME'),
 			'NAME': 'fmfn',
-			#'USER': SecretValue(environ_name = 'DATABASE_USER'),
 			'USER': 'fmfn_user',
-			#'PASSWORD': SecretValue(environ_name = 'DATABASE_PASSWD')
 			'PASSWORD': 'VHSBLnRquEFyPAbZ'
 		}
 	}
 
 	CACHES = {
 		'default': {
-			#'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
 			'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
 			'TIMEOUT': 500,
 			'BINARY': True,
 			'OPTIONS': { 'tcp_nodelay': True }
 		}
 	}
-
-	#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-	#EMAIL_HOST = ''  # TODO: Set this up on the server
-	#EMAIL_PORT = ''  # TODO: Set this up on the server
-	#EMAIL_HOST_USER = SecretValue(environ_name = 'MAILING_USER')
-	#EMAIL_HOST_PASSWORD = SecretValue(environ_name = 'MAILING_PASSWD')
 
 	FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
 
@@ -68,13 +57,13 @@ class Production(Settings):
 		},
 	}
 
-	SESSION_COOKIE_SECURE = True
+	# Enable Security Settings
 	SECURE_BROWSER_XSS_FILTER = True
 	SECURE_CONTENT_TYPE_NOSNIFF = True
-	CSRF_COOKIE_SECURE = True
 	X_FRAME_OPTIONS = 'DENY'
 	CSRF_COOKIE_HTTPONLY = True
 	
+	# Static and media directory configurations
 	MEDIA_ROOT = '/var/www/media/'
 	MEDIA_URL = '/media/'
 	STATIC_ROOT = '/var/www/static/'
