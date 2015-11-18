@@ -6,7 +6,7 @@
     <div class="ninenty">
 
         <div class="profile">
-            <div class="heading-profile">{% blocktrans with u.email_address as email %}{{ email }}'s profile{% endblocktrans %}</div>
+            <div class="heading-profile">{% blocktrans with u.email_address as email %} Perfil de {{ email }}{% endblocktrans %}</div>
             <div class="picture">
                 <img src="{{ u.photo.url }}" alt="
                                 {% blocktrans with u.get_short_name as name %}{{ name }}'s avatar{% endblocktrans %}"/>
